@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { User } from "lucide-react";
 import type { User as UserType } from "@shared/schema";
 
@@ -6,8 +7,18 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({ user }: AppHeaderProps) {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, []);
+
   const getGreeting = () => {
-    const hour = new Date().getHours();
+    const hour = currentTime.getHours();
     if (hour < 12) return "Good morning";
     if (hour < 17) return "Good afternoon";
     return "Good evening";
