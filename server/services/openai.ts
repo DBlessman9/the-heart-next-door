@@ -88,11 +88,12 @@ STRICT Requirements:
 - Maximum 2 paragraphs only
 - Use perfect grammar and spelling
 - Keep sentences clear and concise
+- End every sentence with proper punctuation (periods, question marks, exclamation marks)
 - Use one newline (\n) between paragraphs if using 2 paragraphs
 - Make the prompt feel conversational and welcoming
 - Focus on one specific aspect of their journey
 
-Provide just the prompt text with proper formatting.`;
+Provide just the prompt text with proper formatting and punctuation.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
