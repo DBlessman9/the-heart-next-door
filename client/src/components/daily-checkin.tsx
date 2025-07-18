@@ -112,7 +112,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Question 1: How are you feeling today? */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">What emotion feels most true right now?</h4>
+            <h4 className="font-semibold text-deep-teal mb-4">What emotion feels most true?</h4>
             <div className="grid grid-cols-2 gap-3">
               {feelingOptions.map((option) => (
                 <button
