@@ -29,8 +29,8 @@ export default function Onboarding() {
         name: userData.name,
         email: userData.email,
         pregnancyStage: userData.pregnancyStage,
-        pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : null,
-        dueDate: userData.dueDate ? new Date(userData.dueDate) : null,
+        pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined,
+        dueDate: userData.dueDate || null,
         isPostpartum: userData.pregnancyStage === "postpartum",
         preferences: {},
       });
