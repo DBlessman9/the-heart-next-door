@@ -70,7 +70,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
             <Bot className="text-white" size={20} />
           </div>
           <div>
-            <h3 className="font-semibold text-deep-teal">Nia - Your AI Doula</h3>
+            <h3 className="font-semibold text-deep-teal">Nia - Your Digital Doula</h3>
             <p className="text-sm text-gray-600">Online • Always here for you</p>
           </div>
         </div>
