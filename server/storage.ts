@@ -21,6 +21,8 @@ import {
   type Resource,
   type InsertResource,
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -59,218 +61,186 @@ export interface IStorage {
   createResource(resource: InsertResource): Promise<Resource>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private chatMessages: Map<number, ChatMessage>;
-  private journalEntries: Map<number, JournalEntry>;
-  private checkIns: Map<number, CheckIn>;
-  private affirmations: Map<number, Affirmation>;
-  private experts: Map<number, Expert>;
-  private resources: Map<number, Resource>;
-  private currentId: number;
-
+export class DatabaseStorage implements IStorage {
   constructor() {
-    this.users = new Map();
-    this.chatMessages = new Map();
-    this.journalEntries = new Map();
-    this.checkIns = new Map();
-    this.affirmations = new Map();
-    this.experts = new Map();
-    this.resources = new Map();
-    this.currentId = 1;
     this.seedData();
   }
 
-  private seedData() {
-    // Seed default affirmations
-    const defaultAffirmations: InsertAffirmation[] = [
-      {
-        content: "I am strong, capable, and surrounded by love. My body knows how to nurture and protect my baby.",
-        pregnancyStage: "second",
-        isActive: true,
-      },
-      {
-        content: "I trust my body and my instincts. I am prepared for this beautiful journey.",
-        pregnancyStage: "third",
-        isActive: true,
-      },
-      {
-        content: "Each day brings me closer to meeting my baby. I am excited and ready.",
-        pregnancyStage: "third",
-        isActive: true,
-      },
-      {
-        content: "I am healing and growing stronger every day. My body is amazing.",
-        pregnancyStage: "postpartum",
-        isActive: true,
-      },
-    ];
+  private async seedData() {
+    try {
+      // Check if data already exists
+      const existingExperts = await db.select().from(experts).limit(1);
+      if (existingExperts.length > 0) {
+        return; // Data already seeded
+      }
 
-    defaultAffirmations.forEach(affirmation => {
-      this.createAffirmation(affirmation);
-    });
+      // Seed default affirmations
+      const defaultAffirmations: InsertAffirmation[] = [
+        {
+          content: "I am strong, capable, and surrounded by love. My body knows how to nurture and protect my baby.",
+          pregnancyStage: "second",
+          isActive: true,
+        },
+        {
+          content: "I trust my body and my instincts. I am prepared for this beautiful journey.",
+          pregnancyStage: "third",
+          isActive: true,
+        },
+        {
+          content: "Each day brings me closer to meeting my baby. I am excited and ready.",
+          pregnancyStage: "third",
+          isActive: true,
+        },
+        {
+          content: "I am healing and growing stronger every day. My body is amazing.",
+          pregnancyStage: "postpartum",
+          isActive: true,
+        },
+      ];
 
-    // Seed default experts
-    const defaultExperts: InsertExpert[] = [
-      {
-        name: "Dr. Sarah Johnson",
-        title: "Certified Doula",
-        specialty: "doula",
-        rating: 5,
-        reviewCount: 127,
-        photoUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100",
-        bio: "Experienced doula with over 10 years supporting families through pregnancy and birth.",
-        contactInfo: { email: "sarah@example.com", phone: "+1-555-0123" },
-        isAvailable: true,
-      },
-      {
-        name: "Lisa Martinez",
-        title: "Lactation Consultant",
-        specialty: "lactation",
-        rating: 5,
-        reviewCount: 89,
-        photoUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100",
-        bio: "Certified lactation consultant helping new mothers with breastfeeding challenges.",
-        contactInfo: { email: "lisa@example.com", phone: "+1-555-0456" },
-        isAvailable: true,
-      },
-    ];
+      await db.insert(affirmations).values(defaultAffirmations);
 
-    defaultExperts.forEach(expert => {
-      this.createExpert(expert);
-    });
+      // Seed default experts
+      const defaultExperts: InsertExpert[] = [
+        {
+          name: "Dr. Sarah Johnson",
+          title: "Certified Doula",
+          specialty: "doula",
+          rating: 5,
+          reviewCount: 127,
+          photoUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100",
+          bio: "Experienced doula with over 10 years supporting families through pregnancy and birth.",
+          contactInfo: { email: "sarah@example.com", phone: "+1-555-0123" },
+          isAvailable: true,
+        },
+        {
+          name: "Lisa Martinez",
+          title: "Lactation Consultant",
+          specialty: "lactation",
+          rating: 5,
+          reviewCount: 89,
+          photoUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100",
+          bio: "Certified lactation consultant helping new mothers with breastfeeding challenges.",
+          contactInfo: { email: "lisa@example.com", phone: "+1-555-0456" },
+          isAvailable: true,
+        },
+      ];
 
-    // Seed default resources
-    const defaultResources: InsertResource[] = [
-      {
-        title: "Preparing for Labor",
-        description: "Everything you need to know about labor and delivery",
-        type: "video",
-        duration: "12 min",
-        pregnancyStage: "second",
-        category: "labor",
-        url: "#",
-        isPopular: true,
-      },
-      {
-        title: "Nutrition During Pregnancy",
-        description: "Essential nutrition guidelines for expecting mothers",
-        type: "article",
-        duration: "5 min read",
-        pregnancyStage: "second",
-        category: "nutrition",
-        url: "#",
-        isPopular: true,
-      },
-      {
-        title: "Sleep Tips for Pregnancy",
-        description: "How to get better sleep during pregnancy",
-        type: "guide",
-        duration: "8 min read",
-        pregnancyStage: "second",
-        category: "sleep",
-        url: "#",
-        isPopular: false,
-      },
-    ];
+      await db.insert(experts).values(defaultExperts);
 
-    defaultResources.forEach(resource => {
-      this.createResource(resource);
-    });
+      // Seed default resources
+      const defaultResources: InsertResource[] = [
+        {
+          title: "Preparing for Labor",
+          description: "Everything you need to know about labor and delivery",
+          type: "video",
+          duration: "12 min",
+          pregnancyStage: "second",
+          category: "labor",
+          url: "#",
+          isPopular: true,
+        },
+        {
+          title: "Nutrition During Pregnancy",
+          description: "Essential nutrition guidelines for expecting mothers",
+          type: "article",
+          duration: "5 min read",
+          pregnancyStage: "second",
+          category: "nutrition",
+          url: "#",
+          isPopular: true,
+        },
+        {
+          title: "Sleep Tips for Pregnancy",
+          description: "How to get better sleep during pregnancy",
+          type: "guide",
+          duration: "8 min read",
+          pregnancyStage: "second",
+          category: "sleep",
+          url: "#",
+          isPopular: false,
+        },
+      ];
+
+      await db.insert(resources).values(defaultResources);
+    } catch (error) {
+      console.error("Error seeding data:", error);
+    }
   }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = {
-      ...insertUser,
-      id,
-      createdAt: new Date(),
-      pregnancyWeek: insertUser.pregnancyWeek || null,
-      pregnancyStage: insertUser.pregnancyStage || null,
-      dueDate: insertUser.dueDate || null,
-      isPostpartum: insertUser.isPostpartum || null,
-      preferences: insertUser.preferences || {},
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User> {
-    const user = this.users.get(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    const updatedUser = { ...user, ...updateData };
-    this.users.set(id, updatedUser);
-    return updatedUser;
+    const [user] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
+    return user;
   }
 
   // Chat operations
   async getChatMessages(userId: number): Promise<ChatMessage[]> {
-    return Array.from(this.chatMessages.values())
-      .filter(message => message.userId === userId)
-      .sort((a, b) => a.timestamp!.getTime() - b.timestamp!.getTime());
+    return await db.select()
+      .from(chatMessages)
+      .where(eq(chatMessages.userId, userId))
+      .orderBy(chatMessages.timestamp);
   }
 
   async createChatMessage(insertMessage: InsertChatMessage): Promise<ChatMessage> {
-    const id = this.currentId++;
-    const message: ChatMessage = {
-      ...insertMessage,
-      id,
-      timestamp: new Date(),
-    };
-    this.chatMessages.set(id, message);
+    const [message] = await db
+      .insert(chatMessages)
+      .values(insertMessage)
+      .returning();
     return message;
   }
 
   // Journal operations
   async getJournalEntries(userId: number): Promise<JournalEntry[]> {
-    return Array.from(this.journalEntries.values())
-      .filter(entry => entry.userId === userId)
-      .sort((a, b) => b.createdAt!.getTime() - a.createdAt!.getTime());
+    return await db.select()
+      .from(journalEntries)
+      .where(eq(journalEntries.userId, userId))
+      .orderBy(journalEntries.createdAt);
   }
 
   async createJournalEntry(insertEntry: InsertJournalEntry): Promise<JournalEntry> {
-    const id = this.currentId++;
-    const entry: JournalEntry = {
-      ...insertEntry,
-      id,
-      createdAt: new Date(),
-      pregnancyWeek: insertEntry.pregnancyWeek || null,
-      prompt: insertEntry.prompt || null,
-    };
-    this.journalEntries.set(id, entry);
+    const [entry] = await db
+      .insert(journalEntries)
+      .values(insertEntry)
+      .returning();
     return entry;
   }
 
   // Check-in operations
   async getCheckIns(userId: number): Promise<CheckIn[]> {
-    return Array.from(this.checkIns.values())
-      .filter(checkIn => checkIn.userId === userId)
-      .sort((a, b) => b.createdAt!.getTime() - a.createdAt!.getTime());
+    return await db.select()
+      .from(checkIns)
+      .where(eq(checkIns.userId, userId))
+      .orderBy(checkIns.createdAt);
   }
 
   async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
-    const id = this.currentId++;
-    const checkIn: CheckIn = {
-      ...insertCheckIn,
-      id,
-      createdAt: new Date(),
-      energyLevel: insertCheckIn.energyLevel || null,
-      mood: insertCheckIn.mood || null,
-      symptoms: insertCheckIn.symptoms || {},
-      notes: insertCheckIn.notes || null,
-    };
-    this.checkIns.set(id, checkIn);
+    const [checkIn] = await db
+      .insert(checkIns)
+      .values(insertCheckIn)
+      .returning();
     return checkIn;
   }
 
@@ -280,103 +250,98 @@ export class MemStorage implements IStorage {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return Array.from(this.checkIns.values())
-      .find(checkIn => 
-        checkIn.userId === userId &&
-        checkIn.createdAt! >= today &&
-        checkIn.createdAt! < tomorrow
-      );
+    const [checkIn] = await db.select()
+      .from(checkIns)
+      .where(eq(checkIns.userId, userId))
+      .orderBy(checkIns.createdAt)
+      .limit(1);
+    
+    return checkIn || undefined;
   }
 
   // Affirmation operations
   async getAffirmations(pregnancyStage?: string): Promise<Affirmation[]> {
-    return Array.from(this.affirmations.values())
-      .filter(affirmation => 
-        affirmation.isActive &&
-        (!pregnancyStage || affirmation.pregnancyStage === pregnancyStage)
-      );
+    if (pregnancyStage) {
+      return await db.select()
+        .from(affirmations)
+        .where(and(
+          eq(affirmations.isActive, true),
+          eq(affirmations.pregnancyStage, pregnancyStage)
+        ));
+    }
+    
+    return await db.select()
+      .from(affirmations)
+      .where(eq(affirmations.isActive, true));
   }
 
   async createAffirmation(insertAffirmation: InsertAffirmation): Promise<Affirmation> {
-    const id = this.currentId++;
-    const affirmation: Affirmation = {
-      ...insertAffirmation,
-      id,
-      pregnancyStage: insertAffirmation.pregnancyStage || null,
-      isActive: insertAffirmation.isActive || null,
-    };
-    this.affirmations.set(id, affirmation);
+    const [affirmation] = await db
+      .insert(affirmations)
+      .values(insertAffirmation)
+      .returning();
     return affirmation;
   }
 
   async getRandomAffirmation(pregnancyStage?: string): Promise<Affirmation | undefined> {
-    const affirmations = await this.getAffirmations(pregnancyStage);
-    if (affirmations.length === 0) return undefined;
-    return affirmations[Math.floor(Math.random() * affirmations.length)];
+    const affirmationsList = await this.getAffirmations(pregnancyStage);
+    if (affirmationsList.length === 0) return undefined;
+    return affirmationsList[Math.floor(Math.random() * affirmationsList.length)];
   }
 
   // Expert operations
   async getExperts(): Promise<Expert[]> {
-    return Array.from(this.experts.values())
-      .filter(expert => expert.isAvailable)
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    return await db.select()
+      .from(experts)
+      .where(eq(experts.isAvailable, true))
+      .orderBy(experts.rating);
   }
 
   async getExpertsBySpecialty(specialty: string): Promise<Expert[]> {
-    return Array.from(this.experts.values())
-      .filter(expert => expert.specialty === specialty && expert.isAvailable)
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    return await db.select()
+      .from(experts)
+      .where(eq(experts.specialty, specialty))
+      .orderBy(experts.rating);
   }
 
   async createExpert(insertExpert: InsertExpert): Promise<Expert> {
-    const id = this.currentId++;
-    const expert: Expert = {
-      ...insertExpert,
-      id,
-      rating: insertExpert.rating || null,
-      reviewCount: insertExpert.reviewCount || null,
-      photoUrl: insertExpert.photoUrl || null,
-      bio: insertExpert.bio || null,
-      contactInfo: insertExpert.contactInfo || {},
-      isAvailable: insertExpert.isAvailable || null,
-    };
-    this.experts.set(id, expert);
+    const [expert] = await db
+      .insert(experts)
+      .values(insertExpert)
+      .returning();
     return expert;
   }
 
   // Resource operations
   async getResources(pregnancyStage?: string): Promise<Resource[]> {
-    return Array.from(this.resources.values())
-      .filter(resource => 
-        !pregnancyStage || resource.pregnancyStage === pregnancyStage
-      );
+    if (pregnancyStage) {
+      return await db.select()
+        .from(resources)
+        .where(eq(resources.pregnancyStage, pregnancyStage));
+    }
+    
+    return await db.select().from(resources);
   }
 
   async getResourcesByCategory(category: string): Promise<Resource[]> {
-    return Array.from(this.resources.values())
-      .filter(resource => resource.category === category);
+    return await db.select()
+      .from(resources)
+      .where(eq(resources.category, category));
   }
 
   async getPopularResources(): Promise<Resource[]> {
-    return Array.from(this.resources.values())
-      .filter(resource => resource.isPopular);
+    return await db.select()
+      .from(resources)
+      .where(eq(resources.isPopular, true));
   }
 
   async createResource(insertResource: InsertResource): Promise<Resource> {
-    const id = this.currentId++;
-    const resource: Resource = {
-      ...insertResource,
-      id,
-      pregnancyStage: insertResource.pregnancyStage || null,
-      category: insertResource.category || null,
-      description: insertResource.description || null,
-      duration: insertResource.duration || null,
-      url: insertResource.url || null,
-      isPopular: insertResource.isPopular || null,
-    };
-    this.resources.set(id, resource);
+    const [resource] = await db
+      .insert(resources)
+      .values(insertResource)
+      .returning();
     return resource;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
