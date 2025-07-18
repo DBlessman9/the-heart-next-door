@@ -129,7 +129,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Energy Level */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Energy Level</h4>
+            <h4 className="font-semibold text-deep-teal mb-2">Energy Level</h4>
+            <p className="text-sm text-gray-600 mb-4">How energized are you feeling right now?</p>
             <div className="flex space-x-2 justify-center">
               {[1, 2, 3, 4, 5].map((level) => (
                 <button
@@ -165,7 +166,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Mood */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Mood Today</h4>
+            <h4 className="font-semibold text-deep-teal mb-2">Mood Today</h4>
+            <p className="text-sm text-gray-600 mb-4">Choose what best reflects your emotions.</p>
             <div className="grid grid-cols-2 gap-3">
               {moods.map((moodOption) => (
                 <button
