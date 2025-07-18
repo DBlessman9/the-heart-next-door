@@ -497,7 +497,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
     <div className="p-4 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-deep-teal">Appointments</h2>
+        <h2 className="text-2xl font-bold text-deep-teal">Schedule</h2>
         <Button onClick={() => setIsAddDialogOpen(true)} className="bg-sage hover:bg-sage/90">
           <Plus size={16} className="mr-2" />
           Add Appointment
