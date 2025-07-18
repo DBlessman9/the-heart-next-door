@@ -5,6 +5,8 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
   pregnancyWeek: integer("pregnancy_week"),
   pregnancyStage: text("pregnancy_stage"), // "first", "second", "third", "postpartum"

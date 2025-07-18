@@ -7,6 +7,7 @@ This is a React-based maternal wellness application that provides comprehensive 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Display preference: Show only first name in greetings and throughout the app for personalization.
 
 ## System Architecture
 
@@ -29,7 +30,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Database Schema
 The application uses a PostgreSQL database with the following main entities:
-- **Users**: Core user profiles with pregnancy tracking
+- **Users**: Core user profiles with pregnancy tracking, including separate firstName and lastName fields
 - **Chat Messages**: Conversation history with AI doula
 - **Journal Entries**: Personal reflection entries with AI-generated prompts
 - **Check-ins**: Daily wellness assessments

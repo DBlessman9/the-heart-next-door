@@ -15,7 +15,8 @@ export default function Onboarding() {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     pregnancyWeek: "",
     pregnancyStage: "",
@@ -26,7 +27,9 @@ export default function Onboarding() {
   const createUserMutation = useMutation({
     mutationFn: async (userData: typeof formData) => {
       const response = await apiRequest("POST", "/api/users", {
-        name: userData.name,
+        name: `${userData.firstName} ${userData.lastName}`,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
         email: userData.email,
         pregnancyStage: userData.pregnancyStage,
         pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined,
@@ -215,12 +218,22 @@ export default function Onboarding() {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Your Name</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    placeholder="Enter your name"
+                    id="firstName"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    placeholder="Enter your first name"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    placeholder="Enter your last name"
                     className="mt-1"
                   />
                 </div>
@@ -268,7 +281,7 @@ export default function Onboarding() {
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
                   }}
-                  disabled={!formData.name || !formData.email || !formData.pregnancyStage}
+                  disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.pregnancyStage}
                 >
                   Continue
                 </button>
