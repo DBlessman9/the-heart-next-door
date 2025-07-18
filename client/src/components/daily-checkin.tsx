@@ -14,6 +14,9 @@ interface DailyCheckInProps {
 export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   const [energyLevel, setEnergyLevel] = useState<number>(0);
   const [mood, setMood] = useState<string>("");
+  const [hydration, setHydration] = useState<string>("");
+  const [nutrition, setNutrition] = useState<string>("");
+  const [restQuality, setRestQuality] = useState<number>(0);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
 
   const { data: todaysCheckIn } = useQuery({
@@ -30,11 +33,14 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   });
 
   const createCheckInMutation = useMutation({
-    mutationFn: async (checkInData: { energyLevel: number; mood: string }) => {
+    mutationFn: async (checkInData: { energyLevel: number; mood: string; hydration: string; nutrition: string; restQuality: number }) => {
       const response = await apiRequest("POST", "/api/checkin", {
         userId,
         energyLevel: checkInData.energyLevel,
         mood: checkInData.mood,
+        hydration: checkInData.hydration,
+        nutrition: checkInData.nutrition,
+        restQuality: checkInData.restQuality,
         pregnancyWeek: user.pregnancyWeek,
       });
       return response.json();
@@ -50,12 +56,15 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
       setHasCheckedIn(true);
       setEnergyLevel(todaysCheckIn.energyLevel || 0);
       setMood(todaysCheckIn.mood || "");
+      setHydration(todaysCheckIn.hydration || "");
+      setNutrition(todaysCheckIn.nutrition || "");
+      setRestQuality(todaysCheckIn.restQuality || 0);
     }
   }, [todaysCheckIn]);
 
   const handleSubmitCheckIn = () => {
-    if (energyLevel > 0 && mood) {
-      createCheckInMutation.mutate({ energyLevel, mood });
+    if (energyLevel > 0 && mood && hydration && nutrition && restQuality > 0) {
+      createCheckInMutation.mutate({ energyLevel, mood, hydration, nutrition, restQuality });
     }
   };
 
@@ -64,6 +73,19 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
     { id: "anxious", label: "Anxious", selected: mood === "anxious" },
     { id: "excited", label: "Excited", selected: mood === "excited" },
     { id: "tired", label: "Tired", selected: mood === "tired" },
+  ];
+
+  const hydrationOptions = [
+    { id: "none", label: "None", selected: hydration === "none" },
+    { id: "1-2", label: "1-2 cups", selected: hydration === "1-2" },
+    { id: "3-5", label: "3-5 cups", selected: hydration === "3-5" },
+    { id: "6+", label: "6+ cups", selected: hydration === "6+" },
+  ];
+
+  const nutritionOptions = [
+    { id: "yes", label: "Yes", selected: nutrition === "yes" },
+    { id: "not-yet", label: "Not yet", selected: nutrition === "not-yet" },
+    { id: "trying", label: "I'm trying", selected: nutrition === "trying" },
   ];
 
   return (
@@ -164,26 +186,161 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
           </CardContent>
         </Card>
 
+        {/* Hydration Tracker */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">💧 How much water have you had today, love?</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {hydrationOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => !hasCheckedIn && setHydration(option.id)}
+                  disabled={hasCheckedIn}
+                  className="p-3 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
+                    border: 'none',
+                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
+                    opacity: hasCheckedIn ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                    }
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {hasCheckedIn && hydration && (
+              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
+                <p className="text-sm text-sage font-medium">Let's grab a glass of water together 💧 You're doing great.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Nutrition */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">🍽 Have you nourished your body today?</h4>
+            <div className="grid grid-cols-3 gap-3">
+              {nutritionOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => !hasCheckedIn && setNutrition(option.id)}
+                  disabled={hasCheckedIn}
+                  className="p-3 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
+                    border: 'none',
+                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
+                    opacity: hasCheckedIn ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                    }
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {hasCheckedIn && nutrition && (
+              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
+                <p className="text-sm text-sage font-medium">
+                  {nutrition === "yes" ? "Amazing! Your body and baby are thankful 🌱" : 
+                   nutrition === "not-yet" ? "No worries! Even a small snack counts. Try some nuts or fruit 🍎" :
+                   "You're doing your best, and that's what matters. Every small step counts 💚"}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Rest & Sleep Quality */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">💤 How rested are you feeling today?</h4>
+            <div className="flex space-x-2 justify-center">
+              {[1, 2, 3, 4, 5].map((level) => (
+                <button
+                  key={level}
+                  onClick={() => !hasCheckedIn && setRestQuality(level)}
+                  disabled={hasCheckedIn}
+                  className="w-12 h-12 rounded-full font-semibold transition-transform hover:scale-105"
+                  style={{
+                    backgroundColor: restQuality === level ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 85%)',
+                    color: restQuality === level ? 'white' : 'hsl(0, 0%, 40%)',
+                    border: 'none',
+                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
+                    opacity: hasCheckedIn ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = restQuality === level ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 78%)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = restQuality === level ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 85%)';
+                    }
+                  }}
+                >
+                  {level === 1 ? '😴' : level === 5 ? '😊' : level}
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <span>Exhausted</span>
+              <span>Rested & Refreshed</span>
+            </div>
+            {hasCheckedIn && restQuality > 0 && (
+              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
+                <p className="text-sm text-sage font-medium">
+                  {restQuality <= 2 ? "Rest is so important, mama. Consider a short nap or gentle breathing exercise 🌙" :
+                   restQuality >= 4 ? "Wonderful! You're taking great care of yourself ✨" :
+                   "You're doing well. Remember, rest when you can - even 10 minutes helps 💤"}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Submit Button */}
         {!hasCheckedIn && (
           <button
             onClick={handleSubmitCheckIn}
-            disabled={!energyLevel || !mood || createCheckInMutation.isPending}
+            disabled={!energyLevel || !mood || !hydration || !nutrition || !restQuality || createCheckInMutation.isPending}
             className="w-full py-3 rounded-2xl font-semibold transition-colors"
             style={{
               backgroundColor: 'hsl(146, 27%, 56%)',
               color: 'white',
               border: 'none',
-              cursor: (!energyLevel || !mood || createCheckInMutation.isPending) ? 'not-allowed' : 'pointer',
-              opacity: (!energyLevel || !mood || createCheckInMutation.isPending) ? 0.5 : 1
+              cursor: (!energyLevel || !mood || !hydration || !nutrition || !restQuality || createCheckInMutation.isPending) ? 'not-allowed' : 'pointer',
+              opacity: (!energyLevel || !mood || !hydration || !nutrition || !restQuality || createCheckInMutation.isPending) ? 0.5 : 1
             }}
             onMouseEnter={(e) => {
-              if (energyLevel && mood && !createCheckInMutation.isPending) {
+              if (energyLevel && mood && hydration && nutrition && restQuality && !createCheckInMutation.isPending) {
                 e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
               }
             }}
             onMouseLeave={(e) => {
-              if (energyLevel && mood && !createCheckInMutation.isPending) {
+              if (energyLevel && mood && hydration && nutrition && restQuality && !createCheckInMutation.isPending) {
                 e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
               }
             }}

@@ -38,6 +38,9 @@ export const checkIns = pgTable("check_ins", {
   userId: integer("user_id").references(() => users.id).notNull(),
   energyLevel: integer("energy_level"), // 1-5
   mood: text("mood"),
+  hydration: text("hydration"), // "none", "1-2", "3-5", "6+"
+  nutrition: text("nutrition"), // "yes", "not-yet", "trying"
+  restQuality: integer("rest_quality"), // 1-5
   symptoms: jsonb("symptoms").default([]),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
