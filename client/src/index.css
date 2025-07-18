@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(185, 24%, 31%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(185, 24%, 31%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(185, 24%, 31%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(146, 27%, 56%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(243, 100%, 93%);
+  --secondary-foreground: hsl(185, 24%, 31%);
+  --accent: hsl(243, 100%, 93%);
+  --accent-foreground: hsl(185, 24%, 31%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(185, 24%, 31%);
+  --radius: 0.5rem;
+
+  /* Custom colors for maternal wellness */
+  --sage: hsl(146, 27%, 56%);
+  --lavender: hsl(243, 100%, 93%);
+  --cream: hsl(60, 100%, 95%);
+  --warm-gray: hsl(0, 0%, 96%);
+  --deep-teal: hsl(185, 24%, 31%);
+  --coral: hsl(0, 100%, 75%);
+  --muted-gold: hsl(43, 74%, 49%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(146, 27%, 56%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background-color: hsl(var(--cream));
+    color: hsl(var(--deep-teal));
+  }
+}
+
+@layer utilities {
+  .bg-sage {
+    background-color: hsl(var(--sage));
+  }
+  
+  .bg-lavender {
+    background-color: hsl(var(--lavender));
+  }
+  
+  .bg-cream {
+    background-color: hsl(var(--cream));
+  }
+  
+  .bg-warm-gray {
+    background-color: hsl(var(--warm-gray));
+  }
+  
+  .bg-deep-teal {
+    background-color: hsl(var(--deep-teal));
+  }
+  
+  .bg-coral {
+    background-color: hsl(var(--coral));
+  }
+  
+  .bg-muted-gold {
+    background-color: hsl(var(--muted-gold));
+  }
+  
+  .text-sage {
+    color: hsl(var(--sage));
+  }
+  
+  .text-lavender {
+    color: hsl(var(--lavender));
+  }
+  
+  .text-cream {
+    color: hsl(var(--cream));
+  }
+  
+  .text-warm-gray {
+    color: hsl(var(--warm-gray));
+  }
+  
+  .text-deep-teal {
+    color: hsl(var(--deep-teal));
+  }
+  
+  .text-coral {
+    color: hsl(var(--coral));
+  }
+  
+  .text-muted-gold {
+    color: hsl(var(--muted-gold));
+  }
+  
+  .border-sage {
+    border-color: hsl(var(--sage));
+  }
+  
+  .border-lavender {
+    border-color: hsl(var(--lavender));
+  }
+  
+  .border-deep-teal {
+    border-color: hsl(var(--deep-teal));
+  }
+  
+  .border-coral {
+    border-color: hsl(var(--coral));
+  }
+  
+  .border-muted-gold {
+    border-color: hsl(var(--muted-gold));
+  }
+  
+  .hover\:bg-sage:hover {
+    background-color: hsl(var(--sage));
+  }
+  
+  .hover\:bg-lavender:hover {
+    background-color: hsl(var(--lavender));
+  }
+  
+  .hover\:bg-coral:hover {
+    background-color: hsl(var(--coral));
+  }
+  
+  .hover\:bg-muted-gold:hover {
+    background-color: hsl(var(--muted-gold));
+  }
+}

@@ -1,0 +1,154 @@
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Heart } from "lucide-react";
+import type { User, CheckIn } from "@shared/schema";
+
+interface DailyCheckInProps {
+  userId: number;
+  user: User;
+}
+
+export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
+  const [energyLevel, setEnergyLevel] = useState<number>(0);
+  const [mood, setMood] = useState<string>("");
+  const [hasCheckedIn, setHasCheckedIn] = useState(false);
+
+  const { data: todaysCheckIn } = useQuery({
+    queryKey: ["/api/checkin/today", userId],
+  });
+
+  const { data: randomAffirmation } = useQuery({
+    queryKey: ["/api/affirmations/random"],
+    queryFn: async () => {
+      const response = await fetch(`/api/affirmations/random?stage=${user.pregnancyStage}`);
+      return response.json();
+    },
+  });
+
+  const createCheckInMutation = useMutation({
+    mutationFn: async (checkInData: { energyLevel: number; mood: string }) => {
+      const response = await apiRequest("POST", "/api/checkin", {
+        userId,
+        energyLevel: checkInData.energyLevel,
+        mood: checkInData.mood,
+        pregnancyWeek: user.pregnancyWeek,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/checkin/today", userId] });
+      setHasCheckedIn(true);
+    },
+  });
+
+  useEffect(() => {
+    if (todaysCheckIn) {
+      setHasCheckedIn(true);
+      setEnergyLevel(todaysCheckIn.energyLevel || 0);
+      setMood(todaysCheckIn.mood || "");
+    }
+  }, [todaysCheckIn]);
+
+  const handleSubmitCheckIn = () => {
+    if (energyLevel > 0 && mood) {
+      createCheckInMutation.mutate({ energyLevel, mood });
+    }
+  };
+
+  const moods = [
+    { id: "peaceful", label: "Peaceful", selected: mood === "peaceful" },
+    { id: "anxious", label: "Anxious", selected: mood === "anxious" },
+    { id: "excited", label: "Excited", selected: mood === "excited" },
+    { id: "tired", label: "Tired", selected: mood === "tired" },
+  ];
+
+  return (
+    <div className="px-6 py-6">
+      <div className="text-center mb-6">
+        <div className="w-20 h-20 bg-gradient-to-br from-coral to-muted-gold rounded-full flex items-center justify-center mx-auto mb-4">
+          <Heart className="text-white" size={32} />
+        </div>
+        <h3 className="text-xl font-semibold text-deep-teal mb-2">Daily Check-in</h3>
+        <p className="text-gray-600">
+          {hasCheckedIn ? "Thank you for checking in today!" : "How are you feeling today? Your wellness matters."}
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {/* Energy Level */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">Energy Level</h4>
+            <div className="flex space-x-2">
+              {[1, 2, 3, 4, 5].map((level) => (
+                <Button
+                  key={level}
+                  variant={energyLevel === level ? "default" : "outline"}
+                  onClick={() => !hasCheckedIn && setEnergyLevel(level)}
+                  disabled={hasCheckedIn}
+                  className={`w-12 h-12 rounded-full font-semibold transition-transform hover:scale-105 ${
+                    energyLevel === level
+                      ? "bg-coral text-white"
+                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                  }`}
+                >
+                  {level}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Mood */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">Mood Today</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {moods.map((moodOption) => (
+                <Button
+                  key={moodOption.id}
+                  variant={moodOption.selected ? "default" : "outline"}
+                  onClick={() => !hasCheckedIn && setMood(moodOption.id)}
+                  disabled={hasCheckedIn}
+                  className={`p-3 rounded-xl text-sm font-medium transition-colors ${
+                    moodOption.selected
+                      ? "bg-sage text-white hover:bg-sage/90"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {moodOption.label}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Submit Button */}
+        {!hasCheckedIn && (
+          <Button
+            onClick={handleSubmitCheckIn}
+            disabled={!energyLevel || !mood || createCheckInMutation.isPending}
+            className="w-full bg-sage text-white py-3 rounded-2xl font-semibold hover:bg-sage/90 transition-colors"
+          >
+            {createCheckInMutation.isPending ? "Saving..." : "Complete Check-in"}
+          </Button>
+        )}
+
+        {/* Today's Affirmation */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">Today's Affirmation</h4>
+            <div className="bg-lavender rounded-xl p-4 text-center">
+              <p className="text-deep-teal font-medium">
+                {randomAffirmation?.content || "I am strong, capable, and surrounded by love. My body knows how to nurture and protect my baby."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
