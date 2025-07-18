@@ -26,9 +26,13 @@ export default function Onboarding() {
   const createUserMutation = useMutation({
     mutationFn: async (userData: typeof formData) => {
       const response = await apiRequest("POST", "/api/users", {
-        ...userData,
-        pregnancyWeek: parseInt(userData.pregnancyWeek) || null,
+        name: userData.name,
+        email: userData.email,
+        pregnancyStage: userData.pregnancyStage,
+        pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : null,
         dueDate: userData.dueDate ? new Date(userData.dueDate) : null,
+        isPostpartum: userData.pregnancyStage === "postpartum",
+        preferences: {},
       });
       return response.json();
     },
@@ -106,7 +110,7 @@ export default function Onboarding() {
         )}
 
         {step === 2 && (
-          <Card className="mt-8">
+          <Card className="mt-8 mb-8">
             <CardContent className="p-6">
               <h2 className="text-2xl font-bold text-deep-teal mb-6 text-center">
                 Tell us about yourself
@@ -150,9 +154,11 @@ export default function Onboarding() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="mt-6 pb-4">
                 <Button 
                   onClick={handleSubmit}
-                  className="w-full bg-sage text-white py-3 rounded-2xl hover:bg-sage/90"
+                  className="w-full bg-sage text-white py-3 rounded-2xl hover:bg-sage/90 font-semibold shadow-lg border-2 border-sage"
                   disabled={!formData.name || !formData.email || !formData.pregnancyStage}
                 >
                   Continue
@@ -163,7 +169,7 @@ export default function Onboarding() {
         )}
 
         {step === 3 && (
-          <Card className="mt-8">
+          <Card className="mt-8 mb-8">
             <CardContent className="p-6">
               <h2 className="text-2xl font-bold text-deep-teal mb-6 text-center">
                 A few more details
@@ -196,9 +202,11 @@ export default function Onboarding() {
                     </div>
                   </>
                 )}
+              </div>
+              <div className="mt-6 pb-4">
                 <Button 
                   onClick={handleSubmit}
-                  className="w-full bg-sage text-white py-3 rounded-2xl hover:bg-sage/90"
+                  className="w-full bg-sage text-white py-3 rounded-2xl hover:bg-sage/90 font-semibold shadow-lg border-2 border-sage"
                   disabled={createUserMutation.isPending}
                 >
                   {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
