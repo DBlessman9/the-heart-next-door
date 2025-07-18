@@ -48,7 +48,7 @@ export default function Home() {
       <div className="pb-4">
         {activeTab === "chat" && <ChatInterface userId={currentUserId} />}
         {activeTab === "checkin" && <DailyCheckIn userId={currentUserId} user={user} />}
-        {activeTab === "baby" && <BabyGuidance userId={currentUserId} user={user} />}
+        {activeTab === "baby" && <BabyGuidance userId={currentUserId} user={user} onTabChange={setActiveTab} />}
         {activeTab === "journal" && <Journal userId={currentUserId} user={user} />}
         {activeTab === "resources" && <Resources user={user} />}
         {activeTab === "experts" && <Experts />}

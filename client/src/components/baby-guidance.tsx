@@ -9,6 +9,7 @@ import type { User } from "@shared/schema";
 interface BabyGuidanceProps {
   userId: number;
   user: User;
+  onTabChange?: (tab: string) => void;
 }
 
 interface WeeklyGuidance {
@@ -243,7 +244,7 @@ const weeklyGuidanceData: WeeklyGuidance[] = [
   }
 ];
 
-export default function BabyGuidance({ userId, user }: BabyGuidanceProps) {
+export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidanceProps) {
   const currentWeek = user.pregnancyWeek || 20;
   const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   
@@ -288,10 +289,10 @@ export default function BabyGuidance({ userId, user }: BabyGuidanceProps) {
         
         <div className="text-center">
           <h2 className="text-2xl font-bold text-deep-teal">Week {selectedWeek}</h2>
-          <p className="text-sm text-muted-foreground">
-            Trimester {guidance.trimester}
-            {isCurrentWeek && <Badge variant="secondary" className="ml-2">Current</Badge>}
-          </p>
+          <div className="flex items-center justify-center gap-2 mt-1">
+            <span className="text-sm text-muted-foreground">Trimester {guidance.trimester}</span>
+            {isCurrentWeek && <Badge variant="secondary">Current</Badge>}
+          </div>
         </div>
         
         <Button
@@ -358,20 +359,7 @@ export default function BabyGuidance({ userId, user }: BabyGuidanceProps) {
         </CardContent>
       </Card>
 
-      {/* Emotional Support */}
-      <Card className="bg-gradient-to-r from-sage/10 to-rose-100/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Heart className="text-sage" size={20} />
-            A Message for You
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-deep-teal italic leading-relaxed">
-            "{guidance.emotionalSupport}"
-          </p>
-        </CardContent>
-      </Card>
+
 
       {/* Learning Content */}
       <Card>
@@ -385,8 +373,31 @@ export default function BabyGuidance({ userId, user }: BabyGuidanceProps) {
           <div className="space-y-2">
             <h4 className="font-semibold text-deep-teal">{guidance.learningContent.title}</h4>
             <p className="text-sm text-muted-foreground">{guidance.learningContent.description}</p>
-            <Button variant="outline" size="sm" className="mt-2">
-              Learn More
+            
+            {/* Show related resources if available */}
+            {resources && resources.length > 0 && (
+              <div className="mt-3 space-y-2">
+                <h5 className="text-sm font-medium text-deep-teal">Related Resources:</h5>
+                <div className="space-y-1">
+                  {resources.slice(0, 2).map((resource: any) => (
+                    <div key={resource.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{resource.title}</p>
+                        <p className="text-xs text-muted-foreground">{resource.type} • {resource.duration}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-2"
+              onClick={() => onTabChange?.('resources')}
+            >
+              Explore All Resources
             </Button>
           </div>
         </CardContent>

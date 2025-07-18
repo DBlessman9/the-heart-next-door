@@ -52,6 +52,14 @@ The application uses a PostgreSQL database with the following main entities:
 - Symptom logging with JSON storage
 - Pregnancy week correlation
 
+### Baby Guidance Page
+- Weekly pregnancy insights with fruit size comparisons
+- Baby milestone tracking and development updates
+- Mom's body changes and common symptoms
+- Integrated learning content from Resources page
+- Week-by-week navigation with current week highlighting
+- Seamless integration with Resources tab for detailed learning
+
 ### Journaling Platform
 - AI-generated personalized prompts
 - Pregnancy week tracking
@@ -121,3 +129,13 @@ The application uses a PostgreSQL database with the following main entities:
 - **Accessibility**: Radix UI components for WCAG compliance
 
 The application is designed as a comprehensive maternal wellness platform that prioritizes user experience, data privacy, and clinical accuracy while providing accessible support throughout pregnancy and postpartum periods.
+
+## Recent Changes
+
+### Latest Updates (2025-07-18)
+- **Added Baby Guidance Page**: Comprehensive weekly pregnancy insights with fruit size comparisons, baby milestones, mom's body changes, and integrated learning content
+- **Enhanced Navigation**: Added Baby tab to main navigation between Check-in and Chat
+- **Resource Integration**: Baby page now shows related resources and redirects to Resources tab for detailed learning
+- **Fixed DOM Issues**: Resolved HTML validation warnings in component structure
+- **Database Connection**: Fixed database connection issues in storage layer and seeding process
+- Application successfully running on port 5000 with all features operational
