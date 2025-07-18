@@ -498,7 +498,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
       {/* Header */}
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-deep-teal mb-2">Appointments</h2>
-        <p className="text-gray-600 text-sm">Manage your healthcare appointments and stay on track</p>
+        <p className="text-gray-600 text-sm">Keep track of your upcoming appointments</p>
       </div>
 
       {/* Quick Add Section */}
@@ -507,7 +507,6 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex-1">
               <h3 className="font-semibold text-deep-teal">Add New Appointment</h3>
-              <p className="text-sm text-gray-600">Keep track of your upcoming appointments</p>
             </div>
             <Button 
               onClick={() => setIsAddDialogOpen(true)} 
