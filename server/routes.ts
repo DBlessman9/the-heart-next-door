@@ -66,10 +66,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get user context for AI response
       const user = await storage.getUser(messageData.userId);
+      const recentCheckIn = await storage.getTodaysCheckIn(messageData.userId);
+      
       const userContext = user ? {
         pregnancyWeek: user.pregnancyWeek || undefined,
         pregnancyStage: user.pregnancyStage || undefined,
         isPostpartum: user.isPostpartum || undefined,
+        recentCheckIn: recentCheckIn ? {
+          energyLevel: recentCheckIn.energyLevel || undefined,
+          mood: recentCheckIn.mood || undefined,
+          date: recentCheckIn.createdAt || undefined
+        } : undefined,
       } : undefined;
 
       // Generate AI response
