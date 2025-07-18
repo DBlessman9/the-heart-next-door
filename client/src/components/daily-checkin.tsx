@@ -120,19 +120,31 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
             <h4 className="font-semibold text-deep-teal mb-4">Mood Today</h4>
             <div className="grid grid-cols-2 gap-3">
               {moods.map((moodOption) => (
-                <Button
+                <button
                   key={moodOption.id}
-                  variant={moodOption.selected ? "default" : "outline"}
                   onClick={() => !hasCheckedIn && setMood(moodOption.id)}
                   disabled={hasCheckedIn}
-                  className={`p-3 rounded-xl text-sm font-medium transition-colors ${
-                    moodOption.selected
-                      ? "bg-sage text-white hover:bg-sage/90"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                  className="p-3 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: moodOption.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    color: moodOption.selected ? 'white' : 'hsl(0, 0%, 40%)',
+                    border: 'none',
+                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
+                    opacity: hasCheckedIn ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = moodOption.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = moodOption.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                    }
+                  }}
                 >
                   {moodOption.label}
-                </Button>
+                </button>
               ))}
             </div>
           </CardContent>
@@ -140,13 +152,30 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
 
         {/* Submit Button */}
         {!hasCheckedIn && (
-          <Button
+          <button
             onClick={handleSubmitCheckIn}
             disabled={!energyLevel || !mood || createCheckInMutation.isPending}
-            className="w-full bg-sage text-white py-3 rounded-2xl font-semibold hover:bg-sage/90 transition-colors"
+            className="w-full py-3 rounded-2xl font-semibold transition-colors"
+            style={{
+              backgroundColor: 'hsl(146, 27%, 56%)',
+              color: 'white',
+              border: 'none',
+              cursor: (!energyLevel || !mood || createCheckInMutation.isPending) ? 'not-allowed' : 'pointer',
+              opacity: (!energyLevel || !mood || createCheckInMutation.isPending) ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (energyLevel && mood && !createCheckInMutation.isPending) {
+                e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (energyLevel && mood && !createCheckInMutation.isPending) {
+                e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+              }
+            }}
           >
             {createCheckInMutation.isPending ? "Saving..." : "Complete Check-in"}
-          </Button>
+          </button>
         )}
 
         {/* Today's Affirmation */}
