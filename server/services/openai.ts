@@ -76,55 +76,51 @@ export async function generateJournalPrompt(
   pregnancyStage?: string,
   isPostpartum?: boolean
 ): Promise<string> {
-  try {
-    const systemPrompt = `Generate a brief journaling prompt for an expecting or new mother.
+  // Use predefined prompts that are guaranteed to be grammatically correct
+  const firstTrimesterPrompts = [
+    "How are you feeling about the changes in your body this week?",
+    "What emotions are you experiencing as you begin this journey?",
+    "What's bringing you comfort during these early weeks?",
+    "How are you taking care of yourself today?",
+    "What are you most looking forward to in your pregnancy?"
+  ];
 
-Context:
-- Pregnancy week: ${pregnancyWeek || 'Unknown'}
-- Pregnancy stage: ${pregnancyStage || 'Unknown'}
-- Postpartum: ${isPostpartum ? 'Yes' : 'No'}
+  const secondTrimesterPrompts = [
+    "What has surprised you most about your pregnancy so far?",
+    "How do you feel when you think about your growing baby?",
+    "What's one thing you're grateful for this week?",
+    "How has your energy been lately?",
+    "What hopes do you have for your baby today?"
+  ];
 
-Requirements:
-- ONE simple question only
-- Maximum 15 words
-- Perfect grammar and punctuation
-- No greetings or extra words
-- Make it about their current experience
+  const thirdTrimesterPrompts = [
+    "How are you feeling about meeting your baby soon?",
+    "What's helping you prepare for labor and delivery?",
+    "What are you most excited about becoming a mother?",
+    "How has your body amazed you during this pregnancy?",
+    "What do you want to remember about this time?"
+  ];
 
-Examples:
-"How are you feeling about your changing body this week?"
-"What's bringing you joy in your pregnancy today?"
-"How has your energy level been lately?"
+  const postpartumPrompts = [
+    "How are you adjusting to life with your baby?",
+    "What's been the most surprising part of motherhood so far?",
+    "How are you taking care of yourself today?",
+    "What moments with your baby bring you the most joy?",
+    "What would you tell your pre-baby self about this journey?"
+  ];
 
-Return ONLY the question.`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: "Generate a journal prompt for today." }
-      ],
-      max_tokens: 30,
-      temperature: 0.8,
-    });
-
-    const generatedPrompt = response.choices[0].message.content || "What are three things you're grateful for today during your pregnancy journey?";
-    
-    // Clean up the prompt to ensure it's grammatically correct
-    const cleanPrompt = generatedPrompt
-      .replace(/^["']|["']$/g, '') // Remove quotes
-      .replace(/Hello,?\s*[^,]*,?\s*/i, '') // Remove greetings
-      .replace(/\s+/g, ' ') // Clean up extra spaces
-      .trim();
-    
-    // Ensure it ends with proper punctuation
-    if (cleanPrompt && !cleanPrompt.match(/[.!?]$/)) {
-      return cleanPrompt + '?';
-    }
-    
-    return cleanPrompt;
-  } catch (error) {
-    console.error("OpenAI API error:", error);
-    return "What are three things you're grateful for today during your pregnancy journey?";
+  let promptArray;
+  if (isPostpartum) {
+    promptArray = postpartumPrompts;
+  } else if (pregnancyStage === "third") {
+    promptArray = thirdTrimesterPrompts;
+  } else if (pregnancyStage === "second") {
+    promptArray = secondTrimesterPrompts;
+  } else {
+    promptArray = firstTrimesterPrompts;
   }
+
+  // Return a random prompt from the appropriate array
+  const randomIndex = Math.floor(Math.random() * promptArray.length);
+  return promptArray[randomIndex];
 }
