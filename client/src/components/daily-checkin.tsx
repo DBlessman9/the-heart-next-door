@@ -69,7 +69,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   return (
     <div className="px-6 py-6">
       {/* Today's Affirmation */}
-      <Card className="shadow-lg mb-6">
+      <Card className="shadow-lg mb-4">
         <CardContent className="p-6">
           <h4 className="font-semibold text-deep-teal mb-4">Today's Affirmation</h4>
           <div className="bg-lavender rounded-xl p-4 text-center">
@@ -84,9 +84,9 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         <div className="w-20 h-20 bg-gradient-to-br from-coral to-muted-gold rounded-full flex items-center justify-center mx-auto mb-4">
           <Heart className="text-white" size={32} />
         </div>
-        <h3 className="text-xl font-semibold text-deep-teal mb-2">Daily Check-in</h3>
+        <h3 className="text-xl font-semibold text-deep-teal mb-2">How are you feeling today?</h3>
         <p className="text-gray-600">
-          {hasCheckedIn ? "Thank you for checking in today!" : "How are you feeling today? Your wellness matters."}
+          {hasCheckedIn ? "Thank you for checking in today!" : "Your wellness matters."}
         </p>
       </div>
 
