@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart } from "lucide-react";
+import { Heart, AlertCircle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -53,16 +53,91 @@ export default function Onboarding() {
     },
   });
 
+  const validatePregnancyData = () => {
+    const week = parseInt(formData.pregnancyWeek);
+    const stage = formData.pregnancyStage;
+    const dueDate = formData.dueDate;
+
+    // Skip validation if no week or stage provided
+    if (!week || !stage || stage === "postpartum") {
+      return { isValid: true, error: "" };
+    }
+
+    // Check trimester-week alignment
+    const trimesterRanges = {
+      first: { min: 1, max: 12 },
+      second: { min: 13, max: 27 },
+      third: { min: 28, max: 42 }
+    };
+
+    const range = trimesterRanges[stage];
+    if (!range) {
+      return { isValid: true, error: "" };
+    }
+
+    if (week < range.min || week > range.max) {
+      return {
+        isValid: false,
+        error: `Week ${week} doesn't match ${stage} trimester (weeks ${range.min}-${range.max})`
+      };
+    }
+
+    // Check due date alignment if provided
+    if (dueDate) {
+      const today = new Date();
+      const due = new Date(dueDate);
+      const weeksFromToday = Math.ceil((due.getTime() - today.getTime()) / (7 * 24 * 60 * 60 * 1000));
+      const expectedWeeksRemaining = 40 - week;
+      
+      // Allow 2 week variance for due date calculations
+      if (Math.abs(weeksFromToday - expectedWeeksRemaining) > 2) {
+        return {
+          isValid: false,
+          error: `Due date doesn't align with week ${week}. Expected around ${expectedWeeksRemaining} weeks from now, but due date is ${weeksFromToday} weeks away`
+        };
+      }
+    }
+
+    return { isValid: true, error: "" };
+  };
+
   const handleSubmit = () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
+      // Validate pregnancy data before submission
+      const validation = validatePregnancyData();
+      if (!validation.isValid) {
+        toast({
+          title: "Data Validation Error",
+          description: validation.error,
+          variant: "destructive",
+        });
+        return;
+      }
       createUserMutation.mutate(formData);
     }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const getTrimesterRange = (stage: string) => {
+    switch (stage) {
+      case "first": return "weeks 1-12";
+      case "second": return "weeks 13-27";
+      case "third": return "weeks 28-40+";
+      default: return "";
+    }
+  };
+
+  const getValidationMessage = () => {
+    const validation = validatePregnancyData();
+    if (!validation.isValid) {
+      return validation.error;
+    }
+    return "";
   };
 
   return (
@@ -223,6 +298,17 @@ export default function Onboarding() {
                         min="1"
                         max="42"
                       />
+                      {formData.pregnancyStage && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          {formData.pregnancyStage} trimester is {getTrimesterRange(formData.pregnancyStage)}
+                        </p>
+                      )}
+                      {getValidationMessage() && (
+                        <div className="flex items-center mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                          <AlertCircle className="text-red-500 mr-2" size={16} />
+                          <p className="text-sm text-red-700">{getValidationMessage()}</p>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="dueDate">Due Date (optional)</Label>
