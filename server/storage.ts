@@ -62,8 +62,17 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  private seedingPromise: Promise<void> | null = null;
+
   constructor() {
-    this.seedData();
+    this.seedingPromise = this.seedData();
+  }
+
+  private async ensureSeeded() {
+    if (this.seedingPromise) {
+      await this.seedingPromise;
+      this.seedingPromise = null;
+    }
   }
 
   private async seedData() {
@@ -170,6 +179,7 @@ export class DatabaseStorage implements IStorage {
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
+    await this.ensureSeeded();
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
@@ -261,6 +271,7 @@ export class DatabaseStorage implements IStorage {
 
   // Affirmation operations
   async getAffirmations(pregnancyStage?: string): Promise<Affirmation[]> {
+    await this.ensureSeeded();
     if (pregnancyStage) {
       return await db.select()
         .from(affirmations)
@@ -291,6 +302,7 @@ export class DatabaseStorage implements IStorage {
 
   // Expert operations
   async getExperts(): Promise<Expert[]> {
+    await this.ensureSeeded();
     return await db.select()
       .from(experts)
       .where(eq(experts.isAvailable, true))
@@ -314,6 +326,7 @@ export class DatabaseStorage implements IStorage {
 
   // Resource operations
   async getResources(pregnancyStage?: string): Promise<Resource[]> {
+    await this.ensureSeeded();
     if (pregnancyStage) {
       return await db.select()
         .from(resources)
