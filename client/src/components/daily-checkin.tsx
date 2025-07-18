@@ -78,6 +78,18 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
       </div>
 
       <div className="space-y-6">
+        {/* Today's Affirmation */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">Today's Affirmation</h4>
+            <div className="bg-lavender rounded-xl p-4 text-center">
+              <p className="text-deep-teal font-medium">
+                {randomAffirmation?.content || "I am strong, capable, and surrounded by love. My body knows how to nurture and protect my baby."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Energy Level */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
@@ -178,17 +190,6 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
           </button>
         )}
 
-        {/* Today's Affirmation */}
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Today's Affirmation</h4>
-            <div className="bg-lavender rounded-xl p-4 text-center">
-              <p className="text-deep-teal font-medium">
-                {randomAffirmation?.content || "I am strong, capable, and surrounded by love. My body knows how to nurture and protect my baby."}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
