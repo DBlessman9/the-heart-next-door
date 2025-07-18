@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { User } from "lucide-react";
+import { User, LogOut, ChevronDown } from "lucide-react";
+import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { User as UserType } from "@shared/schema";
 
 interface AppHeaderProps {
@@ -8,6 +11,7 @@ interface AppHeaderProps {
 
 export default function AppHeader({ user }: AppHeaderProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,6 +43,11 @@ export default function AppHeader({ user }: AppHeaderProps) {
     return "Your Journey";
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("currentUserId");
+    setLocation("/onboarding");
+  };
+
   return (
     <header className="bg-white shadow-sm px-6 py-4">
       <div className="flex justify-between items-center">
@@ -50,9 +59,19 @@ export default function AppHeader({ user }: AppHeaderProps) {
             {getPregnancyInfo()}
           </p>
         </div>
-        <div className="w-12 h-12 bg-gradient-to-br from-coral to-muted-gold rounded-full flex items-center justify-center">
-          <User className="text-white" size={20} />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="p-0 h-12 w-12 rounded-full bg-gradient-to-br from-coral to-muted-gold hover:from-coral/90 hover:to-muted-gold/90">
+              <User className="text-white" size={20} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
