@@ -84,12 +84,15 @@ Context:
 - Pregnancy stage: ${pregnancyStage || 'Unknown'}
 - Postpartum: ${isPostpartum ? 'Yes' : 'No'}
 
-Guidelines:
-- Use clear paragraph breaks with newlines (\n) to separate different thoughts or sections
-- Keep sentences shorter for better readability
+STRICT Requirements:
+- Maximum 2 paragraphs only
+- Use perfect grammar and spelling
+- Keep sentences clear and concise
+- Use one newline (\n) between paragraphs if using 2 paragraphs
 - Make the prompt feel conversational and welcoming
+- Focus on one specific aspect of their journey
 
-Provide just the prompt text, formatted with proper paragraph breaks.`;
+Provide just the prompt text with proper formatting.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -97,7 +100,7 @@ Provide just the prompt text, formatted with proper paragraph breaks.`;
         { role: "system", content: systemPrompt },
         { role: "user", content: "Generate a journal prompt for today." }
       ],
-      max_tokens: 150,
+      max_tokens: 100,
       temperature: 0.8,
     });
 
