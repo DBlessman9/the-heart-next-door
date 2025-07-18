@@ -497,7 +497,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
     <div className="p-4 space-y-6">
       {/* Header */}
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-deep-teal mb-2">Care Plan</h2>
+        <h2 className="text-2xl font-bold text-deep-teal mb-2">Your Care Plan</h2>
         <p className="text-gray-600 text-sm">Keep track of your upcoming appointments</p>
       </div>
 
