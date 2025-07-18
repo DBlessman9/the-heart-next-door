@@ -179,13 +179,24 @@ export default function Onboarding() {
                 </div>
               </div>
               <div className="mt-6 pb-4">
-                <Button 
+                <button 
                   onClick={handleSubmit}
-                  className="w-full bg-sage text-white py-3 rounded-2xl hover:bg-sage/90 font-semibold shadow-lg border-2 border-sage"
+                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                  style={{
+                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    color: 'white',
+                    border: '2px solid hsl(146, 27%, 56%)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  }}
                   disabled={!formData.name || !formData.email || !formData.pregnancyStage}
                 >
                   Continue
-                </Button>
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -227,13 +238,24 @@ export default function Onboarding() {
                 )}
               </div>
               <div className="mt-6 pb-4">
-                <Button 
+                <button 
                   onClick={handleSubmit}
-                  className="w-full bg-sage text-white py-3 rounded-2xl hover:bg-sage/90 font-semibold shadow-lg border-2 border-sage"
+                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                  style={{
+                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    color: 'white',
+                    border: '2px solid hsl(146, 27%, 56%)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  }}
                   disabled={createUserMutation.isPending}
                 >
                   {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
-                </Button>
+                </button>
               </div>
             </CardContent>
           </Card>
