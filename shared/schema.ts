@@ -41,6 +41,7 @@ export const checkIns = pgTable("check_ins", {
   hydration: text("hydration"), // "none", "1-2", "3-5", "6+"
   nutrition: text("nutrition"), // "yes", "not-yet", "trying"
   restQuality: integer("rest_quality"), // 1-5
+  babyMovement: text("baby_movement"), // "yes", "not-yet", "unsure"
   symptoms: jsonb("symptoms").default([]),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
