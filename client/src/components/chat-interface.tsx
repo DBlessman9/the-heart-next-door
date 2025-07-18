@@ -62,9 +62,9 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex flex-col h-screen max-h-screen">
+    <div className="flex flex-col h-full relative">
       {/* Chat Header */}
-      <div className="px-6 py-4 bg-lavender sticky top-0 z-10 shadow-sm">
+      <div className="px-6 py-4 bg-lavender sticky top-0 z-0 shadow-sm">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-sage to-deep-teal rounded-full flex items-center justify-center">
             <Bot className="text-white" size={20} />
