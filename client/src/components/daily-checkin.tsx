@@ -86,7 +86,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         </div>
         <h3 className="text-xl font-semibold text-deep-teal mb-2">How are you feeling today, mama?</h3>
         <p className="text-gray-600">
-          {hasCheckedIn ? "Thank you for checking in today!" : "Your wellness matters."}
+          {hasCheckedIn ? "Thank you for checking in today!" : "Your wellness matters. Let's take this moment for you."}
         </p>
       </div>
 
