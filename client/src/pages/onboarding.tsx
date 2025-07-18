@@ -65,7 +65,7 @@ export default function Onboarding() {
     <div className="max-w-md mx-auto bg-white min-h-screen">
       <div className="p-6">
         {step === 1 && (
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <div className="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6">
               <Heart className="text-white text-4xl" size={48} />
             </div>
@@ -75,17 +75,29 @@ export default function Onboarding() {
             <p className="text-lg text-gray-600 mb-8">
               Meet Nia, your AI-powered doula who's here to support you 24/7 through your pregnancy and postpartum journey.
             </p>
-            <div className="space-y-4">
+            <div className="space-y-4 px-4">
               <Button 
                 onClick={() => setStep(2)}
-                className="w-full bg-sage text-white py-4 rounded-2xl text-lg hover:bg-sage/90"
+                className="w-full bg-sage text-white py-4 rounded-2xl text-lg hover:bg-sage/90 font-semibold shadow-lg"
               >
                 Get Started
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => setLocation("/")}
-                className="w-full border-2 border-sage text-sage py-4 rounded-2xl text-lg hover:bg-sage hover:text-white"
+                onClick={() => {
+                  // Check if there's an existing user
+                  const existingUserId = localStorage.getItem("currentUserId");
+                  if (existingUserId) {
+                    setLocation("/");
+                  } else {
+                    toast({
+                      title: "No existing profile found",
+                      description: "Please create a new profile to continue.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                className="w-full border-2 border-sage text-sage py-4 rounded-2xl text-lg hover:bg-sage hover:text-white font-semibold"
               >
                 I'm Returning
               </Button>
