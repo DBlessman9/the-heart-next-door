@@ -34,7 +34,7 @@ import {
   type InsertGroupMessage,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, gte, lt, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -433,8 +433,14 @@ export class DatabaseStorage implements IStorage {
 
     const [checkIn] = await db.select()
       .from(checkIns)
-      .where(eq(checkIns.userId, userId))
-      .orderBy(checkIns.createdAt)
+      .where(
+        and(
+          eq(checkIns.userId, userId),
+          gte(checkIns.createdAt, today),
+          lt(checkIns.createdAt, tomorrow)
+        )
+      )
+      .orderBy(desc(checkIns.createdAt))
       .limit(1);
     
     return checkIn || undefined;
