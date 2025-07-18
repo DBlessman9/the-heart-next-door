@@ -77,27 +77,26 @@ export async function generateJournalPrompt(
   isPostpartum?: boolean
 ): Promise<string> {
   try {
-    const systemPrompt = `Generate a brief, thoughtful journaling prompt for an expecting or new mother.
+    const systemPrompt = `Generate a brief journaling prompt for an expecting or new mother.
 
 Context:
 - Pregnancy week: ${pregnancyWeek || 'Unknown'}
 - Pregnancy stage: ${pregnancyStage || 'Unknown'}
 - Postpartum: ${isPostpartum ? 'Yes' : 'No'}
 
-STRICT Requirements:
-- Maximum 50 words total
-- Maximum 2-3 sentences only
-- Use perfect grammar and spelling with proper punctuation
-- Ask ONE specific question about their current experience
-- Be warm but concise
-- No greetings, no lengthy explanations
+Requirements:
+- ONE simple question only
+- Maximum 15 words
+- Perfect grammar and punctuation
+- No greetings or extra words
+- Make it about their current experience
 
 Examples:
 "How are you feeling about your changing body this week?"
-"What's one thing you're grateful for in your pregnancy journey today?"
-"How has your baby's movement made you feel this week?"
+"What's bringing you joy in your pregnancy today?"
+"How has your energy level been lately?"
 
-Provide ONLY the prompt text, nothing else.`;
+Return ONLY the question.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -109,7 +108,21 @@ Provide ONLY the prompt text, nothing else.`;
       temperature: 0.8,
     });
 
-    return response.choices[0].message.content || "What are three things you're grateful for today during your pregnancy journey?";
+    const generatedPrompt = response.choices[0].message.content || "What are three things you're grateful for today during your pregnancy journey?";
+    
+    // Clean up the prompt to ensure it's grammatically correct
+    const cleanPrompt = generatedPrompt
+      .replace(/^["']|["']$/g, '') // Remove quotes
+      .replace(/Hello,?\s*[^,]*,?\s*/i, '') // Remove greetings
+      .replace(/\s+/g, ' ') // Clean up extra spaces
+      .trim();
+    
+    // Ensure it ends with proper punctuation
+    if (cleanPrompt && !cleanPrompt.match(/[.!?]$/)) {
+      return cleanPrompt + '?';
+    }
+    
+    return cleanPrompt;
   } catch (error) {
     console.error("OpenAI API error:", error);
     return "What are three things you're grateful for today during your pregnancy journey?";
