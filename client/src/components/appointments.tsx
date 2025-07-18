@@ -516,7 +516,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
               className="hover:opacity-90 border-0 shadow-sm"
             >
               <Plus size={16} className="mr-2" />
-              Add Appointment
+              Add New Appointment
             </Button>
           </div>
         </CardContent>
