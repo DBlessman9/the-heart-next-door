@@ -7,6 +7,7 @@ import {
   insertChatMessageSchema,
   insertJournalEntrySchema,
   insertCheckInSchema,
+  insertAppointmentSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -217,6 +218,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(resources);
     } catch (error) {
       res.status(500).json({ message: "Error fetching resources", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Appointment routes
+  app.get("/api/appointments/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const appointments = await storage.getAppointments(userId);
+      res.json(appointments);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching appointments", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/appointments/:userId/upcoming", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const appointments = await storage.getUpcomingAppointments(userId);
+      res.json(appointments);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching upcoming appointments", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.post("/api/appointments", async (req, res) => {
+    try {
+      const appointmentData = insertAppointmentSchema.parse(req.body);
+      const appointment = await storage.createAppointment(appointmentData);
+      res.json(appointment);
+    } catch (error) {
+      res.status(400).json({ message: "Error creating appointment", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.put("/api/appointments/:id", async (req, res) => {
+    try {
+      const appointmentId = parseInt(req.params.id);
+      const updateData = req.body;
+      const appointment = await storage.updateAppointment(appointmentId, updateData);
+      res.json(appointment);
+    } catch (error) {
+      res.status(400).json({ message: "Error updating appointment", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.delete("/api/appointments/:id", async (req, res) => {
+    try {
+      const appointmentId = parseInt(req.params.id);
+      await storage.deleteAppointment(appointmentId);
+      res.json({ message: "Appointment deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting appointment", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 

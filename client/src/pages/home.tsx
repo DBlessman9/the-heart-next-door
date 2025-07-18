@@ -9,6 +9,7 @@ import Journal from "@/components/journal";
 import Resources from "@/components/resources";
 import Experts from "@/components/experts";
 import BabyGuidance from "@/components/baby-guidance";
+import Appointments from "@/components/appointments";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -49,6 +50,7 @@ export default function Home() {
         {activeTab === "chat" && <ChatInterface userId={currentUserId} />}
         {activeTab === "checkin" && <DailyCheckIn userId={currentUserId} user={user} />}
         {activeTab === "baby" && <BabyGuidance userId={currentUserId} user={user} onTabChange={setActiveTab} />}
+        {activeTab === "appointments" && <Appointments userId={currentUserId} user={user} />}
         {activeTab === "journal" && <Journal userId={currentUserId} user={user} />}
         {activeTab === "resources" && <Resources user={user} />}
         {activeTab === "experts" && <Experts />}

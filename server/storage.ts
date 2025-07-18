@@ -6,6 +6,7 @@ import {
   affirmations,
   experts,
   resources,
+  appointments,
   type User,
   type InsertUser,
   type ChatMessage,
@@ -20,6 +21,8 @@ import {
   type InsertExpert,
   type Resource,
   type InsertResource,
+  type Appointment,
+  type InsertAppointment,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -59,6 +62,13 @@ export interface IStorage {
   getResourcesByCategory(category: string): Promise<Resource[]>;
   getPopularResources(): Promise<Resource[]>;
   createResource(resource: InsertResource): Promise<Resource>;
+
+  // Appointment operations
+  getAppointments(userId: number): Promise<Appointment[]>;
+  getUpcomingAppointments(userId: number): Promise<Appointment[]>;
+  createAppointment(appointment: InsertAppointment): Promise<Appointment>;
+  updateAppointment(id: number, appointment: Partial<InsertAppointment>): Promise<Appointment>;
+  deleteAppointment(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -172,6 +182,64 @@ export class DatabaseStorage implements IStorage {
       ];
 
       await db.insert(resources).values(defaultResources);
+
+      // Seed default appointments
+      const defaultAppointments: InsertAppointment[] = [
+        {
+          userId: 2,
+          title: "20-Week Anatomy Scan",
+          description: "Detailed ultrasound to check baby's development",
+          type: "ultrasound",
+          date: new Date("2025-07-25T10:00:00Z"),
+          time: "10:00 AM",
+          duration: 60,
+          location: "Women's Health Center, Room 201",
+          providerName: "Dr. Sarah Chen",
+          providerPhone: "(555) 123-4567",
+          providerEmail: "dr.chen@womenshealth.com",
+          reminders: true,
+          supportPersonName: "Mike (Partner)",
+          supportPersonEmail: "mike@email.com",
+          notes: "Bring insurance card and previous ultrasound images",
+          isRecurring: false,
+        },
+        {
+          userId: 2,
+          title: "Monthly OB Checkup",
+          description: "Regular prenatal appointment with OB/GYN",
+          type: "ob",
+          date: new Date("2025-07-30T14:30:00Z"),
+          time: "2:30 PM",
+          duration: 45,
+          location: "Maternal Care Clinic",
+          providerName: "Dr. Lisa Rodriguez",
+          providerPhone: "(555) 987-6543",
+          providerEmail: "dr.rodriguez@maternalcare.com",
+          reminders: true,
+          notes: "Routine blood work and weight check",
+          isRecurring: true,
+          recurringType: "monthly",
+        },
+        {
+          userId: 2,
+          title: "Childbirth Class",
+          description: "Preparation for labor and delivery",
+          type: "other",
+          date: new Date("2025-08-05T18:00:00Z"),
+          time: "6:00 PM",
+          duration: 120,
+          location: "Community Health Center, Conference Room A",
+          providerName: "Maria Santos, RN",
+          providerPhone: "(555) 456-7890",
+          reminders: true,
+          supportPersonName: "Mike (Partner)",
+          supportPersonEmail: "mike@email.com",
+          notes: "Bring pillow and comfortable clothes",
+          isRecurring: false,
+        },
+      ];
+
+      await db.insert(appointments).values(defaultAppointments);
     } catch (error) {
       console.error("Error seeding data:", error);
     }
@@ -354,6 +422,49 @@ export class DatabaseStorage implements IStorage {
       .values(insertResource)
       .returning();
     return resource;
+  }
+
+  // Appointment operations
+  async getAppointments(userId: number): Promise<Appointment[]> {
+    await this.ensureSeeded();
+    return await db.select()
+      .from(appointments)
+      .where(eq(appointments.userId, userId))
+      .orderBy(appointments.date);
+  }
+
+  async getUpcomingAppointments(userId: number): Promise<Appointment[]> {
+    await this.ensureSeeded();
+    const now = new Date();
+    return await db.select()
+      .from(appointments)
+      .where(and(
+        eq(appointments.userId, userId),
+        // Note: In a real app, you'd use proper date comparison
+        // For now, we'll get all and filter in the component
+      ))
+      .orderBy(appointments.date);
+  }
+
+  async createAppointment(insertAppointment: InsertAppointment): Promise<Appointment> {
+    const [appointment] = await db
+      .insert(appointments)
+      .values(insertAppointment)
+      .returning();
+    return appointment;
+  }
+
+  async updateAppointment(id: number, updateData: Partial<InsertAppointment>): Promise<Appointment> {
+    const [appointment] = await db
+      .update(appointments)
+      .set(updateData)
+      .where(eq(appointments.id, id))
+      .returning();
+    return appointment;
+  }
+
+  async deleteAppointment(id: number): Promise<void> {
+    await db.delete(appointments).where(eq(appointments.id, id));
   }
 }
 

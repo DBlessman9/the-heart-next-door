@@ -75,6 +75,28 @@ export const resources = pgTable("resources", {
   isPopular: boolean("is_popular").default(false),
 });
 
+export const appointments = pgTable("appointments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // "ob", "doula", "therapist", "lactation", "baby-checkup", "ultrasound", "other"
+  date: timestamp("date").notNull(),
+  time: text("time").notNull(),
+  duration: integer("duration").notNull(), // in minutes
+  location: text("location"),
+  providerName: text("provider_name"),
+  providerPhone: text("provider_phone"),
+  providerEmail: text("provider_email"),
+  reminders: boolean("reminders").default(true),
+  supportPersonEmail: text("support_person_email"),
+  supportPersonName: text("support_person_name"),
+  notes: text("notes"),
+  isRecurring: boolean("is_recurring").default(false),
+  recurringType: text("recurring_type"), // "weekly", "monthly", "custom"
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -114,6 +136,18 @@ export const insertResourceSchema = createInsertSchema(resources).omit({
   id: true,
 });
 
+export const insertAppointmentSchema = createInsertSchema(appointments).omit({
+  id: true,
+  createdAt: true,
+}).extend({
+  date: z.union([z.string(), z.date()]).transform((val) => {
+    if (typeof val === 'string') {
+      return new Date(val);
+    }
+    return val;
+  }),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
@@ -128,3 +162,5 @@ export type Expert = typeof experts.$inferSelect;
 export type InsertExpert = z.infer<typeof insertExpertSchema>;
 export type Resource = typeof resources.$inferSelect;
 export type InsertResource = z.infer<typeof insertResourceSchema>;
+export type Appointment = typeof appointments.$inferSelect;
+export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
