@@ -504,12 +504,15 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
       {/* Quick Add Section */}
       <Card className="bg-sage/5 border-sage/20">
         <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-1">
               <h3 className="font-semibold text-deep-teal">Add New Appointment</h3>
               <p className="text-sm text-gray-600">Schedule your next healthcare visit</p>
             </div>
-            <Button onClick={() => setIsAddDialogOpen(true)} className="bg-sage hover:bg-sage/90">
+            <Button 
+              onClick={() => setIsAddDialogOpen(true)} 
+              className="bg-sage hover:bg-sage/90 text-white font-medium px-4 py-2 w-full sm:w-auto flex-shrink-0"
+            >
               <Plus size={16} className="mr-2" />
               Add Appointment
             </Button>
