@@ -95,7 +95,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         <Card className="shadow-lg">
           <CardContent className="p-6">
             <h4 className="font-semibold text-deep-teal mb-4">Energy Level</h4>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 justify-center">
               {[1, 2, 3, 4, 5].map((level) => (
                 <button
                   key={level}
