@@ -71,7 +71,11 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
           </div>
           <div>
             <h3 className="font-semibold text-deep-teal">Nia - Your Digital Doula</h3>
-            <p className="text-sm text-gray-600">Online • Always here for you</p>
+            <p className="text-sm text-gray-600 flex items-center">
+              Online 
+              <span className="w-2 h-2 bg-green-500 rounded-full mx-2"></span>
+              Always here for you
+            </p>
           </div>
         </div>
       </div>
