@@ -12,11 +12,9 @@ interface DailyCheckInProps {
 }
 
 export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
-  const [energyLevel, setEnergyLevel] = useState<number>(0);
-  const [mood, setMood] = useState<string>("");
-  const [hydration, setHydration] = useState<string>("");
-  const [nutrition, setNutrition] = useState<string>("");
-  const [babyMovement, setBabyMovement] = useState<string>("");
+  const [feeling, setFeeling] = useState<string>("");
+  const [bodyCare, setBodyCare] = useState<string>("");
+  const [feelingSupported, setFeelingSupported] = useState<string>("");
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
 
   const { data: todaysCheckIn } = useQuery({
@@ -33,15 +31,12 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   });
 
   const createCheckInMutation = useMutation({
-    mutationFn: async (checkInData: { energyLevel: number; mood: string; hydration: string; nutrition: string; babyMovement: string }) => {
+    mutationFn: async (checkInData: { feeling: string; bodyCare: string; feelingSupported: string }) => {
       const response = await apiRequest("POST", "/api/checkin", {
         userId,
-        energyLevel: checkInData.energyLevel,
-        mood: checkInData.mood,
-        hydration: checkInData.hydration,
-        nutrition: checkInData.nutrition,
-        babyMovement: checkInData.babyMovement,
-        pregnancyWeek: user.pregnancyWeek,
+        feeling: checkInData.feeling,
+        bodyCare: checkInData.bodyCare,
+        feelingSupported: checkInData.feelingSupported,
       });
       return response.json();
     },
@@ -54,47 +49,39 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   useEffect(() => {
     if (todaysCheckIn) {
       setHasCheckedIn(true);
-      setEnergyLevel(todaysCheckIn.energyLevel || 0);
-      setMood(todaysCheckIn.mood || "");
-      setHydration(todaysCheckIn.hydration || "");
-      setNutrition(todaysCheckIn.nutrition || "");
-      setBabyMovement(todaysCheckIn.babyMovement || "");
+      setFeeling(todaysCheckIn.feeling || "");
+      setBodyCare(todaysCheckIn.bodyCare || "");
+      setFeelingSupported(todaysCheckIn.feelingSupported || "");
     }
   }, [todaysCheckIn]);
 
   const handleSubmitCheckIn = () => {
-    const requiredFields = energyLevel > 0 && mood && hydration && nutrition;
-    const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16;
-    
-    if (requiredFields && (!babyMovementRequired || babyMovement)) {
-      createCheckInMutation.mutate({ energyLevel, mood, hydration, nutrition, babyMovement });
+    if (feeling && bodyCare && feelingSupported) {
+      createCheckInMutation.mutate({ feeling, bodyCare, feelingSupported });
     }
   };
 
-  const moods = [
-    { id: "peaceful", label: "Peaceful", selected: mood === "peaceful" },
-    { id: "anxious", label: "Anxious", selected: mood === "anxious" },
-    { id: "excited", label: "Excited", selected: mood === "excited" },
-    { id: "tired", label: "Tired", selected: mood === "tired" },
+  const feelingOptions = [
+    { id: "peaceful", label: "Peaceful", selected: feeling === "peaceful" },
+    { id: "anxious", label: "Anxious", selected: feeling === "anxious" },
+    { id: "tired", label: "Tired", selected: feeling === "tired" },
+    { id: "overwhelmed", label: "Overwhelmed", selected: feeling === "overwhelmed" },
+    { id: "grateful", label: "Grateful", selected: feeling === "grateful" },
+    { id: "other", label: "Other", selected: feeling === "other" },
   ];
 
-  const hydrationOptions = [
-    { id: "none", label: "None", selected: hydration === "none" },
-    { id: "1-2", label: "1–2 cups", selected: hydration === "1-2" },
-    { id: "3-5", label: "3–5", selected: hydration === "3-5" },
-    { id: "6+", label: "6+", selected: hydration === "6+" },
+  const bodyCareOptions = [
+    { id: "not-yet", label: "Not yet", selected: bodyCare === "not-yet" },
+    { id: "a-little", label: "A little", selected: bodyCare === "a-little" },
+    { id: "yes-tried", label: "Yes, I tried", selected: bodyCare === "yes-tried" },
+    { id: "yes-nourished", label: "Yes, feeling nourished", selected: bodyCare === "yes-nourished" },
   ];
 
-  const nutritionOptions = [
-    { id: "yes", label: "Yes", selected: nutrition === "yes" },
-    { id: "not-yet", label: "Not yet", selected: nutrition === "not-yet" },
-    { id: "trying", label: "I'm trying", selected: nutrition === "trying" },
-  ];
-
-  const babyMovementOptions = [
-    { id: "yes", label: "Yes", selected: babyMovement === "yes" },
-    { id: "not-yet", label: "Not yet", selected: babyMovement === "not-yet" },
-    { id: "unsure", label: "Unsure", selected: babyMovement === "unsure" },
+  const supportOptions = [
+    { id: "not-really", label: "Not really", selected: feelingSupported === "not-really" },
+    { id: "a-little", label: "A little", selected: feelingSupported === "a-little" },
+    { id: "mostly", label: "Mostly", selected: feelingSupported === "mostly" },
+    { id: "fully-supported", label: "Fully supported", selected: feelingSupported === "fully-supported" },
   ];
 
   return (
@@ -122,88 +109,15 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
       </div>
 
       <div className="space-y-6">
-
-        {/* Energy Level */}
+        {/* Question 1: How are you feeling today? */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Energy Level</h4>
-            <div className="flex space-x-2 justify-center">
-              {[1, 2, 3, 4, 5].map((level) => (
-                <button
-                  key={level}
-                  onClick={() => !hasCheckedIn && setEnergyLevel(level)}
-                  disabled={hasCheckedIn}
-                  className="w-12 h-12 rounded-full font-semibold transition-transform hover:scale-105"
-                  style={{
-                    backgroundColor: energyLevel === level ? 'hsl(10, 73%, 70%)' : 'hsl(0, 0%, 85%)',
-                    color: energyLevel === level ? 'white' : 'hsl(0, 0%, 40%)',
-                    border: 'none',
-                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
-                    opacity: hasCheckedIn ? 0.5 : 1
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = energyLevel === level ? 'hsl(10, 73%, 65%)' : 'hsl(0, 0%, 78%)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = energyLevel === level ? 'hsl(10, 73%, 70%)' : 'hsl(0, 0%, 85%)';
-                    }
-                  }}
-                >
-                  {level}
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Mood */}
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Mood Today</h4>
+            <h4 className="font-semibold text-deep-teal mb-4">1. How are you feeling today?</h4>
             <div className="grid grid-cols-2 gap-3">
-              {moods.map((moodOption) => (
-                <button
-                  key={moodOption.id}
-                  onClick={() => !hasCheckedIn && setMood(moodOption.id)}
-                  disabled={hasCheckedIn}
-                  className="p-3 rounded-xl text-sm font-medium transition-colors"
-                  style={{
-                    backgroundColor: moodOption.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
-                    color: moodOption.selected ? 'white' : 'hsl(0, 0%, 40%)',
-                    border: 'none',
-                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
-                    opacity: hasCheckedIn ? 0.5 : 1
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = moodOption.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = moodOption.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
-                    }
-                  }}
-                >
-                  {moodOption.label}
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Water Intake */}
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Water Intake</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {hydrationOptions.map((option) => (
+              {feelingOptions.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => !hasCheckedIn && setHydration(option.id)}
+                  onClick={() => !hasCheckedIn && setFeeling(option.id)}
                   disabled={hasCheckedIn}
                   className="p-3 rounded-xl text-sm font-medium transition-colors"
                   style={{
@@ -228,28 +142,30 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                 </button>
               ))}
             </div>
-            {hasCheckedIn && hydration && (
+            {hasCheckedIn && feeling && (
               <div className="mt-4 p-3 bg-sage/10 rounded-lg">
                 <p className="text-sm text-sage font-medium">
-                  {hydration === "none" ? "Let's grab a glass of water together 💧 You're doing great." :
-                   hydration === "1-2" ? "Great start! Try to sip a bit more water throughout the day 💧" :
-                   hydration === "3-5" ? "You're doing well with hydration! Keep it up 💧" :
-                   "Amazing hydration! Your body and baby are thankful 💧✨"}
+                  {feeling === "peaceful" ? "What a beautiful feeling to hold today. You're doing wonderfully." :
+                   feeling === "anxious" ? "It's okay to feel anxious. You're supported and not alone in this journey." :
+                   feeling === "tired" ? "Rest when you can, mama. Your body is doing incredible work." :
+                   feeling === "overwhelmed" ? "Take it one breath at a time. You're stronger than you know." :
+                   feeling === "grateful" ? "Gratitude is such a powerful feeling. You're radiating positivity." :
+                   "Every feeling is valid. You're doing an amazing job."}
                 </p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Nutrition */}
+        {/* Question 2: Have you cared for your body today? */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Nutrition</h4>
-            <div className="grid grid-cols-3 gap-3">
-              {nutritionOptions.map((option) => (
+            <h4 className="font-semibold text-deep-teal mb-4">2. Have you cared for your body today?</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {bodyCareOptions.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => !hasCheckedIn && setNutrition(option.id)}
+                  onClick={() => !hasCheckedIn && setBodyCare(option.id)}
                   disabled={hasCheckedIn}
                   className="p-3 rounded-xl text-sm font-medium transition-colors"
                   style={{
@@ -274,111 +190,84 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                 </button>
               ))}
             </div>
-            {hasCheckedIn && nutrition && (
+            {hasCheckedIn && bodyCare && (
               <div className="mt-4 p-3 bg-sage/10 rounded-lg">
                 <p className="text-sm text-sage font-medium">
-                  {nutrition === "yes" ? "Amazing! Your body and baby are thankful 🌱" : 
-                   nutrition === "not-yet" ? "No worries! Even a small snack counts. Try some nuts or fruit 🍎" :
-                   "You're doing your best, and that's what matters. Every small step counts 💚"}
+                  {bodyCare === "not-yet" ? "No pressure, mama. Even small acts of self-care count. Maybe start with a glass of water?" :
+                   bodyCare === "a-little" ? "Every little bit counts. You're taking steps to care for yourself." :
+                   bodyCare === "yes-tried" ? "You're making an effort and that's what matters. Keep going!" :
+                   "Beautiful! Your body and baby are grateful for the nourishment you're giving them."}
                 </p>
               </div>
             )}
           </CardContent>
         </Card>
 
-
-
-        {/* Baby Movement (if pregnant) */}
-        {!user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && (
-          <Card className="shadow-lg">
-            <CardContent className="p-6">
-              <h4 className="font-semibold text-deep-teal mb-4">Baby Movement</h4>
-              <div className="grid grid-cols-3 gap-3">
-                {babyMovementOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    onClick={() => !hasCheckedIn && setBabyMovement(option.id)}
-                    disabled={hasCheckedIn}
-                    className="p-3 rounded-xl text-sm font-medium transition-colors"
-                    style={{
-                      backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
-                      color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
-                      border: 'none',
-                      cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
-                      opacity: hasCheckedIn ? 0.5 : 1
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!hasCheckedIn) {
-                        e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!hasCheckedIn) {
-                        e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
-                      }
-                    }}
-                  >
-                    {option.label}
-                  </button>
-                ))}
+        {/* Question 3: Do you feel supported right now? */}
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            <h4 className="font-semibold text-deep-teal mb-4">3. Do you feel supported right now?</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {supportOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => !hasCheckedIn && setFeelingSupported(option.id)}
+                  disabled={hasCheckedIn}
+                  className="p-3 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
+                    border: 'none',
+                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
+                    opacity: hasCheckedIn ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                    }
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {hasCheckedIn && feelingSupported && (
+              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
+                <p className="text-sm text-sage font-medium">
+                  {feelingSupported === "not-really" ? "You're not alone, even when it feels that way. Consider reaching out to someone today." :
+                   feelingSupported === "a-little" ? "It's okay to need more support. You deserve to feel surrounded by care." :
+                   feelingSupported === "mostly" ? "It's wonderful that you feel supported. That makes such a difference." :
+                   "How beautiful to feel fully supported! You're surrounded by love."}
+                </p>
               </div>
-              {hasCheckedIn && babyMovement && (
-                <div className="mt-4 p-3 bg-sage/10 rounded-lg">
-                  <p className="text-sm text-sage font-medium">
-                    {babyMovement === "yes" ? "How wonderful! Those little kicks are such a blessing 👶✨" :
-                     babyMovement === "not-yet" ? "That's okay! Every baby has their own rhythm. Try lying on your left side 💕" :
-                     "It's normal to wonder sometimes. If you're concerned, trust your instincts and reach out to your provider 💙"}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </CardContent>
+        </Card>
 
         {/* Submit Button */}
-        {!hasCheckedIn && (
-          <button
-            onClick={handleSubmitCheckIn}
-            disabled={(() => {
-              const requiredFields = !energyLevel || !mood || !hydration || !nutrition;
-              const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && !babyMovement;
-              return requiredFields || babyMovementRequired || createCheckInMutation.isPending;
-            })()}
-            className="w-full py-3 rounded-2xl font-semibold transition-colors"
-            style={{
-              backgroundColor: 'hsl(146, 27%, 56%)',
-              color: 'white',
-              border: 'none',
-              cursor: (() => {
-                const requiredFields = !energyLevel || !mood || !hydration || !nutrition;
-                const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && !babyMovement;
-                return requiredFields || babyMovementRequired || createCheckInMutation.isPending ? 'not-allowed' : 'pointer';
-              })(),
-              opacity: (() => {
-                const requiredFields = !energyLevel || !mood || !hydration || !nutrition;
-                const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && !babyMovement;
-                return requiredFields || babyMovementRequired || createCheckInMutation.isPending ? 0.5 : 1;
-              })()
-            }}
-            onMouseEnter={(e) => {
-              const requiredFields = energyLevel && mood && hydration && nutrition;
-              const babyMovementOk = user.isPostpartum || !user.pregnancyWeek || user.pregnancyWeek < 16 || babyMovement;
-              if (requiredFields && babyMovementOk && !createCheckInMutation.isPending) {
-                e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              const requiredFields = energyLevel && mood && hydration && nutrition;
-              const babyMovementOk = user.isPostpartum || !user.pregnancyWeek || user.pregnancyWeek < 16 || babyMovement;
-              if (requiredFields && babyMovementOk && !createCheckInMutation.isPending) {
-                e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
-              }
-            }}
-          >
-            {createCheckInMutation.isPending ? "Saving..." : "Complete Check-in"}
-          </button>
-        )}
-
+        <div className="text-center">
+          {!hasCheckedIn ? (
+            <Button
+              onClick={handleSubmitCheckIn}
+              disabled={!feeling || !bodyCare || !feelingSupported || createCheckInMutation.isPending}
+              className="w-full bg-gradient-to-r from-coral to-muted-gold text-white py-4 text-lg font-medium hover:from-coral/90 hover:to-muted-gold/90 transition-all duration-200 disabled:opacity-50"
+            >
+              {createCheckInMutation.isPending ? "Checking in..." : "Complete Check-In"}
+            </Button>
+          ) : (
+            <div className="bg-sage/10 rounded-lg p-4">
+              <p className="text-sage font-medium">
+                Thank you for taking time to check in with yourself today, mama. 
+                Remember, you're doing an amazing job. 💚
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

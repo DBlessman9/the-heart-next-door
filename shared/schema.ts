@@ -36,13 +36,9 @@ export const journalEntries = pgTable("journal_entries", {
 export const checkIns = pgTable("check_ins", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id).notNull(),
-  energyLevel: integer("energy_level"), // 1-5
-  mood: text("mood"),
-  hydration: text("hydration"), // "none", "1-2", "3-5", "6+"
-  nutrition: text("nutrition"), // "yes", "not-yet", "trying"
-  restQuality: integer("rest_quality"), // 1-5
-  babyMovement: text("baby_movement"), // "yes", "not-yet", "unsure"
-  symptoms: jsonb("symptoms").default([]),
+  feeling: text("feeling"), // "peaceful", "anxious", "tired", "overwhelmed", "grateful", "other"
+  bodyCare: text("body_care"), // "not-yet", "a-little", "yes-tried", "yes-nourished"
+  feelingSupported: text("feeling_supported"), // "not-really", "a-little", "mostly", "fully-supported"
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });

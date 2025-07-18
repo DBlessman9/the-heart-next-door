@@ -77,8 +77,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pregnancyStage: user.pregnancyStage || undefined,
         isPostpartum: user.isPostpartum || undefined,
         recentCheckIn: recentCheckIn ? {
-          energyLevel: recentCheckIn.energyLevel || undefined,
-          mood: recentCheckIn.mood || undefined,
+          feeling: recentCheckIn.feeling || undefined,
+          bodyCare: recentCheckIn.bodyCare || undefined,
+          feelingSupported: recentCheckIn.feelingSupported || undefined,
           date: recentCheckIn.createdAt || undefined
         } : undefined,
       } : undefined;

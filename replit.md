@@ -133,6 +133,13 @@ The application is designed as a comprehensive maternal wellness platform that p
 ## Recent Changes
 
 ### Latest Updates (2025-07-18)
+- **Simplified Check-in System**: Condensed daily check-in to 3 focused questions:
+  1. "How are you feeling today?" (Peaceful/Anxious/Tired/Overwhelmed/Grateful/Other)
+  2. "Have you cared for your body today?" (Not yet/A little/Yes, I tried/Yes, feeling nourished)
+  3. "Do you feel supported right now?" (Not really/A little/Mostly/Fully supported)
+- **Updated Database Schema**: Replaced complex check-in fields with simplified `feeling`, `bodyCare`, and `feelingSupported` columns
+- **Enhanced User Experience**: Personalized responses and encouragement based on check-in answers
+- **AI Integration**: Updated Nia's context awareness to understand new check-in format
 - **Added Baby Guidance Page**: Comprehensive weekly pregnancy insights with fruit size comparisons, baby milestones, mom's body changes, and integrated learning content
 - **Enhanced Navigation**: Added Baby tab to main navigation between Check-in and Chat
 - **Resource Integration**: Baby page now shows related resources and redirects to Resources tab for detailed learning
