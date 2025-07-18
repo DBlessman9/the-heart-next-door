@@ -13,11 +13,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
   app.post("/api/users", async (req, res) => {
     try {
-      // Convert dueDate string to Date object if provided
-      if (req.body.dueDate && typeof req.body.dueDate === 'string') {
-        req.body.dueDate = new Date(req.body.dueDate);
-      }
-      
       const userData = insertUserSchema.parse(req.body);
       const user = await storage.createUser(userData);
       res.json(user);

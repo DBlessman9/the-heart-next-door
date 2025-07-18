@@ -76,6 +76,13 @@ export const resources = pgTable("resources", {
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
+}).extend({
+  dueDate: z.union([z.string(), z.date()]).optional().transform((val) => {
+    if (typeof val === 'string') {
+      return new Date(val);
+    }
+    return val;
+  }),
 });
 
 export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({

@@ -30,7 +30,7 @@ export default function Onboarding() {
         email: userData.email,
         pregnancyStage: userData.pregnancyStage,
         pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined,
-        dueDate: userData.dueDate || null,
+        dueDate: userData.dueDate || undefined,
         isPostpartum: userData.pregnancyStage === "postpartum",
         preferences: {},
       });
