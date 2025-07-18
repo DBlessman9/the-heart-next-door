@@ -55,10 +55,10 @@ export default function Resources({ user }: ResourcesProps) {
   };
 
   const categories = [
-    { id: "sleep", label: "Sleep Tips", color: "bg-sage" },
-    { id: "exercise", label: "Exercise", color: "bg-lavender" },
-    { id: "nutrition", label: "Baby Care", color: "bg-coral" },
-    { id: "breastfeeding", label: "Breastfeeding", color: "bg-muted-gold" },
+    { id: "sleep", label: "Sleep Tips", color: "hsl(146, 27%, 56%)" },
+    { id: "exercise", label: "Exercise", color: "hsl(264, 56%, 77%)" },
+    { id: "nutrition", label: "Baby Care", color: "hsl(10, 73%, 70%)" },
+    { id: "breastfeeding", label: "Breastfeeding", color: "hsl(39, 75%, 74%)" },
   ];
 
   return (
@@ -112,18 +112,26 @@ export default function Resources({ user }: ResourcesProps) {
             <h4 className="font-semibold text-deep-teal mb-4">Popular Topics</h4>
             <div className="grid grid-cols-2 gap-3">
               {categories.map((category) => (
-                <Button
+                <button
                   key={category.id}
-                  variant={selectedCategory === category.id ? "default" : "outline"}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`p-3 rounded-xl text-sm font-medium transition-colors ${
-                    selectedCategory === category.id
-                      ? `${category.color} text-white hover:opacity-90`
-                      : `${category.color} text-white hover:opacity-90`
-                  }`}
+                  className="p-3 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: category.color,
+                    color: 'white',
+                    border: 'none',
+                    cursor: 'pointer',
+                    opacity: selectedCategory === category.id ? 1 : 0.8
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.opacity = '0.9';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.opacity = selectedCategory === category.id ? '1' : '0.8';
+                  }}
                 >
                   {category.label}
-                </Button>
+                </button>
               ))}
             </div>
           </CardContent>
