@@ -507,7 +507,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex-1">
               <h3 className="font-semibold text-deep-teal">Add New Appointment</h3>
-              <p className="text-sm text-gray-600">Schedule your next healthcare visit</p>
+              <p className="text-sm text-gray-600">Add an appointment you've already scheduled</p>
             </div>
             <Button 
               onClick={() => setIsAddDialogOpen(true)} 
