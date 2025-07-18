@@ -15,6 +15,7 @@ interface JournalProps {
 export default function Journal({ userId, user }: JournalProps) {
   const [entryContent, setEntryContent] = useState("");
   const [isWritingNew, setIsWritingNew] = useState(false);
+  const [usePrompt, setUsePrompt] = useState(true);
 
   const { data: entries = [] } = useQuery({
     queryKey: ["/api/journal", userId],
@@ -96,22 +97,53 @@ export default function Journal({ userId, user }: JournalProps) {
       </div>
 
       <div className="space-y-4">
-        {/* Today's Prompt */}
+        {/* Journal Entry */}
         <Card className={`shadow-lg ${isWritingNew ? 'ring-2 ring-sage ring-opacity-50' : ''}`}>
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-3">Today's Prompt</h4>
-            <div className="text-gray-600 mb-4">
-              {(journalPrompt?.prompt || "What are three things you're grateful for today during your pregnancy journey?").split('\n').map((paragraph, index) => (
-                <p key={index} className={index > 0 ? "mt-3" : ""}>
-                  {paragraph}
-                </p>
-              ))}
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="font-semibold text-deep-teal">Write Your Entry</h4>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setUsePrompt(true)}
+                  className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                    usePrompt 
+                      ? 'bg-sage/20 text-sage border-sage' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  style={usePrompt ? { borderWidth: '1px', borderStyle: 'solid' } : {}}
+                >
+                  Use Prompt
+                </button>
+                <button
+                  onClick={() => setUsePrompt(false)}
+                  className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                    !usePrompt 
+                      ? 'bg-sage/20 text-sage border-sage' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  style={!usePrompt ? { borderWidth: '1px', borderStyle: 'solid' } : {}}
+                >
+                  Free Write
+                </button>
+              </div>
             </div>
+            
+            {usePrompt && (
+              <div className="text-gray-600 mb-4 p-4 bg-sage/5 rounded-lg border-l-4 border-sage">
+                <p className="font-medium text-sage mb-2">Today's Prompt:</p>
+                {(journalPrompt?.prompt || "What are three things you're grateful for today during your pregnancy journey?").split('\n').map((paragraph, index) => (
+                  <p key={index} className={index > 0 ? "mt-3" : ""}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            )}
+            
             <Textarea
               value={entryContent}
               onChange={(e) => setEntryContent(e.target.value)}
-              placeholder="Write your thoughts..."
-              className="w-full h-24 border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-sage focus:border-transparent resize-none"
+              placeholder={usePrompt ? "Write your thoughts about the prompt..." : "What's on your mind today?"}
+              className="w-full h-32 border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-sage focus:border-transparent resize-none"
             />
             <button
               onClick={handleSaveEntry}
