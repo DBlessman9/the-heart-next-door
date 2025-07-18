@@ -8,6 +8,9 @@ import {
   insertJournalEntrySchema,
   insertCheckInSchema,
   insertAppointmentSchema,
+  insertGroupSchema,
+  insertMembershipSchema,
+  insertGroupMessageSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -270,6 +273,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Appointment deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Error deleting appointment", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Community routes
+  app.get("/api/community/groups", async (req, res) => {
+    try {
+      const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
+      const groups = await storage.getGroups(userId);
+      res.json(groups);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching groups", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/community/my-groups/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const groups = await storage.getUserGroups(userId);
+      res.json(groups);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching user groups", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.post("/api/community/groups", async (req, res) => {
+    try {
+      const groupData = insertGroupSchema.parse(req.body);
+      const group = await storage.createGroup(groupData);
+      res.json(group);
+    } catch (error) {
+      res.status(400).json({ message: "Error creating group", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.post("/api/community/groups/:groupId/join", async (req, res) => {
+    try {
+      const groupId = parseInt(req.params.groupId);
+      const { userId } = req.body;
+      await storage.joinGroup(userId, groupId);
+      res.json({ message: "Successfully joined group" });
+    } catch (error) {
+      res.status(400).json({ message: "Error joining group", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.post("/api/community/groups/:groupId/leave", async (req, res) => {
+    try {
+      const groupId = parseInt(req.params.groupId);
+      const { userId } = req.body;
+      await storage.leaveGroup(userId, groupId);
+      res.json({ message: "Successfully left group" });
+    } catch (error) {
+      res.status(400).json({ message: "Error leaving group", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/community/messages/:groupId", async (req, res) => {
+    try {
+      const groupId = parseInt(req.params.groupId);
+      const messages = await storage.getGroupMessages(groupId);
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching group messages", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.post("/api/community/messages", async (req, res) => {
+    try {
+      const messageData = insertGroupMessageSchema.parse(req.body);
+      const message = await storage.createGroupMessage(messageData);
+      res.json(message);
+    } catch (error) {
+      res.status(400).json({ message: "Error creating message", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 

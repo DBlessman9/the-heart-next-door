@@ -7,6 +7,9 @@ import {
   experts,
   resources,
   appointments,
+  groups,
+  memberships,
+  groupMessages,
   type User,
   type InsertUser,
   type ChatMessage,
@@ -23,9 +26,15 @@ import {
   type InsertResource,
   type Appointment,
   type InsertAppointment,
+  type Group,
+  type InsertGroup,
+  type Membership,
+  type InsertMembership,
+  type GroupMessage,
+  type InsertGroupMessage,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -69,6 +78,15 @@ export interface IStorage {
   createAppointment(appointment: InsertAppointment): Promise<Appointment>;
   updateAppointment(id: number, appointment: Partial<InsertAppointment>): Promise<Appointment>;
   deleteAppointment(id: number): Promise<void>;
+
+  // Community operations
+  getGroups(userId?: number): Promise<Group[]>;
+  getUserGroups(userId: number): Promise<Group[]>;
+  createGroup(group: InsertGroup): Promise<Group>;
+  joinGroup(userId: number, groupId: number): Promise<void>;
+  leaveGroup(userId: number, groupId: number): Promise<void>;
+  getGroupMessages(groupId: number): Promise<GroupMessage[]>;
+  createGroupMessage(message: InsertGroupMessage): Promise<GroupMessage>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -89,7 +107,8 @@ export class DatabaseStorage implements IStorage {
     try {
       // Check if data already exists
       const existingExperts = await db.select().from(experts).limit(1);
-      if (existingExperts.length > 0) {
+      const existingGroups = await db.select().from(groups).limit(1);
+      if (existingExperts.length > 0 && existingGroups.length > 0) {
         return; // Data already seeded
       }
 
@@ -240,6 +259,90 @@ export class DatabaseStorage implements IStorage {
       ];
 
       await db.insert(appointments).values(defaultAppointments);
+
+      // Seed default community groups
+      const defaultGroups: InsertGroup[] = [
+        {
+          name: "Brooklyn Moms July 2025",
+          description: "Connect with other expecting mothers in Brooklyn due July 2025",
+          type: "birth_month",
+          dueDate: new Date("2025-07-15"),
+          isPrivate: false,
+          createdBy: 2,
+        },
+        {
+          name: "NYC Area Moms",
+          description: "Local support group for mothers in the NYC area",
+          type: "location",
+          zipCode: "10001",
+          isPrivate: false,
+          createdBy: 2,
+        },
+        {
+          name: "Breastfeeding Support",
+          description: "Tips, encouragement, and advice for breastfeeding mothers",
+          type: "topic",
+          topic: "breastfeeding",
+          isPrivate: false,
+          createdBy: 2,
+        },
+        {
+          name: "NICU Warriors",
+          description: "Support for families with babies in the NICU",
+          type: "topic",
+          topic: "nicu",
+          isPrivate: false,
+          createdBy: 2,
+        },
+        {
+          name: "First-Time Moms",
+          description: "Everything you need to know about becoming a first-time mom",
+          type: "topic",
+          topic: "first-time",
+          isPrivate: false,
+          createdBy: 2,
+        },
+        {
+          name: "Postpartum Recovery",
+          description: "Support and resources for postpartum recovery and mental health",
+          type: "topic",
+          topic: "postpartum",
+          isPrivate: false,
+          createdBy: 2,
+        },
+      ];
+
+      await db.insert(groups).values(defaultGroups);
+
+      // Seed sample messages for a few groups
+      const sampleMessages: InsertGroupMessage[] = [
+        {
+          groupId: 1,
+          userId: 2,
+          content: "Hi everyone! I'm due July 20th and so excited to connect with other Brooklyn moms! 💕",
+        },
+        {
+          groupId: 3,
+          userId: 2,
+          content: "Has anyone tried the nipple shields from Medela? Looking for recommendations!",
+        },
+        {
+          groupId: 5,
+          userId: 2,
+          content: "Just wanted to share that I finally feel the first kicks! Week 20 has been amazing ✨",
+        },
+      ];
+
+      await db.insert(groupMessages).values(sampleMessages);
+
+      // Join the user to a few groups
+      const initialMemberships: InsertMembership[] = [
+        { userId: 2, groupId: 1, role: "member" },
+        { userId: 2, groupId: 3, role: "member" },
+        { userId: 2, groupId: 5, role: "member" },
+      ];
+
+      await db.insert(memberships).values(initialMemberships);
     } catch (error) {
       console.error("Error seeding data:", error);
     }
@@ -465,6 +568,111 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAppointment(id: number): Promise<void> {
     await db.delete(appointments).where(eq(appointments.id, id));
+  }
+
+  // Community operations
+  async getGroups(userId?: number): Promise<Group[]> {
+    await this.ensureSeeded();
+    const allGroups = await db.select().from(groups).orderBy(groups.createdAt);
+    
+    if (userId) {
+      // Check membership status for each group
+      const userMemberships = await db.select()
+        .from(memberships)
+        .where(eq(memberships.userId, userId));
+      
+      return allGroups.map(group => ({
+        ...group,
+        userMembership: userMemberships.some(m => m.groupId === group.id)
+      })) as any;
+    }
+    
+    return allGroups;
+  }
+
+  async getUserGroups(userId: number): Promise<Group[]> {
+    await this.ensureSeeded();
+    return await db.select({
+      id: groups.id,
+      name: groups.name,
+      description: groups.description,
+      type: groups.type,
+      zipCode: groups.zipCode,
+      dueDate: groups.dueDate,
+      topic: groups.topic,
+      isPrivate: groups.isPrivate,
+      memberCount: groups.memberCount,
+      createdBy: groups.createdBy,
+      createdAt: groups.createdAt,
+    })
+    .from(groups)
+    .innerJoin(memberships, eq(memberships.groupId, groups.id))
+    .where(eq(memberships.userId, userId))
+    .orderBy(groups.createdAt);
+  }
+
+  async createGroup(insertGroup: InsertGroup): Promise<Group> {
+    const [group] = await db
+      .insert(groups)
+      .values(insertGroup)
+      .returning();
+    
+    // Automatically join the creator to the group
+    if (insertGroup.createdBy) {
+      await this.joinGroup(insertGroup.createdBy, group.id);
+    }
+    
+    return group;
+  }
+
+  async joinGroup(userId: number, groupId: number): Promise<void> {
+    await db.insert(memberships).values({
+      userId,
+      groupId,
+      role: 'member'
+    });
+    
+    // Update member count
+    await db.update(groups)
+      .set({ memberCount: sql`${groups.memberCount} + 1` })
+      .where(eq(groups.id, groupId));
+  }
+
+  async leaveGroup(userId: number, groupId: number): Promise<void> {
+    await db.delete(memberships)
+      .where(and(
+        eq(memberships.userId, userId),
+        eq(memberships.groupId, groupId)
+      ));
+    
+    // Update member count
+    await db.update(groups)
+      .set({ memberCount: sql`${groups.memberCount} - 1` })
+      .where(eq(groups.id, groupId));
+  }
+
+  async getGroupMessages(groupId: number): Promise<GroupMessage[]> {
+    return await db.select({
+      id: groupMessages.id,
+      groupId: groupMessages.groupId,
+      userId: groupMessages.userId,
+      content: groupMessages.content,
+      replyTo: groupMessages.replyTo,
+      createdAt: groupMessages.createdAt,
+      userName: users.firstName,
+    })
+    .from(groupMessages)
+    .innerJoin(users, eq(users.id, groupMessages.userId))
+    .where(eq(groupMessages.groupId, groupId))
+    .orderBy(groupMessages.createdAt);
+  }
+
+  async createGroupMessage(insertMessage: InsertGroupMessage): Promise<GroupMessage> {
+    const [message] = await db
+      .insert(groupMessages)
+      .values(insertMessage)
+      .returning();
+    return message;
   }
 }
 
