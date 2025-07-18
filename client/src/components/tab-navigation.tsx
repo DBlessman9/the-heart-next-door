@@ -7,11 +7,11 @@ interface TabNavigationProps {
 
 export default function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   const tabs = [
-    { id: "chat", label: "Chat", icon: MessageCircle },
     { id: "checkin", label: "Check-in", icon: Heart },
-    { id: "journal", label: "Journal", icon: BookOpen },
-    { id: "resources", label: "Learn", icon: GraduationCap },
+    { id: "chat", label: "Chat", icon: MessageCircle },
     { id: "experts", label: "Experts", icon: UserCheck },
+    { id: "resources", label: "Learn", icon: GraduationCap },
+    { id: "journal", label: "Journal", icon: BookOpen },
   ];
 
   return (

@@ -11,7 +11,7 @@ import Experts from "@/components/experts";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState("chat");
+  const [activeTab, setActiveTab] = useState("checkin");
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   useEffect(() => {
