@@ -85,9 +85,13 @@ export default function Journal({ userId, user }: JournalProps) {
         <Card className="shadow-lg">
           <CardContent className="p-6">
             <h4 className="font-semibold text-deep-teal mb-3">Today's Prompt</h4>
-            <p className="text-gray-600 mb-4">
-              {journalPrompt?.prompt || "What are three things you're grateful for today during your pregnancy journey?"}
-            </p>
+            <div className="text-gray-600 mb-4">
+              {(journalPrompt?.prompt || "What are three things you're grateful for today during your pregnancy journey?").split('\n').map((paragraph, index) => (
+                <p key={index} className={index > 0 ? "mt-3" : ""}>
+                  {paragraph}
+                </p>
+              ))}
+            </div>
             <Textarea
               value={entryContent}
               onChange={(e) => setEntryContent(e.target.value)}

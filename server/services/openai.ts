@@ -84,7 +84,12 @@ Context:
 - Pregnancy stage: ${pregnancyStage || 'Unknown'}
 - Postpartum: ${isPostpartum ? 'Yes' : 'No'}
 
-Provide just the prompt text, no additional formatting or explanation.`;
+Guidelines:
+- Use clear paragraph breaks with newlines (\n) to separate different thoughts or sections
+- Keep sentences shorter for better readability
+- Make the prompt feel conversational and welcoming
+
+Provide just the prompt text, formatted with proper paragraph breaks.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
