@@ -107,9 +107,13 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
             <div
               className={`rounded-2xl p-4 max-w-xs ${
                 msg.isFromUser
-                  ? "bg-sage text-white rounded-tr-sm"
+                  ? "rounded-tr-sm"
                   : "bg-warm-gray text-deep-teal rounded-tl-sm"
               }`}
+              style={msg.isFromUser ? {
+                backgroundColor: 'hsl(146, 27%, 56%)',
+                color: 'white'
+              } : {}}
             >
               <p className="text-sm">{msg.content}</p>
             </div>
@@ -151,13 +155,30 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
             className="flex-1 border-gray-200 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-sage focus:border-transparent"
             disabled={sendMessageMutation.isPending}
           />
-          <Button
+          <button
             onClick={handleSendMessage}
             disabled={!message.trim() || sendMessageMutation.isPending}
-            className="bg-sage text-white w-12 h-12 rounded-2xl hover:bg-sage/90 transition-colors"
+            className="w-12 h-12 rounded-2xl transition-colors"
+            style={{
+              backgroundColor: 'hsl(146, 27%, 56%)',
+              color: 'white',
+              border: 'none',
+              cursor: (!message.trim() || sendMessageMutation.isPending) ? 'not-allowed' : 'pointer',
+              opacity: (!message.trim() || sendMessageMutation.isPending) ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (message.trim() && !sendMessageMutation.isPending) {
+                e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (message.trim() && !sendMessageMutation.isPending) {
+                e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+              }
+            }}
           >
             <Send size={16} />
-          </Button>
+          </button>
         </div>
       </div>
     </div>
