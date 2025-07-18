@@ -142,7 +142,7 @@ export default function Journal({ userId, user }: JournalProps) {
             <Textarea
               value={entryContent}
               onChange={(e) => setEntryContent(e.target.value)}
-              placeholder={usePrompt ? "Write your thoughts about the prompt..." : "What's on your mind today?"}
+              placeholder={usePrompt ? "Write your thoughts..." : "What's on your mind today?"}
               className="w-full h-32 border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-sage focus:border-transparent resize-none"
             />
             <button
