@@ -23,7 +23,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   const { data: randomAffirmation } = useQuery({
     queryKey: ["/api/affirmations/random"],
     queryFn: async () => {
-      const response = await fetch(`/api/affirmations/random?stage=${user.pregnancyStage}`);
+      const stage = user.isPostpartum ? "postpartum" : user.pregnancyStage;
+      const response = await fetch(`/api/affirmations/random?stage=${stage}`);
       return response.json();
     },
   });
