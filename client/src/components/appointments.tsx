@@ -506,27 +506,24 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
 
       {/* Calendar Integration Card */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="text-sage" size={20} />
-            Calendar Integration
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Sync your appointments with your calendar for automatic reminders and updates.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Mail size={16} />
-              Connect Gmail Calendar
-              <ExternalLink size={14} />
-            </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Calendar size={16} />
-              Connect Outlook Calendar
-              <ExternalLink size={14} />
-            </Button>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="text-sage" size={18} />
+              <span className="font-medium">Calendar Sync</span>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+                <Mail size={14} />
+                Gmail
+                <ExternalLink size={12} />
+              </Button>
+              <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+                <Calendar size={14} />
+                Outlook
+                <ExternalLink size={12} />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
