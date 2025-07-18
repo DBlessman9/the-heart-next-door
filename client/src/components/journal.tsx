@@ -77,7 +77,7 @@ export default function Journal({ userId, user }: JournalProps) {
         <h3 className="text-xl font-semibold text-deep-teal">My Journal</h3>
         <Button
           onClick={handleNewEntry}
-          className="bg-sage hover:bg-sage/90 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center"
+          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center"
         >
           <Plus size={16} className="mr-2" />
           New Entry
@@ -86,7 +86,7 @@ export default function Journal({ userId, user }: JournalProps) {
 
       <div className="space-y-4">
         {/* Today's Prompt */}
-        <Card className={`shadow-lg ${isWritingNew ? 'ring-2 ring-sage ring-opacity-50' : ''}`}>
+        <Card className={`shadow-lg ${isWritingNew ? 'ring-2 ring-green-500 ring-opacity-50' : ''}`}>
           <CardContent className="p-6">
             <h4 className="font-semibold text-deep-teal mb-3">Today's Prompt</h4>
             <div className="text-gray-600 mb-4">
@@ -105,7 +105,7 @@ export default function Journal({ userId, user }: JournalProps) {
             <Button
               onClick={handleSaveEntry}
               disabled={!entryContent.trim() || createEntryMutation.isPending}
-              className="mt-3 bg-sage hover:bg-sage/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-3 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createEntryMutation.isPending ? "Saving..." : "Save Entry"}
             </Button>
