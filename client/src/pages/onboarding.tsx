@@ -80,14 +80,24 @@ export default function Onboarding() {
               Meet Nia, your AI-powered doula who's here to support you 24/7 through your pregnancy and postpartum journey.
             </p>
             <div className="space-y-4 px-4">
-              <Button 
+              <button 
                 onClick={() => setStep(2)}
-                className="w-full bg-sage text-white py-4 rounded-2xl text-lg hover:bg-sage/90 font-semibold shadow-lg"
+                className="w-full py-4 rounded-2xl text-lg font-semibold shadow-lg transition-colors"
+                style={{
+                  backgroundColor: 'hsl(146, 27%, 56%)',
+                  color: 'white',
+                  border: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                }}
               >
                 Get Started
-              </Button>
-              <Button 
-                variant="outline"
+              </button>
+              <button 
                 onClick={() => {
                   // Check if there's an existing user
                   const existingUserId = localStorage.getItem("currentUserId");
@@ -101,10 +111,23 @@ export default function Onboarding() {
                     });
                   }
                 }}
-                className="w-full border-2 border-sage text-sage py-4 rounded-2xl text-lg hover:bg-sage hover:text-white font-semibold"
+                className="w-full py-4 rounded-2xl text-lg font-semibold transition-colors"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'hsl(146, 27%, 56%)',
+                  border: '2px solid hsl(146, 27%, 56%)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  e.target.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'hsl(146, 27%, 56%)';
+                }}
               >
                 I'm Returning
-              </Button>
+              </button>
             </div>
           </div>
         )}
