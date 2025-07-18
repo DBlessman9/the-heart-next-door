@@ -75,13 +75,24 @@ export default function Journal({ userId, user }: JournalProps) {
     <div className="px-6 py-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-deep-teal">My Journal</h3>
-        <Button
+        <button
           onClick={handleNewEntry}
-          className="bg-sage hover:bg-sage/90 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center"
+          className="px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center text-white"
+          style={{
+            backgroundColor: 'hsl(146, 27%, 56%)',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+          }}
         >
           <Plus size={16} className="mr-2" />
           New Entry
-        </Button>
+        </button>
       </div>
 
       <div className="space-y-4">
@@ -102,13 +113,29 @@ export default function Journal({ userId, user }: JournalProps) {
               placeholder="Write your thoughts..."
               className="w-full h-24 border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-sage focus:border-transparent resize-none"
             />
-            <Button
+            <button
               onClick={handleSaveEntry}
               disabled={!entryContent.trim() || createEntryMutation.isPending}
-              className="mt-3 bg-sage hover:bg-sage/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-3 px-4 py-2 rounded-xl transition-colors font-medium text-white"
+              style={{
+                backgroundColor: 'hsl(146, 27%, 56%)',
+                border: 'none',
+                cursor: (!entryContent.trim() || createEntryMutation.isPending) ? 'not-allowed' : 'pointer',
+                opacity: (!entryContent.trim() || createEntryMutation.isPending) ? 0.5 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (entryContent.trim() && !createEntryMutation.isPending) {
+                  e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (entryContent.trim() && !createEntryMutation.isPending) {
+                  e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                }
+              }}
             >
               {createEntryMutation.isPending ? "Saving..." : "Save Entry"}
-            </Button>
+            </button>
           </CardContent>
         </Card>
 
