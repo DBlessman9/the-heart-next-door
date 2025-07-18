@@ -496,13 +496,26 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
   return (
     <div className="p-4 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-deep-teal">Schedule</h2>
-        <Button onClick={() => setIsAddDialogOpen(true)} className="bg-sage hover:bg-sage/90">
-          <Plus size={16} className="mr-2" />
-          Add Appointment
-        </Button>
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-deep-teal mb-2">Appointments</h2>
+        <p className="text-gray-600 text-sm">Manage your healthcare appointments and stay on track</p>
       </div>
+
+      {/* Quick Add Section */}
+      <Card className="bg-sage/5 border-sage/20">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-deep-teal">Add New Appointment</h3>
+              <p className="text-sm text-gray-600">Schedule your next healthcare visit</p>
+            </div>
+            <Button onClick={() => setIsAddDialogOpen(true)} className="bg-sage hover:bg-sage/90">
+              <Plus size={16} className="mr-2" />
+              Add Appointment
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Calendar Integration Card */}
       <Card>
