@@ -61,6 +61,14 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // Custom maternal wellness colors
+        sage: "var(--sage)",
+        lavender: "var(--lavender)",
+        cream: "var(--cream)",
+        "warm-gray": "var(--warm-gray)",
+        "deep-teal": "var(--deep-teal)",
+        coral: "var(--coral)",
+        "muted-gold": "var(--muted-gold)",
       },
       keyframes: {
         "accordion-down": {
