@@ -84,19 +84,31 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
             <h4 className="font-semibold text-deep-teal mb-4">Energy Level</h4>
             <div className="flex space-x-2">
               {[1, 2, 3, 4, 5].map((level) => (
-                <Button
+                <button
                   key={level}
-                  variant={energyLevel === level ? "default" : "outline"}
                   onClick={() => !hasCheckedIn && setEnergyLevel(level)}
                   disabled={hasCheckedIn}
-                  className={`w-12 h-12 rounded-full font-semibold transition-transform hover:scale-105 ${
-                    energyLevel === level
-                      ? "bg-coral text-white"
-                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                  }`}
+                  className="w-12 h-12 rounded-full font-semibold transition-transform hover:scale-105"
+                  style={{
+                    backgroundColor: energyLevel === level ? 'hsl(10, 73%, 70%)' : 'hsl(0, 0%, 85%)',
+                    color: energyLevel === level ? 'white' : 'hsl(0, 0%, 40%)',
+                    border: 'none',
+                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
+                    opacity: hasCheckedIn ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = energyLevel === level ? 'hsl(10, 73%, 65%)' : 'hsl(0, 0%, 78%)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!hasCheckedIn) {
+                      e.target.style.backgroundColor = energyLevel === level ? 'hsl(10, 73%, 70%)' : 'hsl(0, 0%, 85%)';
+                    }
+                  }}
                 >
                   {level}
-                </Button>
+                </button>
               ))}
             </div>
           </CardContent>
