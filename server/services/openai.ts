@@ -77,7 +77,7 @@ export async function generateJournalPrompt(
   isPostpartum?: boolean
 ): Promise<string> {
   try {
-    const systemPrompt = `Generate a thoughtful, personalized journaling prompt for an expecting or new mother. The prompt should encourage reflection, gratitude, or processing of emotions related to their pregnancy journey. Make it warm, supportive, and relevant to their current stage.
+    const systemPrompt = `Generate a brief, thoughtful journaling prompt for an expecting or new mother.
 
 Context:
 - Pregnancy week: ${pregnancyWeek || 'Unknown'}
@@ -85,15 +85,19 @@ Context:
 - Postpartum: ${isPostpartum ? 'Yes' : 'No'}
 
 STRICT Requirements:
-- Maximum 2 paragraphs only
-- Use perfect grammar and spelling
-- Keep sentences clear and concise
-- End every sentence with proper punctuation (periods, question marks, exclamation marks)
-- Use one newline (\n) between paragraphs if using 2 paragraphs
-- Make the prompt feel conversational and welcoming
-- Focus on one specific aspect of their journey
+- Maximum 50 words total
+- Maximum 2-3 sentences only
+- Use perfect grammar and spelling with proper punctuation
+- Ask ONE specific question about their current experience
+- Be warm but concise
+- No greetings, no lengthy explanations
 
-Provide just the prompt text with proper formatting and punctuation.`;
+Examples:
+"How are you feeling about your changing body this week?"
+"What's one thing you're grateful for in your pregnancy journey today?"
+"How has your baby's movement made you feel this week?"
+
+Provide ONLY the prompt text, nothing else.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -101,7 +105,7 @@ Provide just the prompt text with proper formatting and punctuation.`;
         { role: "system", content: systemPrompt },
         { role: "user", content: "Generate a journal prompt for today." }
       ],
-      max_tokens: 100,
+      max_tokens: 30,
       temperature: 0.8,
     });
 
