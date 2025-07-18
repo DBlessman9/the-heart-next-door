@@ -17,10 +17,10 @@ export default function Experts() {
   });
 
   const specialties = [
-    { id: "doula", label: "Doulas", color: "bg-sage" },
-    { id: "lactation", label: "Lactation", color: "bg-lavender text-deep-teal" },
-    { id: "therapy", label: "Therapy", color: "bg-coral" },
-    { id: "nutrition", label: "Nutrition", color: "bg-muted-gold" },
+    { id: "doula", label: "Doulas", color: "hsl(146, 27%, 56%)" },
+    { id: "lactation", label: "Lactation", color: "hsl(264, 56%, 77%)" },
+    { id: "therapy", label: "Therapy", color: "hsl(10, 73%, 70%)" },
+    { id: "nutrition", label: "Nutrition", color: "hsl(39, 75%, 74%)" },
   ];
 
   const filteredExperts = selectedSpecialty
@@ -75,12 +75,23 @@ export default function Experts() {
                         </span>
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      className="bg-sage text-white px-4 py-2 rounded-xl hover:bg-sage/90 transition-colors"
+                    <button
+                      className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                      style={{
+                        backgroundColor: 'hsl(146, 27%, 56%)',
+                        color: 'white',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.opacity = '0.9';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.opacity = '1';
+                      }}
                     >
                       Connect
-                    </Button>
+                    </button>
                   </div>
                 ))
               )}
@@ -94,20 +105,28 @@ export default function Experts() {
             <h4 className="font-semibold text-deep-teal mb-4">Specialties</h4>
             <div className="grid grid-cols-2 gap-3">
               {specialties.map((specialty) => (
-                <Button
+                <button
                   key={specialty.id}
-                  variant={selectedSpecialty === specialty.id ? "default" : "outline"}
                   onClick={() => setSelectedSpecialty(
                     selectedSpecialty === specialty.id ? "" : specialty.id
                   )}
-                  className={`p-3 rounded-xl text-sm font-medium transition-colors ${
-                    selectedSpecialty === specialty.id
-                      ? `${specialty.color} text-white hover:opacity-90`
-                      : `${specialty.color} text-white hover:opacity-90`
-                  }`}
+                  className="p-3 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: specialty.color,
+                    color: 'white',
+                    border: 'none',
+                    cursor: 'pointer',
+                    opacity: selectedSpecialty === specialty.id ? 1 : 0.8
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.opacity = '0.9';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.opacity = selectedSpecialty === specialty.id ? '1' : '0.8';
+                  }}
                 >
                   {specialty.label}
-                </Button>
+                </button>
               ))}
             </div>
           </CardContent>
