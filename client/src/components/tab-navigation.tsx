@@ -9,7 +9,7 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
   const tabs = [
     { id: "checkin", label: "Check-in", icon: Heart },
     { id: "baby", label: "Baby", icon: Baby },
-    { id: "appointments", label: "Care Plan", icon: Calendar },
+    { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "chat", label: "Chat", icon: MessageCircle },
     { id: "experts", label: "Experts", icon: UserCheck },
     { id: "resources", label: "Learn", icon: GraduationCap },
