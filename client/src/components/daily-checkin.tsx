@@ -16,7 +16,6 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   const [mood, setMood] = useState<string>("");
   const [hydration, setHydration] = useState<string>("");
   const [nutrition, setNutrition] = useState<string>("");
-  const [restQuality, setRestQuality] = useState<number>(0);
   const [babyMovement, setBabyMovement] = useState<string>("");
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
 
@@ -34,14 +33,13 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
   });
 
   const createCheckInMutation = useMutation({
-    mutationFn: async (checkInData: { energyLevel: number; mood: string; hydration: string; nutrition: string; restQuality: number; babyMovement: string }) => {
+    mutationFn: async (checkInData: { energyLevel: number; mood: string; hydration: string; nutrition: string; babyMovement: string }) => {
       const response = await apiRequest("POST", "/api/checkin", {
         userId,
         energyLevel: checkInData.energyLevel,
         mood: checkInData.mood,
         hydration: checkInData.hydration,
         nutrition: checkInData.nutrition,
-        restQuality: checkInData.restQuality,
         babyMovement: checkInData.babyMovement,
         pregnancyWeek: user.pregnancyWeek,
       });
@@ -60,17 +58,16 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
       setMood(todaysCheckIn.mood || "");
       setHydration(todaysCheckIn.hydration || "");
       setNutrition(todaysCheckIn.nutrition || "");
-      setRestQuality(todaysCheckIn.restQuality || 0);
       setBabyMovement(todaysCheckIn.babyMovement || "");
     }
   }, [todaysCheckIn]);
 
   const handleSubmitCheckIn = () => {
-    const requiredFields = energyLevel > 0 && mood && hydration && nutrition && restQuality > 0;
+    const requiredFields = energyLevel > 0 && mood && hydration && nutrition;
     const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16;
     
     if (requiredFields && (!babyMovementRequired || babyMovement)) {
-      createCheckInMutation.mutate({ energyLevel, mood, hydration, nutrition, restQuality, babyMovement });
+      createCheckInMutation.mutate({ energyLevel, mood, hydration, nutrition, babyMovement });
     }
   };
 
@@ -289,54 +286,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
           </CardContent>
         </Card>
 
-        {/* Rest & Sleep Quality */}
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-4">Sleep Quality</h4>
-            <div className="flex space-x-2 justify-center">
-              {[1, 2, 3, 4, 5].map((level) => (
-                <button
-                  key={level}
-                  onClick={() => !hasCheckedIn && setRestQuality(level)}
-                  disabled={hasCheckedIn}
-                  className="w-12 h-12 rounded-full font-semibold transition-transform hover:scale-105"
-                  style={{
-                    backgroundColor: restQuality === level ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 85%)',
-                    color: restQuality === level ? 'white' : 'hsl(0, 0%, 40%)',
-                    border: 'none',
-                    cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
-                    opacity: hasCheckedIn ? 0.5 : 1
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = restQuality === level ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 78%)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = restQuality === level ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 85%)';
-                    }
-                  }}
-                >
-                  {level === 1 ? '😴' : level === 5 ? '😊' : level}
-                </button>
-              ))}
-            </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-2">
-              <span>Exhausted</span>
-              <span>Rested & Refreshed</span>
-            </div>
-            {hasCheckedIn && restQuality > 0 && (
-              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
-                <p className="text-sm text-sage font-medium">
-                  {restQuality <= 2 ? "Rest is so important, mama. Consider a short nap or gentle breathing exercise 🌙" :
-                   restQuality >= 4 ? "Wonderful! You're taking great care of yourself ✨" :
-                   "You're doing well. Remember, rest when you can - even 10 minutes helps 💤"}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+
 
         {/* Baby Movement (if pregnant) */}
         {!user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && (
@@ -390,7 +340,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
           <button
             onClick={handleSubmitCheckIn}
             disabled={(() => {
-              const requiredFields = !energyLevel || !mood || !hydration || !nutrition || !restQuality;
+              const requiredFields = !energyLevel || !mood || !hydration || !nutrition;
               const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && !babyMovement;
               return requiredFields || babyMovementRequired || createCheckInMutation.isPending;
             })()}
@@ -400,25 +350,25 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
               color: 'white',
               border: 'none',
               cursor: (() => {
-                const requiredFields = !energyLevel || !mood || !hydration || !nutrition || !restQuality;
+                const requiredFields = !energyLevel || !mood || !hydration || !nutrition;
                 const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && !babyMovement;
                 return requiredFields || babyMovementRequired || createCheckInMutation.isPending ? 'not-allowed' : 'pointer';
               })(),
               opacity: (() => {
-                const requiredFields = !energyLevel || !mood || !hydration || !nutrition || !restQuality;
+                const requiredFields = !energyLevel || !mood || !hydration || !nutrition;
                 const babyMovementRequired = !user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && !babyMovement;
                 return requiredFields || babyMovementRequired || createCheckInMutation.isPending ? 0.5 : 1;
               })()
             }}
             onMouseEnter={(e) => {
-              const requiredFields = energyLevel && mood && hydration && nutrition && restQuality;
+              const requiredFields = energyLevel && mood && hydration && nutrition;
               const babyMovementOk = user.isPostpartum || !user.pregnancyWeek || user.pregnancyWeek < 16 || babyMovement;
               if (requiredFields && babyMovementOk && !createCheckInMutation.isPending) {
                 e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
               }
             }}
             onMouseLeave={(e) => {
-              const requiredFields = energyLevel && mood && hydration && nutrition && restQuality;
+              const requiredFields = energyLevel && mood && hydration && nutrition;
               const babyMovementOk = user.isPostpartum || !user.pregnancyWeek || user.pregnancyWeek < 16 || babyMovement;
               if (requiredFields && babyMovementOk && !createCheckInMutation.isPending) {
                 e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
