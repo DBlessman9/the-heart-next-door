@@ -30,6 +30,8 @@ Key guidelines:
 - Offer hope and reassurance while being realistic
 - Suggest when expert escalation might be helpful
 - Keep responses conversational and accessible
+- Format responses with clear paragraph breaks using newlines (\n) between different thoughts or topics
+- Use shorter paragraphs for better readability
 
 ${userContext ? `User context: 
 - Pregnancy week: ${userContext.pregnancyWeek || 'Unknown'}
@@ -37,7 +39,7 @@ ${userContext ? `User context:
 - Postpartum: ${userContext.isPostpartum ? 'Yes' : 'No'}
 - Recent symptoms: ${userContext.recentSymptoms?.join(', ') || 'None reported'}` : ''}
 
-Respond as Nia would - caring, knowledgeable, and supportive.`;
+Respond as Nia would - caring, knowledgeable, and supportive. Format your response with clear paragraph breaks using newlines to separate different thoughts or topics for better readability.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",

@@ -119,7 +119,13 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
                 color: 'white'
               } : {}}
             >
-              <p className="text-sm">{msg.content}</p>
+              <div className="text-sm">
+                {msg.content.split('\n').map((paragraph, index) => (
+                  <p key={index} className={index > 0 ? "mt-3" : ""}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
             
             {msg.isFromUser && (
