@@ -511,7 +511,13 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
             </div>
             <Button 
               onClick={() => setIsAddDialogOpen(true)} 
-              className="bg-sage hover:bg-sage/90 text-white font-medium px-4 py-2 w-full sm:w-auto flex-shrink-0"
+              style={{ 
+                backgroundColor: 'hsl(146, 27%, 56%)', 
+                color: 'white',
+                minWidth: 'fit-content',
+                padding: '0.5rem 1rem'
+              }}
+              className="hover:opacity-90 border-0 shadow-sm"
             >
               <Plus size={16} className="mr-2" />
               Add Appointment
