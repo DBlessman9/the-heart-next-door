@@ -129,8 +129,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Energy Level */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-2">Energy Level</h4>
-            <p className="text-sm text-gray-600 mb-4">How energized are you feeling right now?</p>
+            <h4 className="font-semibold text-deep-teal mb-4">Energy Level</h4>
             <div className="flex space-x-2 justify-center">
               {[1, 2, 3, 4, 5].map((level) => (
                 <button
@@ -166,8 +165,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Mood */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-2">Mood Today</h4>
-            <p className="text-sm text-gray-600 mb-4">Choose what best reflects your emotions.</p>
+            <h4 className="font-semibold text-deep-teal mb-4">Mood Today</h4>
             <div className="grid grid-cols-2 gap-3">
               {moods.map((moodOption) => (
                 <button
@@ -200,11 +198,10 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
           </CardContent>
         </Card>
 
-        {/* Hydration Tracker */}
+        {/* Water Intake */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-2">Hydration</h4>
-            <p className="text-sm text-gray-600 mb-4">How much water have you had today?</p>
+            <h4 className="font-semibold text-deep-teal mb-4">Water Intake</h4>
             <div className="grid grid-cols-2 gap-3">
               {hydrationOptions.map((option) => (
                 <button
@@ -250,8 +247,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Nutrition */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-2">Nutrition</h4>
-            <p className="text-sm text-gray-600 mb-4">Have you nourished your body today?</p>
+            <h4 className="font-semibold text-deep-teal mb-4">Nutrition</h4>
             <div className="grid grid-cols-3 gap-3">
               {nutritionOptions.map((option) => (
                 <button
@@ -296,8 +292,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {/* Rest & Sleep Quality */}
         <Card className="shadow-lg">
           <CardContent className="p-6">
-            <h4 className="font-semibold text-deep-teal mb-2">Sleep Quality</h4>
-            <p className="text-sm text-gray-600 mb-4">How well did you rest last night?</p>
+            <h4 className="font-semibold text-deep-teal mb-4">Sleep Quality</h4>
             <div className="flex space-x-2 justify-center">
               {[1, 2, 3, 4, 5].map((level) => (
                 <button
@@ -347,8 +342,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         {!user.isPostpartum && user.pregnancyWeek && user.pregnancyWeek >= 16 && (
           <Card className="shadow-lg">
             <CardContent className="p-6">
-              <h4 className="font-semibold text-deep-teal mb-2">Baby Movement</h4>
-              <p className="text-sm text-gray-600 mb-4">Have you felt your baby move today?</p>
+              <h4 className="font-semibold text-deep-teal mb-4">Baby Movement</h4>
               <div className="grid grid-cols-3 gap-3">
                 {babyMovementOptions.map((option) => (
                   <button
