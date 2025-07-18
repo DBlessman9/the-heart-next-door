@@ -8,6 +8,7 @@ import DailyCheckIn from "@/components/daily-checkin";
 import Journal from "@/components/journal";
 import Resources from "@/components/resources";
 import Experts from "@/components/experts";
+import BabyGuidance from "@/components/baby-guidance";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -47,6 +48,7 @@ export default function Home() {
       <div className="pb-4">
         {activeTab === "chat" && <ChatInterface userId={currentUserId} />}
         {activeTab === "checkin" && <DailyCheckIn userId={currentUserId} user={user} />}
+        {activeTab === "baby" && <BabyGuidance userId={currentUserId} user={user} />}
         {activeTab === "journal" && <Journal userId={currentUserId} user={user} />}
         {activeTab === "resources" && <Resources user={user} />}
         {activeTab === "experts" && <Experts />}

@@ -1,0 +1,409 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight, Baby, Heart, Brain, Sparkles } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import type { User } from "@shared/schema";
+
+interface BabyGuidanceProps {
+  userId: number;
+  user: User;
+}
+
+interface WeeklyGuidance {
+  week: number;
+  trimester: number;
+  babySize: {
+    fruit: string;
+    emoji: string;
+    size: string;
+  };
+  babyMilestones: string[];
+  momInsights: string[];
+  emotionalSupport: string;
+  learningContent: {
+    title: string;
+    description: string;
+    category: string;
+  };
+}
+
+// Comprehensive weekly guidance data
+const weeklyGuidanceData: WeeklyGuidance[] = [
+  {
+    week: 4,
+    trimester: 1,
+    babySize: { fruit: "Poppy seed", emoji: "🌰", size: "2mm" },
+    babyMilestones: [
+      "Neural tube is forming",
+      "Heart begins to develop",
+      "Placenta starts to form"
+    ],
+    momInsights: [
+      "You might notice breast tenderness",
+      "Fatigue is common as your body works hard",
+      "Mood swings are normal due to hormonal changes"
+    ],
+    emotionalSupport: "You're embarking on an incredible journey. Your body is already working miracles, even if you can't feel it yet. Trust the process.",
+    learningContent: {
+      title: "Understanding Early Pregnancy Symptoms",
+      description: "Learn what's happening in your body during these crucial first weeks",
+      category: "early-pregnancy"
+    }
+  },
+  {
+    week: 8,
+    trimester: 1,
+    babySize: { fruit: "Raspberry", emoji: "🫐", size: "16mm" },
+    babyMilestones: [
+      "All major organs are forming",
+      "Tiny fingers and toes appear",
+      "Baby's face is taking shape"
+    ],
+    momInsights: [
+      "Morning sickness may peak around now",
+      "Food aversions are completely normal",
+      "You might feel more emotional than usual"
+    ],
+    emotionalSupport: "Every wave of nausea is your body protecting and nurturing your baby. You're stronger than you know.",
+    learningContent: {
+      title: "Managing Morning Sickness",
+      description: "Natural remedies and tips to help you feel better",
+      category: "symptoms"
+    }
+  },
+  {
+    week: 12,
+    trimester: 1,
+    babySize: { fruit: "Lime", emoji: "🍋", size: "5.4cm" },
+    babyMilestones: [
+      "All major organs are formed",
+      "Baby can swallow and make urine",
+      "Vocal cords are developing"
+    ],
+    momInsights: [
+      "Morning sickness often improves",
+      "Energy levels may start to return",
+      "You might notice your clothes fitting differently"
+    ],
+    emotionalSupport: "You've made it through the most critical development period. Your baby is growing beautifully, and so are you as a mother.",
+    learningContent: {
+      title: "Your First Trimester Recap",
+      description: "Celebrate how far you've come and what's ahead",
+      category: "milestones"
+    }
+  },
+  {
+    week: 16,
+    trimester: 2,
+    babySize: { fruit: "Avocado", emoji: "🥑", size: "11.6cm" },
+    babyMilestones: [
+      "Baby can hear your voice now!",
+      "Facial muscles are developing",
+      "Baby is practicing breathing movements"
+    ],
+    momInsights: [
+      "You might feel the first flutters of movement",
+      "Skin changes like darkening nipples are normal",
+      "Your appetite is likely returning"
+    ],
+    emotionalSupport: "Your baby can hear you now - every word of love you speak is being received. You're creating their first memories together.",
+    learningContent: {
+      title: "Bonding with Your Baby",
+      description: "Ways to connect with your baby before birth",
+      category: "bonding"
+    }
+  },
+  {
+    week: 20,
+    trimester: 2,
+    babySize: { fruit: "Banana", emoji: "🍌", size: "16.4cm" },
+    babyMilestones: [
+      "Baby can hear outside sounds",
+      "Fingerprints are forming",
+      "Baby is developing sleep patterns"
+    ],
+    momInsights: [
+      "You're likely feeling regular movements now",
+      "Round ligament pain is common",
+      "Your center of gravity is starting to shift"
+    ],
+    emotionalSupport: "You're halfway there! Your body is doing exactly what it needs to do. Every kick is a love letter from your baby.",
+    learningContent: {
+      title: "Anatomy Scan and Development",
+      description: "Understanding your 20-week ultrasound",
+      category: "development"
+    }
+  },
+  {
+    week: 24,
+    trimester: 2,
+    babySize: { fruit: "Corn", emoji: "🌽", size: "21cm" },
+    babyMilestones: [
+      "Baby's hearing is fully developed",
+      "Lungs are developing rapidly",
+      "Baby can recognize your voice"
+    ],
+    momInsights: [
+      "You might experience leg cramps",
+      "Braxton Hicks contractions may begin",
+      "Back pain is common as your belly grows"
+    ],
+    emotionalSupport: "Your baby knows your voice and finds comfort in it. You're already providing safety and love in the most beautiful way.",
+    learningContent: {
+      title: "Preparing for the Third Trimester",
+      description: "What to expect in the coming weeks",
+      category: "preparation"
+    }
+  },
+  {
+    week: 28,
+    trimester: 3,
+    babySize: { fruit: "Eggplant", emoji: "🍆", size: "25cm" },
+    babyMilestones: [
+      "Baby's eyes can open and close",
+      "Brain development accelerates",
+      "Baby can distinguish between light and dark"
+    ],
+    momInsights: [
+      "You might feel short of breath",
+      "Heartburn is common",
+      "Your belly button may pop out"
+    ],
+    emotionalSupport: "You're in the final stretch! Your baby is getting stronger every day, and so is your bond. You're growing into yourself as a mother.",
+    learningContent: {
+      title: "Third Trimester Comfort Tips",
+      description: "Managing common discomforts in late pregnancy",
+      category: "comfort"
+    }
+  },
+  {
+    week: 32,
+    trimester: 3,
+    babySize: { fruit: "Coconut", emoji: "🥥", size: "28cm" },
+    babyMilestones: [
+      "Baby's bones are hardening",
+      "Immune system is developing",
+      "Baby can dream now"
+    ],
+    momInsights: [
+      "You might feel increased pressure",
+      "Frequent urination returns",
+      "Stretch marks may appear"
+    ],
+    emotionalSupport: "Your baby is dreaming - possibly about you! Every stretch mark is a testament to the miracle your body is creating.",
+    learningContent: {
+      title: "Preparing Your Hospital Bag",
+      description: "Essential items for labor and delivery",
+      category: "preparation"
+    }
+  },
+  {
+    week: 36,
+    trimester: 3,
+    babySize: { fruit: "Honeydew", emoji: "🍈", size: "32cm" },
+    babyMilestones: [
+      "Baby is considered full-term soon",
+      "Lungs are nearly mature",
+      "Baby is practicing breathing"
+    ],
+    momInsights: [
+      "You might feel baby 'drop' into position",
+      "Nesting instinct may kick in",
+      "Braxton Hicks may become more frequent"
+    ],
+    emotionalSupport: "Your body knows exactly what to do. You've brought your baby this far - trust in your strength and your instincts.",
+    learningContent: {
+      title: "Signs of Labor",
+      description: "How to know when it's time to go to the hospital",
+      category: "labor"
+    }
+  },
+  {
+    week: 40,
+    trimester: 3,
+    babySize: { fruit: "Watermelon", emoji: "🍉", size: "35cm" },
+    babyMilestones: [
+      "Baby is ready to be born",
+      "All systems are mature",
+      "Baby has settled into birth position"
+    ],
+    momInsights: [
+      "You might feel anxious about labor",
+      "Energy levels can fluctuate",
+      "Every day brings you closer to meeting your baby"
+    ],
+    emotionalSupport: "You've grown a human being from nothing. You are incredible, powerful, and ready for this next chapter. Trust your body.",
+    learningContent: {
+      title: "Labor and Delivery Guide",
+      description: "Everything you need to know about bringing your baby earthside",
+      category: "labor"
+    }
+  }
+];
+
+export default function BabyGuidance({ userId, user }: BabyGuidanceProps) {
+  const currentWeek = user.pregnancyWeek || 20;
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
+  
+  // Find the guidance for the selected week or closest available
+  const guidance = weeklyGuidanceData.find(g => g.week === selectedWeek) || 
+                   weeklyGuidanceData.find(g => g.week <= selectedWeek) ||
+                   weeklyGuidanceData[0];
+
+  const { data: resources } = useQuery({
+    queryKey: ["/api/resources", user.pregnancyStage],
+    enabled: !!user.pregnancyStage,
+  });
+
+  const goToPrevWeek = () => {
+    const currentIndex = weeklyGuidanceData.findIndex(g => g.week === selectedWeek);
+    if (currentIndex > 0) {
+      setSelectedWeek(weeklyGuidanceData[currentIndex - 1].week);
+    }
+  };
+
+  const goToNextWeek = () => {
+    const currentIndex = weeklyGuidanceData.findIndex(g => g.week === selectedWeek);
+    if (currentIndex < weeklyGuidanceData.length - 1) {
+      setSelectedWeek(weeklyGuidanceData[currentIndex + 1].week);
+    }
+  };
+
+  const isCurrentWeek = selectedWeek === currentWeek;
+
+  return (
+    <div className="p-4 space-y-6">
+      {/* Week Navigation */}
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={goToPrevWeek}
+          disabled={selectedWeek === weeklyGuidanceData[0].week}
+        >
+          <ChevronLeft size={16} />
+        </Button>
+        
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-deep-teal">Week {selectedWeek}</h2>
+          <p className="text-sm text-muted-foreground">
+            Trimester {guidance.trimester}
+            {isCurrentWeek && <Badge variant="secondary" className="ml-2">Current</Badge>}
+          </p>
+        </div>
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={goToNextWeek}
+          disabled={selectedWeek === weeklyGuidanceData[weeklyGuidanceData.length - 1].week}
+        >
+          <ChevronRight size={16} />
+        </Button>
+      </div>
+
+      {/* Baby Size and Milestones */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Baby className="text-sage" size={20} />
+            Your Baby This Week
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Baby Size */}
+          <div className="text-center p-4 bg-sage/10 rounded-lg">
+            <div className="text-4xl mb-2">{guidance.babySize.emoji}</div>
+            <p className="font-semibold text-deep-teal">Size of a {guidance.babySize.fruit}</p>
+            <p className="text-sm text-muted-foreground">{guidance.babySize.size}</p>
+          </div>
+
+          {/* Baby Milestones */}
+          <div>
+            <h4 className="font-semibold text-deep-teal mb-2 flex items-center gap-2">
+              <Sparkles size={16} className="text-sage" />
+              Amazing Developments
+            </h4>
+            <ul className="space-y-2">
+              {guidance.babyMilestones.map((milestone, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-sage rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-sm">{milestone}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Mom's Body Insights */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Heart className="text-rose-500" size={20} />
+            Your Body This Week
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2">
+            {guidance.momInsights.map((insight, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-rose-500 rounded-full mt-2 flex-shrink-0"></div>
+                <span className="text-sm">{insight}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* Emotional Support */}
+      <Card className="bg-gradient-to-r from-sage/10 to-rose-100/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Heart className="text-sage" size={20} />
+            A Message for You
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-deep-teal italic leading-relaxed">
+            "{guidance.emotionalSupport}"
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Learning Content */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="text-deep-teal" size={20} />
+            This Week's Learning
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <h4 className="font-semibold text-deep-teal">{guidance.learningContent.title}</h4>
+            <p className="text-sm text-muted-foreground">{guidance.learningContent.description}</p>
+            <Button variant="outline" size="sm" className="mt-2">
+              Learn More
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Access to Current Week */}
+      {!isCurrentWeek && (
+        <div className="text-center">
+          <Button
+            variant="outline"
+            onClick={() => setSelectedWeek(currentWeek)}
+            className="text-sage border-sage hover:bg-sage/10"
+          >
+            Return to Week {currentWeek}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
