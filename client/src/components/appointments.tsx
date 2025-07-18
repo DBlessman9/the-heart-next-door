@@ -504,10 +504,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
       {/* Quick Add Section */}
       <Card className="bg-sage/5 border-sage/20">
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="font-semibold text-deep-teal">Add New Appointment</h3>
-            </div>
+          <div className="flex justify-center">
             <Button 
               onClick={() => setIsAddDialogOpen(true)} 
               style={{ 
