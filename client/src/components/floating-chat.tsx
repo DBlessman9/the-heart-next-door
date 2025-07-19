@@ -123,7 +123,7 @@ export default function FloatingChat() {
 
       {/* Expanded Chat Modal */}
       {isExpanded && (
-        <div className="fixed inset-0 z-50 flex items-end justify-end p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black bg-opacity-20"
@@ -131,7 +131,7 @@ export default function FloatingChat() {
           ></div>
           
           {/* Chat Window */}
-          <Card className="relative w-full max-w-md h-[500px] flex flex-col shadow-2xl">
+          <Card className="relative w-full max-w-md h-[480px] flex flex-col shadow-2xl">
             <CardHeader className="pb-3" style={{ backgroundColor: 'hsl(146, 27%, 56%)' }}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
