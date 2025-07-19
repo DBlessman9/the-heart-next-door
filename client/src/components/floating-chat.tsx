@@ -24,11 +24,7 @@ export default function FloatingChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const currentUserId = localStorage.getItem("currentUserId");
-  
-  // Don't show on onboarding page or if user not logged in
-  if (!currentUserId || location === "/onboarding") return null;
-
-  const userId = parseInt(currentUserId);
+  const userId = currentUserId ? parseInt(currentUserId) : null;
 
   // Get contextual greeting based on current page
   const getContextualGreeting = () => {
@@ -54,6 +50,7 @@ export default function FloatingChat() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
+      if (!userId) throw new Error("No user ID");
       return apiRequest("POST", "/api/chat", {
         userId,
         content,
@@ -61,7 +58,9 @@ export default function FloatingChat() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/chat", userId] });
+      if (userId) {
+        queryClient.invalidateQueries({ queryKey: ["/api/chat", userId] });
+      }
       setMessage("");
     },
   });
@@ -87,6 +86,9 @@ export default function FloatingChat() {
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
   };
+
+  // Don't show on onboarding page or if user not logged in
+  if (!currentUserId || location === "/onboarding") return null;
 
   return (
     <>
