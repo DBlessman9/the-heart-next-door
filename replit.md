@@ -133,6 +133,16 @@ The application is designed as a comprehensive maternal wellness platform that p
 ## Recent Changes
 
 ### Latest Updates (2025-07-19)
+- **New Insights/Dashboard Page**: Comprehensive wellness journey visualization
+  - Added "Insights" tab to main navigation with chart icon
+  - Key metrics display: journal streak, pregnancy week, learning progress, mood trends
+  - Emotional check-in trends visualization over past week
+  - Learning journey progress tracking with completed modules
+  - Upcoming appointments overview with scheduling integration
+  - Support team/village member display from expert network
+  - Planning tools section: baby names, birth plan, nursery checklist buttons
+  - Robust error handling for date formatting and data validation
+  - Real-time data integration from existing user activities
 - **Enhanced Floating Chat Interface**: Completely redesigned chat modal for optimal user experience
   - Fixed user message visibility issues with proper sage green styling
   - Removed cluttered contextual greetings for clean, minimal chat experience

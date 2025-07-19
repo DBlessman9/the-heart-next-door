@@ -60,30 +60,37 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
   const calculateJournalStreak = () => {
     if (!journalEntries || journalEntries.length === 0) return 0;
     
-    const sortedEntries = journalEntries
-      .map((entry: any) => new Date(entry.createdAt))
-      .sort((a: Date, b: Date) => b.getTime() - a.getTime());
-    
-    let streak = 0;
-    let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    
-    for (const entryDate of sortedEntries) {
-      const entryDay = new Date(entryDate);
-      entryDay.setHours(0, 0, 0, 0);
+    try {
+      const sortedEntries = journalEntries
+        .filter((entry: any) => entry.createdAt) // Filter out entries without dates
+        .map((entry: any) => new Date(entry.createdAt))
+        .filter((date: Date) => !isNaN(date.getTime())) // Filter out invalid dates
+        .sort((a: Date, b: Date) => b.getTime() - a.getTime());
       
-      if (entryDay.getTime() === currentDate.getTime()) {
-        streak++;
-        currentDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
-      } else if (entryDay.getTime() === currentDate.getTime() - 24 * 60 * 60 * 1000) {
-        streak++;
-        currentDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
-      } else {
-        break;
+      let streak = 0;
+      let currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      
+      for (const entryDate of sortedEntries) {
+        const entryDay = new Date(entryDate);
+        entryDay.setHours(0, 0, 0, 0);
+        
+        if (entryDay.getTime() === currentDate.getTime()) {
+          streak++;
+          currentDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+        } else if (entryDay.getTime() === currentDate.getTime() - 24 * 60 * 60 * 1000) {
+          streak++;
+          currentDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+        } else {
+          break;
+        }
       }
+      
+      return streak;
+    } catch (error) {
+      console.error('Error calculating journal streak:', error);
+      return 0;
     }
-    
-    return streak;
   };
 
   // Calculate completion percentage for learning modules
@@ -96,29 +103,38 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
   // Get recent mood trend
   const getMoodTrend = () => {
     if (!checkinTrends || checkinTrends.length < 2) return "stable";
-    const recent = checkinTrends.slice(-2);
-    const moodScore = (feeling: string) => {
-      const scores: { [key: string]: number } = {
-        'Peaceful': 5, 'Grateful': 5, 'Yes, feeling nourished': 4,
-        'A little': 3, 'Tired': 2, 'Anxious': 1, 'Overwhelmed': 1
+    try {
+      const recent = checkinTrends.slice(-2);
+      const moodScore = (feeling: string) => {
+        const scores: { [key: string]: number } = {
+          'Peaceful': 5, 'Grateful': 5, 'Yes, feeling nourished': 4,
+          'A little': 3, 'Tired': 2, 'Anxious': 1, 'Overwhelmed': 1
+        };
+        return scores[feeling] || 3;
       };
-      return scores[feeling] || 3;
-    };
-    
-    const currentScore = moodScore(recent[1]?.feeling);
-    const previousScore = moodScore(recent[0]?.feeling);
-    
-    if (currentScore > previousScore) return "improving";
-    if (currentScore < previousScore) return "declining";
-    return "stable";
+      
+      const currentScore = moodScore(recent[1]?.feeling || '');
+      const previousScore = moodScore(recent[0]?.feeling || '');
+      
+      if (currentScore > previousScore) return "improving";
+      if (currentScore < previousScore) return "declining";
+      return "stable";
+    } catch (error) {
+      console.error('Error calculating mood trend:', error);
+      return "stable";
+    }
   };
 
   const journalStreak = calculateJournalStreak();
   const learningProgress = calculateLearningProgress();
   const moodTrend = getMoodTrend();
-  const upcomingAppointments = appointments?.filter((apt: any) => 
-    isAfter(new Date(apt.date), new Date())
-  ).slice(0, 3) || [];
+  const upcomingAppointments = appointments?.filter((apt: any) => {
+    try {
+      return apt.date && isAfter(new Date(apt.date), new Date());
+    } catch (error) {
+      return false;
+    }
+  }).slice(0, 3) || [];
 
   return (
     <div className="space-y-6 p-4">
@@ -193,7 +209,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
               {checkinTrends.slice(-7).map((checkin: any, index: number) => (
                 <div key={index} className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">
-                    {format(new Date(checkin.date), 'MMM dd')}
+                    {checkin.date ? format(new Date(checkin.date), 'MMM dd') : 'Recent'}
                   </span>
                   <div className="flex items-center gap-2">
                     <Badge variant={
@@ -265,8 +281,10 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
                     <p className="text-xs text-gray-600">{appointment.type}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium">{format(new Date(appointment.date), 'MMM dd')}</p>
-                    <p className="text-xs text-gray-600">{appointment.time}</p>
+                    <p className="text-sm font-medium">
+                      {appointment.date ? format(new Date(appointment.date), 'MMM dd') : 'TBD'}
+                    </p>
+                    <p className="text-xs text-gray-600">{appointment.time || 'Time TBD'}</p>
                   </div>
                 </div>
               ))}
