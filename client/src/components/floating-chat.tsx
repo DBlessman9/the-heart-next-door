@@ -163,16 +163,13 @@ export default function FloatingChat() {
                       <Loader2 className="animate-spin text-sage" size={24} />
                     </div>
                   ) : (
-                    <div className="space-y-3 pb-4">
-                      {/* Initial contextual greeting */}
-                      <div className="flex justify-start">
-                        <div className="max-w-[85%] p-3 rounded-lg bg-gray-100">
-                          <p className="text-sm text-gray-800">{getContextualGreeting()}</p>
-                          <span className="text-xs text-gray-500 mt-1 block">Just now</span>
-                        </div>
-                      </div>
-
+                    <div className="space-y-3 pb-4 min-h-[200px]">
                       {/* Chat messages */}
+                      {messages.length === 0 && (
+                        <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                          Start a conversation with Nia
+                        </div>
+                      )}
                       {messages.map((msg: ChatMessage) => (
                         <div
                           key={msg.id}
