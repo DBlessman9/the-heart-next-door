@@ -154,97 +154,95 @@ export default function FloatingChat() {
               </div>
             </CardHeader>
 
-            <CardContent className="flex-1 flex flex-col p-0">
-              {/* Messages Area */}
-              <div className="flex-1 overflow-hidden">
-                <ScrollArea className="h-full p-4">
-                  {isLoading ? (
-                    <div className="flex items-center justify-center h-32">
-                      <Loader2 className="animate-spin text-sage" size={24} />
-                    </div>
-                  ) : (
-                    <div className="space-y-3 pb-4 min-h-[200px]">
-                      {/* Chat messages */}
-                      {messages.length === 0 && (
-                        <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                          Start a conversation with Nia
-                        </div>
-                      )}
-                      {messages.map((msg: ChatMessage) => (
-                        <div
-                          key={msg.id}
-                          className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"}`}
-                        >
-                          <div
-                            className={`max-w-[85%] p-3 rounded-lg ${
-                              msg.isFromUser
-                                ? "text-white"
-                                : "bg-gray-100 text-gray-800"
-                            }`}
-                            style={{
-                              backgroundColor: msg.isFromUser ? 'hsl(146, 27%, 56%)' : undefined
-                            }}
-                          >
-                            <p className="text-sm leading-relaxed">{msg.content}</p>
-                            <span className={`text-xs mt-2 block ${
-                              msg.isFromUser ? "text-white/70" : "text-gray-500"
-                            }`}>
-                              {new Date(msg.timestamp).toLocaleTimeString([], { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Loading indicator for new messages */}
-                      {sendMessageMutation.isPending && (
-                        <div className="flex justify-start">
-                          <div className="max-w-[85%] p-3 rounded-lg bg-gray-100">
-                            <div className="flex items-center gap-2">
-                              <Loader2 className="animate-spin" size={16} />
-                              <span className="text-sm text-gray-600">Nia is typing...</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Scroll anchor */}
-                      <div ref={messagesEndRef} />
-                    </div>
-                  )}
-                </ScrollArea>
-              </div>
-
-              {/* Message Input */}
-              <div className="border-t border-gray-200 p-4 bg-white">
-                <form onSubmit={handleSendMessage} className="flex gap-3">
-                  <Input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type your message to Nia..."
-                    className="flex-1 border-gray-300 focus:border-sage focus:ring-sage"
-                    disabled={sendMessageMutation.isPending}
-                  />
-                  <Button
-                    type="submit"
-                    disabled={!message.trim() || sendMessageMutation.isPending}
-                    className="px-4"
-                    style={{
-                      backgroundColor: 'hsl(146, 27%, 56%)',
-                      color: 'white'
-                    }}
-                  >
-                    {sendMessageMutation.isPending ? (
-                      <Loader2 className="animate-spin" size={16} />
-                    ) : (
-                      <Send size={16} />
+            {/* Messages Area */}
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full p-4">
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-32">
+                    <Loader2 className="animate-spin text-sage" size={24} />
+                  </div>
+                ) : (
+                  <div className="space-y-3 pb-4 min-h-[200px]">
+                    {/* Chat messages */}
+                    {messages.length === 0 && (
+                      <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                        Start a conversation with Nia
+                      </div>
                     )}
-                  </Button>
-                </form>
-              </div>
-            </CardContent>
+                    {messages.map((msg: ChatMessage) => (
+                      <div
+                        key={msg.id}
+                        className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`max-w-[85%] p-3 rounded-lg ${
+                            msg.isFromUser
+                              ? "text-white"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                          style={{
+                            backgroundColor: msg.isFromUser ? 'hsl(146, 27%, 56%)' : undefined
+                          }}
+                        >
+                          <p className="text-sm leading-relaxed">{msg.content}</p>
+                          <span className={`text-xs mt-2 block ${
+                            msg.isFromUser ? "text-white/70" : "text-gray-500"
+                          }`}>
+                            {new Date(msg.timestamp).toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Loading indicator for new messages */}
+                    {sendMessageMutation.isPending && (
+                      <div className="flex justify-start">
+                        <div className="max-w-[85%] p-3 rounded-lg bg-gray-100">
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="animate-spin" size={16} />
+                            <span className="text-sm text-gray-600">Nia is typing...</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Scroll anchor */}
+                    <div ref={messagesEndRef} />
+                  </div>
+                )}
+              </ScrollArea>
+            </div>
+
+            {/* Message Input - Fixed at bottom */}
+            <div className="border-t border-gray-200 p-4 bg-white shrink-0">
+              <form onSubmit={handleSendMessage} className="flex gap-3">
+                <Input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Type your message to Nia..."
+                  className="flex-1 border-gray-300 focus:border-sage focus:ring-sage"
+                  disabled={sendMessageMutation.isPending}
+                />
+                <Button
+                  type="submit"
+                  disabled={!message.trim() || sendMessageMutation.isPending}
+                  className="px-4"
+                  style={{
+                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    color: 'white'
+                  }}
+                >
+                  {sendMessageMutation.isPending ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <Send size={16} />
+                  )}
+                </Button>
+              </form>
+            </div>
           </Card>
         </div>
       )}
