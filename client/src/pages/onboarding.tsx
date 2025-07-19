@@ -446,7 +446,7 @@ export default function Onboarding() {
                     </div>
                     
                     <div>
-                      <Label className="text-base font-medium">Would you like to share a little about yours so we can better support you?</Label>
+                      <Label className="text-base font-medium">Would you like to share a little about your birth so we can better support you?</Label>
                       <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
                       <div className="space-y-3">
                         {[
@@ -458,6 +458,7 @@ export default function Onboarding() {
                           "Emergency delivery",
                           "NICU stay",
                           "Complications during birth",
+                          "We lost our baby",
                           "I'm still processing my experience",
                           "I'd rather not say"
                         ].map((option) => (
