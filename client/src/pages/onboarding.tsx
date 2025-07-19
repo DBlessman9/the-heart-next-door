@@ -152,7 +152,7 @@ export default function Onboarding() {
               <Heart className="text-white text-4xl" size={48} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
-              Welcome to Your Digital Village
+              Welcome home, mama.
             </h1>
             <p className="text-lg text-gray-600 mb-8">
               You were never meant to do this alone.<br/>
