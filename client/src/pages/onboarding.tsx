@@ -250,7 +250,7 @@ export default function Onboarding() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="pregnancyStage">Current Stage</Label>
+                  <Label htmlFor="pregnancyStage">Stage of Pregnancy</Label>
                   <Select 
                     value={formData.pregnancyStage} 
                     onValueChange={(value) => handleInputChange("pregnancyStage", value)}
