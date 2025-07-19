@@ -10,6 +10,7 @@ import Experts from "@/components/experts";
 import BabyGuidance from "@/components/baby-guidance";
 import Appointments from "@/components/appointments";
 import Community from "@/components/community";
+import InsightsDashboard from "@/components/insights-dashboard";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -49,6 +50,7 @@ export default function Home() {
       <div className="pb-4">
         {activeTab === "checkin" && <DailyCheckIn userId={currentUserId} user={user} />}
         {activeTab === "baby" && <BabyGuidance userId={currentUserId} user={user} onTabChange={setActiveTab} />}
+        {activeTab === "insights" && <InsightsDashboard userId={currentUserId} />}
         {activeTab === "appointments" && <Appointments userId={currentUserId} user={user} />}
         {activeTab === "community" && <Community userId={currentUserId} user={user} />}
         {activeTab === "journal" && <Journal userId={currentUserId} user={user} />}

@@ -375,6 +375,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dashboard/Insights routes
+  app.get("/api/checkins/trends/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const checkIns = await storage.getCheckIns(userId);
+      // Return last 7 days of check-ins for trends
+      const last7Days = checkIns
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 7);
+      res.json(last7Days);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching check-in trends", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/resources/completed/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      // For now, return sample completed resources
+      // In a real app, you'd track user's completed resources
+      const completedResources = [
+        { id: 1, title: "Understanding Your Changing Body", completedAt: new Date() },
+        { id: 2, title: "Nutrition During Pregnancy", completedAt: new Date() },
+        { id: 3, title: "Preparing for Labor", completedAt: new Date() }
+      ];
+      res.json(completedResources);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching completed resources", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/appointments/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const appointments = await storage.getAppointments(userId);
+      res.json(appointments);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching appointments", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
