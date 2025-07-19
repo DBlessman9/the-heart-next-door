@@ -155,7 +155,8 @@ export default function Onboarding() {
               Welcome to Your Digital Village
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              Meet Nia, your AI-powered doula who's here to support you 24/7 through your pregnancy and postpartum journey.
+              You were never meant to do this alone.<br/>
+              Your personalized care starts now — with 24/7 support, real experts, and the love you deserve.
             </p>
             <div className="space-y-4 px-4">
               <button 
