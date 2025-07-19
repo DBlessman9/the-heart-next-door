@@ -172,33 +172,36 @@ export default function FloatingChat() {
                     </div>
 
                     {/* Chat messages */}
-                    {messages.map((msg: ChatMessage) => {
-                      console.log("Message:", msg.id, "isFromUser:", msg.isFromUser, "content:", msg.content.substring(0, 50));
-                      return (
+                    {messages.map((msg: ChatMessage) => (
+                      <div
+                        key={msg.id}
+                        className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"} mb-3`}
+                      >
                         <div
-                          key={msg.id}
-                          className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"}`}
+                          className={`max-w-[80%] p-3 rounded-lg border-2 ${
+                            msg.isFromUser
+                              ? "border-green-500 text-white"
+                              : "bg-gray-100 text-gray-800 border-gray-300"
+                          }`}
+                          style={{
+                            backgroundColor: msg.isFromUser ? '#22c55e' : undefined
+                          }}
                         >
-                          <div
-                            className={`max-w-[80%] p-3 rounded-lg ${
-                              msg.isFromUser
-                                ? "bg-sage text-white"
-                                : "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            <p className="text-sm">{msg.content}</p>
-                            <span className={`text-xs mt-1 block ${
-                              msg.isFromUser ? "text-white/70" : "text-gray-500"
-                            }`}>
-                              {new Date(msg.timestamp).toLocaleTimeString([], { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}
-                            </span>
+                          <div className="text-xs text-red-500 mb-1">
+                            {msg.isFromUser ? "USER" : "NIA"}
                           </div>
+                          <p className="text-sm">{msg.content}</p>
+                          <span className={`text-xs mt-1 block ${
+                            msg.isFromUser ? "text-white/70" : "text-gray-500"
+                          }`}>
+                            {new Date(msg.timestamp).toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </span>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
 
                     {/* Loading indicator for new messages */}
                     {sendMessageMutation.isPending && (
