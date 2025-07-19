@@ -80,6 +80,18 @@ export default function Onboarding() {
 
   const handleSubmit = () => {
     if (step < 4) {
+      // Validate due date before proceeding from step 3
+      if (step === 3 && formData.pregnancyStage !== "postpartum") {
+        const validation = validateDueDate();
+        if (!validation.isValid) {
+          toast({
+            title: "Due Date Error",
+            description: validation.error,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
       setStep(step + 1);
     } else {
       // Final submission
@@ -100,6 +112,43 @@ export default function Onboarding() {
         return { ...prev, [field]: currentArray.filter(item => item !== option) };
       }
     });
+  };
+
+  const validateDueDate = () => {
+    if (!formData.dueDate || !formData.pregnancyStage || formData.pregnancyStage === "postpartum") {
+      return { isValid: true, error: "" };
+    }
+
+    const today = new Date();
+    const dueDate = new Date(formData.dueDate);
+    const weeksUntilDue = Math.ceil((dueDate.getTime() - today.getTime()) / (7 * 24 * 60 * 60 * 1000));
+
+    // Calculate expected week ranges for each trimester
+    const trimesterRanges = {
+      first: { minWeeks: 28, maxWeeks: 40 }, // weeks 0-12, so 28-40 weeks until due
+      second: { minWeeks: 13, maxWeeks: 27 }, // weeks 13-27, so 13-27 weeks until due  
+      third: { minWeeks: 0, maxWeeks: 12 }    // weeks 28-40, so 0-12 weeks until due
+    };
+
+    const range = trimesterRanges[formData.pregnancyStage as keyof typeof trimesterRanges];
+    if (!range) {
+      return { isValid: true, error: "" };
+    }
+
+    if (weeksUntilDue < range.minWeeks || weeksUntilDue > range.maxWeeks) {
+      const trimesterNames = {
+        first: "first trimester (weeks 1-12)",
+        second: "second trimester (weeks 13-27)", 
+        third: "third trimester (weeks 28-40)"
+      };
+      
+      return {
+        isValid: false,
+        error: `Due date doesn't align with ${trimesterNames[formData.pregnancyStage as keyof typeof trimesterNames]}. Expected ${range.minWeeks}-${range.maxWeeks} weeks until delivery.`
+      };
+    }
+
+    return { isValid: true, error: "" };
   };
 
 
@@ -289,6 +338,12 @@ export default function Onboarding() {
                         className="mt-1"
                         required
                       />
+                      {formData.dueDate && formData.pregnancyStage && !validateDueDate().isValid && (
+                        <div className="flex items-center mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                          <AlertCircle className="text-red-500 mr-2" size={16} />
+                          <p className="text-sm text-red-700">{validateDueDate().error}</p>
+                        </div>
+                      )}
                     </div>
 
                     <div>
