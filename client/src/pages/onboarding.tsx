@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Heart, AlertCircle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -22,8 +23,8 @@ export default function Onboarding() {
     pregnancyStage: "",
     dueDate: "",
     babyBirthDate: "",
-    babyAgeMonths: "",
-    babyAgeWeeks: "",
+    birthExperience: [] as string[],
+    supportNeeds: [] as string[],
     isPostpartum: false,
   });
 
@@ -39,8 +40,8 @@ export default function Onboarding() {
         dueDate: userData.dueDate || undefined,
         isPostpartum: userData.pregnancyStage === "postpartum",
         babyBirthDate: userData.babyBirthDate || undefined,
-        babyAgeMonths: userData.babyAgeMonths ? parseInt(userData.babyAgeMonths) : undefined,
-        babyAgeWeeks: userData.babyAgeWeeks ? parseInt(userData.babyAgeWeeks) : undefined,
+        birthExperience: userData.birthExperience,
+        supportNeeds: userData.supportNeeds,
         preferences: {},
       });
       return response.json();
@@ -111,25 +112,41 @@ export default function Onboarding() {
   };
 
   const handleSubmit = () => {
-    if (step < 3) {
+    if (step < 4) {
+      if (step === 3) {
+        // Validate pregnancy data before going to final step
+        if (formData.pregnancyStage !== "postpartum") {
+          const validation = validatePregnancyData();
+          if (!validation.isValid) {
+            toast({
+              title: "Data Validation Error",
+              description: validation.error,
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+      }
       setStep(step + 1);
     } else {
-      // Validate pregnancy data before submission
-      const validation = validatePregnancyData();
-      if (!validation.isValid) {
-        toast({
-          title: "Data Validation Error",
-          description: validation.error,
-          variant: "destructive",
-        });
-        return;
-      }
+      // Final submission
       createUserMutation.mutate(formData);
     }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCheckboxChange = (field: 'birthExperience' | 'supportNeeds', option: string, checked: boolean) => {
+    setFormData(prev => {
+      const currentArray = prev[field] as string[];
+      if (checked) {
+        return { ...prev, [field]: [...currentArray, option] };
+      } else {
+        return { ...prev, [field]: currentArray.filter(item => item !== option) };
+      }
+    });
   };
 
   const getTrimesterRange = (stage: string) => {
@@ -374,37 +391,58 @@ export default function Onboarding() {
                         required
                       />
                     </div>
+                    
                     <div>
-                      <Label htmlFor="babyAge">How old is your baby?</Label>
-                      <div className="grid grid-cols-2 gap-2 mt-1">
-                        <div>
-                          <Input
-                            id="babyAgeMonths"
-                            type="number"
-                            value={formData.babyAgeMonths}
-                            onChange={(e) => handleInputChange("babyAgeMonths", e.target.value)}
-                            placeholder="Months"
-                            className="w-full"
-                            min="0"
-                            max="24"
-                          />
-                        </div>
-                        <div>
-                          <Input
-                            id="babyAgeWeeks"
-                            type="number"
-                            value={formData.babyAgeWeeks}
-                            onChange={(e) => handleInputChange("babyAgeWeeks", e.target.value)}
-                            placeholder="Weeks"
-                            className="w-full"
-                            min="0"
-                            max="52"
-                          />
-                        </div>
+                      <Label className="text-base font-medium">Would you like to share a little about yours so we can better support you?</Label>
+                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
+                      <div className="space-y-3">
+                        {[
+                          "Baby arrived full-term",
+                          "Baby was preterm", 
+                          "Vaginal birth",
+                          "Cesarean birth",
+                          "Planned induction",
+                          "Emergency delivery",
+                          "NICU stay",
+                          "Complications during birth",
+                          "I'm still processing my experience",
+                          "I'd rather not say"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`birth-${option}`}
+                              checked={formData.birthExperience.includes(option)}
+                              onCheckedChange={(checked) => handleCheckboxChange('birthExperience', option, checked as boolean)}
+                            />
+                            <Label htmlFor={`birth-${option}`} className="text-sm font-normal">{option}</Label>
+                          </div>
+                        ))}
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">
-                        You can fill in months, weeks, or both for more precise tracking
-                      </p>
+                    </div>
+
+                    <div>
+                      <Label className="text-base font-medium">Would you like support with any of the following?</Label>
+                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
+                      <div className="space-y-3">
+                        {[
+                          "Breastfeeding / feeding routines",
+                          "Emotional wellness / mood",
+                          "Sleep & recovery",
+                          "Birth healing / trauma",
+                          "Scheduling care and appointments",
+                          "Connecting with other moms",
+                          "None right now"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`support-${option}`}
+                              checked={formData.supportNeeds.includes(option)}
+                              onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
+                            />
+                            <Label htmlFor={`support-${option}`} className="text-sm font-normal">{option}</Label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </>
                 )}
@@ -425,6 +463,42 @@ export default function Onboarding() {
                     e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
                   }}
                   disabled={createUserMutation.isPending || !isFormValid()}
+                >
+                  {formData.pregnancyStage === "postpartum" ? "Continue" : "Complete Setup"}
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 4 && formData.pregnancyStage === "postpartum" && (
+          <Card className="mt-8 mb-8">
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6">
+                  <Heart className="text-white text-2xl" size={32} />
+                </div>
+                <div className="mb-6">
+                  <span className="text-4xl">💛</span>
+                </div>
+                <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+                  Thank you for trusting us with your story. However your journey unfolded and whatever support you need, you're not alone. We're here to walk it with you.
+                </p>
+                <button 
+                  onClick={handleSubmit}
+                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                  style={{
+                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    color: 'white',
+                    border: '2px solid hsl(146, 27%, 56%)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  }}
+                  disabled={createUserMutation.isPending}
                 >
                   {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
                 </button>

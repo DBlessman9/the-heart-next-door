@@ -14,8 +14,8 @@ export const users = pgTable("users", {
   isPostpartum: boolean("is_postpartum").default(false),
   // Postpartum-specific fields
   babyBirthDate: timestamp("baby_birth_date"),
-  babyAgeMonths: integer("baby_age_months"),
-  babyAgeWeeks: integer("baby_age_weeks"),
+  birthExperience: jsonb("birth_experience").default([]),
+  supportNeeds: jsonb("support_needs").default([]),
   preferences: jsonb("preferences").default({}),
   createdAt: timestamp("created_at").defaultNow(),
 });
