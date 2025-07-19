@@ -131,7 +131,7 @@ export default function FloatingChat() {
           ></div>
           
           {/* Chat Window */}
-          <Card className="relative w-full max-w-md h-[600px] flex flex-col shadow-2xl">
+          <Card className="relative w-full max-w-md h-[500px] flex flex-col shadow-2xl">
             <CardHeader className="pb-3" style={{ backgroundColor: 'hsl(146, 27%, 56%)' }}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -156,82 +156,88 @@ export default function FloatingChat() {
 
             <CardContent className="flex-1 flex flex-col p-0">
               {/* Messages Area */}
-              <ScrollArea className="flex-1 p-4">
-                {isLoading ? (
-                  <div className="flex items-center justify-center h-32">
-                    <Loader2 className="animate-spin text-sage" size={24} />
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Initial contextual greeting */}
-                    <div className="flex justify-start">
-                      <div className="max-w-[80%] p-3 rounded-lg bg-gray-100">
-                        <p className="text-sm text-gray-800">{getContextualGreeting()}</p>
-                        <span className="text-xs text-gray-500 mt-1 block">Just now</span>
-                      </div>
+              <div className="flex-1 overflow-hidden">
+                <ScrollArea className="h-full p-4">
+                  {isLoading ? (
+                    <div className="flex items-center justify-center h-32">
+                      <Loader2 className="animate-spin text-sage" size={24} />
                     </div>
-
-                    {/* Chat messages */}
-                    {messages.map((msg: ChatMessage) => (
-                      <div
-                        key={msg.id}
-                        className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"} mb-3`}
-                      >
-                        <div
-                          className={`max-w-[80%] p-3 rounded-lg ${
-                            msg.isFromUser
-                              ? "text-white"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                          style={{
-                            backgroundColor: msg.isFromUser ? 'hsl(146, 27%, 56%)' : undefined
-                          }}
-                        >
-                          <p className="text-sm">{msg.content}</p>
-                          <span className={`text-xs mt-1 block ${
-                            msg.isFromUser ? "text-white/70" : "text-gray-500"
-                          }`}>
-                            {new Date(msg.timestamp).toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            })}
-                          </span>
+                  ) : (
+                    <div className="space-y-3 pb-4">
+                      {/* Initial contextual greeting */}
+                      <div className="flex justify-start">
+                        <div className="max-w-[85%] p-3 rounded-lg bg-gray-100">
+                          <p className="text-sm text-gray-800">{getContextualGreeting()}</p>
+                          <span className="text-xs text-gray-500 mt-1 block">Just now</span>
                         </div>
                       </div>
-                    ))}
 
-                    {/* Loading indicator for new messages */}
-                    {sendMessageMutation.isPending && (
-                      <div className="flex justify-start">
-                        <div className="max-w-[80%] p-3 rounded-lg bg-gray-100">
-                          <div className="flex items-center gap-2">
-                            <Loader2 className="animate-spin" size={16} />
-                            <span className="text-sm text-gray-600">Nia is typing...</span>
+                      {/* Chat messages */}
+                      {messages.map((msg: ChatMessage) => (
+                        <div
+                          key={msg.id}
+                          className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"}`}
+                        >
+                          <div
+                            className={`max-w-[85%] p-3 rounded-lg ${
+                              msg.isFromUser
+                                ? "text-white"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                            style={{
+                              backgroundColor: msg.isFromUser ? 'hsl(146, 27%, 56%)' : undefined
+                            }}
+                          >
+                            <p className="text-sm leading-relaxed">{msg.content}</p>
+                            <span className={`text-xs mt-2 block ${
+                              msg.isFromUser ? "text-white/70" : "text-gray-500"
+                            }`}>
+                              {new Date(msg.timestamp).toLocaleTimeString([], { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                              })}
+                            </span>
                           </div>
                         </div>
-                      </div>
-                    )}
-                    
-                    {/* Scroll anchor */}
-                    <div ref={messagesEndRef} />
-                  </div>
-                )}
-              </ScrollArea>
+                      ))}
+
+                      {/* Loading indicator for new messages */}
+                      {sendMessageMutation.isPending && (
+                        <div className="flex justify-start">
+                          <div className="max-w-[85%] p-3 rounded-lg bg-gray-100">
+                            <div className="flex items-center gap-2">
+                              <Loader2 className="animate-spin" size={16} />
+                              <span className="text-sm text-gray-600">Nia is typing...</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Scroll anchor */}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  )}
+                </ScrollArea>
+              </div>
 
               {/* Message Input */}
-              <div className="border-t p-4">
-                <form onSubmit={handleSendMessage} className="flex gap-2">
+              <div className="border-t border-gray-200 p-4 bg-white">
+                <form onSubmit={handleSendMessage} className="flex gap-3">
                   <Input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type your message..."
-                    className="flex-1"
+                    placeholder="Type your message to Nia..."
+                    className="flex-1 border-gray-300 focus:border-sage focus:ring-sage"
                     disabled={sendMessageMutation.isPending}
                   />
                   <Button
                     type="submit"
                     disabled={!message.trim() || sendMessageMutation.isPending}
-                    className="bg-sage hover:bg-sage/90"
+                    className="px-4"
+                    style={{
+                      backgroundColor: 'hsl(146, 27%, 56%)',
+                      color: 'white'
+                    }}
                   >
                     {sendMessageMutation.isPending ? (
                       <Loader2 className="animate-spin" size={16} />
