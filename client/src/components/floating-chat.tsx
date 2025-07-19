@@ -140,7 +140,7 @@ export default function FloatingChat() {
                   </div>
                   <div>
                     <CardTitle className="text-white text-lg">Nia</CardTitle>
-                    <p className="text-white/80 text-sm">Your AI Doula</p>
+                    <p className="text-white/80 text-sm">Your Digital Doula</p>
                   </div>
                 </div>
                 <Button
