@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Onboarding from "@/pages/onboarding";
+import FloatingChat from "@/components/floating-chat";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
+        <FloatingChat />
       </TooltipProvider>
     </QueryClientProvider>
   );

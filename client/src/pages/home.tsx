@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import AppHeader from "@/components/app-header";
 import TabNavigation from "@/components/tab-navigation";
-import ChatInterface from "@/components/chat-interface";
 import DailyCheckIn from "@/components/daily-checkin";
 import Journal from "@/components/journal";
 import Resources from "@/components/resources";
@@ -48,7 +47,6 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       <div className="pb-4">
-        {activeTab === "chat" && <ChatInterface userId={currentUserId} />}
         {activeTab === "checkin" && <DailyCheckIn userId={currentUserId} user={user} />}
         {activeTab === "baby" && <BabyGuidance userId={currentUserId} user={user} onTabChange={setActiveTab} />}
         {activeTab === "appointments" && <Appointments userId={currentUserId} user={user} />}

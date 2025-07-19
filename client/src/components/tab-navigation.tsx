@@ -11,7 +11,6 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
     { id: "baby", label: "Baby", icon: Baby },
     { id: "appointments", label: "Schedule", icon: Calendar },
     { id: "community", label: "Village", icon: Users },
-    { id: "chat", label: "Chat", icon: MessageCircle },
     { id: "experts", label: "Experts", icon: UserCheck },
     { id: "resources", label: "Learn", icon: GraduationCap },
     { id: "journal", label: "Journal", icon: BookOpen },
