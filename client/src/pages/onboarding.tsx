@@ -532,9 +532,7 @@ export default function Onboarding() {
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6">
                   <Heart className="text-white text-2xl" size={32} />
                 </div>
-                <div className="mb-6">
-                  <span className="text-4xl">💛</span>
-                </div>
+
                 <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                   {formData.pregnancyStage === "postpartum" 
                     ? "Thank you for trusting us with your story. However your journey unfolded and whatever support you need, you're not alone. We're here to walk it with you."
