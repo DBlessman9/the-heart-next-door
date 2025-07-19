@@ -180,9 +180,12 @@ export default function FloatingChat() {
                         <div
                           className={`max-w-[80%] p-3 rounded-lg ${
                             msg.isFromUser
-                              ? "bg-sage text-white"
+                              ? "text-white"
                               : "bg-gray-100 text-gray-800"
                           }`}
+                          style={{
+                            backgroundColor: msg.isFromUser ? 'hsl(146, 27%, 56%)' : undefined
+                          }}
                         >
                           <p className="text-sm">{msg.content}</p>
                           <span className={`text-xs mt-1 block ${
