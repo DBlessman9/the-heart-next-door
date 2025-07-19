@@ -178,18 +178,12 @@ export default function FloatingChat() {
                         className={`flex ${msg.isFromUser ? "justify-end" : "justify-start"} mb-3`}
                       >
                         <div
-                          className={`max-w-[80%] p-3 rounded-lg border-2 ${
+                          className={`max-w-[80%] p-3 rounded-lg ${
                             msg.isFromUser
-                              ? "border-green-500 text-white"
-                              : "bg-gray-100 text-gray-800 border-gray-300"
+                              ? "bg-sage text-white"
+                              : "bg-gray-100 text-gray-800"
                           }`}
-                          style={{
-                            backgroundColor: msg.isFromUser ? '#22c55e' : undefined
-                          }}
                         >
-                          <div className="text-xs text-red-500 mb-1">
-                            {msg.isFromUser ? "USER" : "NIA"}
-                          </div>
                           <p className="text-sm">{msg.content}</p>
                           <span className={`text-xs mt-1 block ${
                             msg.isFromUser ? "text-white/70" : "text-gray-500"
