@@ -23,6 +23,7 @@ export default function Onboarding() {
     pregnancyStage: "",
     dueDate: "",
     babyBirthDate: "",
+    pregnancyExperience: [] as string[],
     birthExperience: [] as string[],
     supportNeeds: [] as string[],
     isPostpartum: false,
@@ -40,6 +41,7 @@ export default function Onboarding() {
         dueDate: userData.dueDate || undefined,
         isPostpartum: userData.pregnancyStage === "postpartum",
         babyBirthDate: userData.babyBirthDate || undefined,
+        pregnancyExperience: userData.pregnancyExperience,
         birthExperience: userData.birthExperience,
         supportNeeds: userData.supportNeeds,
         preferences: {},
@@ -138,7 +140,7 @@ export default function Onboarding() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleCheckboxChange = (field: 'birthExperience' | 'supportNeeds', option: string, checked: boolean) => {
+  const handleCheckboxChange = (field: 'pregnancyExperience' | 'birthExperience' | 'supportNeeds', option: string, checked: boolean) => {
     setFormData(prev => {
       const currentArray = prev[field] as string[];
       if (checked) {
@@ -376,6 +378,57 @@ export default function Onboarding() {
                         required
                       />
                     </div>
+
+                    <div>
+                      <Label className="text-base font-medium">Would you like to share anything about your pregnancy to help us personalize your care?</Label>
+                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
+                      <div className="space-y-3">
+                        {[
+                          "This is my first pregnancy",
+                          "I've had previous pregnancies",
+                          "High-risk pregnancy",
+                          "Multiple babies (twins, triplets, etc.)",
+                          "Complications or special concerns",
+                          "I'm navigating loss or uncertainty",
+                          "I'm still figuring things out",
+                          "I'd rather not say"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`pregnancy-${option}`}
+                              checked={formData.pregnancyExperience.includes(option)}
+                              onCheckedChange={(checked) => handleCheckboxChange('pregnancyExperience', option, checked as boolean)}
+                            />
+                            <Label htmlFor={`pregnancy-${option}`} className="text-sm font-normal">{option}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-base font-medium">Would you like extra support with…</Label>
+                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
+                      <div className="space-y-3">
+                        {[
+                          "Preparing for birth",
+                          "Managing symptoms",
+                          "Emotional wellbeing",
+                          "Nutrition & wellness",
+                          "Talking with providers",
+                          "My relationship or support system",
+                          "Something else / not sure yet"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`pregnancy-support-${option}`}
+                              checked={formData.supportNeeds.includes(option)}
+                              onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
+                            />
+                            <Label htmlFor={`pregnancy-support-${option}`} className="text-sm font-normal">{option}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </>
                 ) : (
                   // Postpartum questions
@@ -464,14 +517,14 @@ export default function Onboarding() {
                   }}
                   disabled={createUserMutation.isPending || !isFormValid()}
                 >
-                  {formData.pregnancyStage === "postpartum" ? "Continue" : "Complete Setup"}
+                  Continue
                 </button>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {step === 4 && formData.pregnancyStage === "postpartum" && (
+        {step === 4 && (
           <Card className="mt-8 mb-8">
             <CardContent className="p-6">
               <div className="text-center">
@@ -482,7 +535,10 @@ export default function Onboarding() {
                   <span className="text-4xl">💛</span>
                 </div>
                 <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                  Thank you for trusting us with your story. However your journey unfolded and whatever support you need, you're not alone. We're here to walk it with you.
+                  {formData.pregnancyStage === "postpartum" 
+                    ? "Thank you for trusting us with your story. However your journey unfolded and whatever support you need, you're not alone. We're here to walk it with you."
+                    : "Thank you for sharing. Wherever you are in your pregnancy journey, we're here to support you with care that adapts to you."
+                  }
                 </p>
                 <button 
                   onClick={handleSubmit}
