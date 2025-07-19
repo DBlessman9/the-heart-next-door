@@ -21,6 +21,9 @@ export default function Onboarding() {
     pregnancyWeek: "",
     pregnancyStage: "",
     dueDate: "",
+    babyBirthDate: "",
+    babyAgeMonths: "",
+    babyAgeWeeks: "",
     isPostpartum: false,
   });
 
@@ -35,6 +38,9 @@ export default function Onboarding() {
         pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined,
         dueDate: userData.dueDate || undefined,
         isPostpartum: userData.pregnancyStage === "postpartum",
+        babyBirthDate: userData.babyBirthDate || undefined,
+        babyAgeMonths: userData.babyAgeMonths ? parseInt(userData.babyAgeMonths) : undefined,
+        babyAgeWeeks: userData.babyAgeWeeks ? parseInt(userData.babyAgeWeeks) : undefined,
         preferences: {},
       });
       return response.json();
@@ -141,6 +147,22 @@ export default function Onboarding() {
       return validation.error;
     }
     return "";
+  };
+
+  const isFormValid = () => {
+    if (step === 2) {
+      return formData.firstName && formData.lastName && formData.email && formData.pregnancyStage;
+    }
+    if (step === 3) {
+      if (formData.pregnancyStage === "postpartum") {
+        // For postpartum: baby birth date is required
+        return formData.babyBirthDate;
+      } else {
+        // For pregnant: pregnancy week and due date are required
+        return formData.pregnancyWeek && formData.dueDate;
+      }
+    }
+    return true;
   };
 
   return (
@@ -282,7 +304,7 @@ export default function Onboarding() {
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
                   }}
-                  disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.pregnancyStage}
+                  disabled={!isFormValid()}
                 >
                   Continue
                 </button>
@@ -298,10 +320,11 @@ export default function Onboarding() {
                 A few more details
               </h2>
               <div className="space-y-4">
-                {formData.pregnancyStage !== "postpartum" && (
+                {formData.pregnancyStage !== "postpartum" ? (
+                  // Pregnancy questions (mandatory)
                   <>
                     <div>
-                      <Label htmlFor="pregnancyWeek">Pregnancy Week (optional)</Label>
+                      <Label htmlFor="pregnancyWeek">Pregnancy Week *</Label>
                       <Input
                         id="pregnancyWeek"
                         type="number"
@@ -311,6 +334,7 @@ export default function Onboarding() {
                         className="mt-1"
                         min="1"
                         max="42"
+                        required
                       />
                       {formData.pregnancyStage && (
                         <p className="text-sm text-gray-500 mt-1">
@@ -325,14 +349,62 @@ export default function Onboarding() {
                       )}
                     </div>
                     <div>
-                      <Label htmlFor="dueDate">Due Date (optional)</Label>
+                      <Label htmlFor="dueDate">Due Date *</Label>
                       <Input
                         id="dueDate"
                         type="date"
                         value={formData.dueDate}
                         onChange={(e) => handleInputChange("dueDate", e.target.value)}
                         className="mt-1"
+                        required
                       />
+                    </div>
+                  </>
+                ) : (
+                  // Postpartum questions
+                  <>
+                    <div>
+                      <Label htmlFor="babyBirthDate">When was your baby born? *</Label>
+                      <Input
+                        id="babyBirthDate"
+                        type="date"
+                        value={formData.babyBirthDate}
+                        onChange={(e) => handleInputChange("babyBirthDate", e.target.value)}
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="babyAge">How old is your baby?</Label>
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <div>
+                          <Input
+                            id="babyAgeMonths"
+                            type="number"
+                            value={formData.babyAgeMonths}
+                            onChange={(e) => handleInputChange("babyAgeMonths", e.target.value)}
+                            placeholder="Months"
+                            className="w-full"
+                            min="0"
+                            max="24"
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            id="babyAgeWeeks"
+                            type="number"
+                            value={formData.babyAgeWeeks}
+                            onChange={(e) => handleInputChange("babyAgeWeeks", e.target.value)}
+                            placeholder="Weeks"
+                            className="w-full"
+                            min="0"
+                            max="52"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        You can fill in months, weeks, or both for more precise tracking
+                      </p>
                     </div>
                   </>
                 )}
@@ -352,7 +424,7 @@ export default function Onboarding() {
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
                   }}
-                  disabled={createUserMutation.isPending}
+                  disabled={createUserMutation.isPending || !isFormValid()}
                 >
                   {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
                 </button>

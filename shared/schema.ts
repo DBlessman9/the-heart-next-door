@@ -12,6 +12,10 @@ export const users = pgTable("users", {
   pregnancyStage: text("pregnancy_stage"), // "first", "second", "third", "postpartum"
   dueDate: timestamp("due_date"),
   isPostpartum: boolean("is_postpartum").default(false),
+  // Postpartum-specific fields
+  babyBirthDate: timestamp("baby_birth_date"),
+  babyAgeMonths: integer("baby_age_months"),
+  babyAgeWeeks: integer("baby_age_weeks"),
   preferences: jsonb("preferences").default({}),
   createdAt: timestamp("created_at").defaultNow(),
 });
