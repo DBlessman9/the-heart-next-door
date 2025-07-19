@@ -97,29 +97,14 @@ export default function FloatingChat() {
         <div className="fixed bottom-6 right-6 z-50">
           <Button
             onClick={handleToggle}
-            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 relative"
+            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
             style={{
               backgroundColor: 'hsl(146, 27%, 56%)',
               border: '3px solid white'
             }}
           >
             <MessageCircle size={24} className="text-white" />
-            {/* Pulsing indicator */}
-            <div className="absolute -top-1 -right-1 h-4 w-4 bg-red-400 rounded-full animate-pulse"></div>
           </Button>
-          
-          {/* Contextual tooltip */}
-          <div className="absolute bottom-full right-0 mb-2 max-w-xs">
-            <div className="bg-white rounded-lg shadow-lg border p-3 text-sm text-gray-700 transform transition-all duration-300">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="font-medium text-sage">Nia is here</span>
-              </div>
-              <p>{getContextualGreeting()}</p>
-              {/* Arrow pointing down */}
-              <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
-            </div>
-          </div>
         </div>
       )}
 
