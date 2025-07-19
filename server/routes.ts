@@ -22,7 +22,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(user);
     } catch (error) {
       console.error("User creation error:", error);
-      res.status(400).json({ message: "Invalid user data", error: error instanceof Error ? error.message : "Unknown error" });
+      
+      // Handle duplicate email error specifically
+      if (error && typeof error === 'object' && 'code' in error && error.code === '23505') {
+        return res.status(409).json({ 
+          message: "An account with this email already exists", 
+          error: "duplicate_email" 
+        });
+      }
+      
+      res.status(400).json({ 
+        message: "Invalid user data", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
   });
 

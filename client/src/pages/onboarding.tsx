@@ -56,12 +56,23 @@ export default function Onboarding() {
       });
       setLocation("/");
     },
-    onError: (error) => {
-      toast({
-        title: "Error creating profile",
-        description: "Please try again.",
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      console.error("Profile creation error:", error);
+      
+      // Check if it's a duplicate email error
+      if (error?.message?.includes("duplicate_email") || error?.message?.includes("email already exists")) {
+        toast({
+          title: "Email already registered",
+          description: "An account with this email already exists. Try logging in instead or use a different email.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error creating profile",
+          description: "Please check your information and try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
