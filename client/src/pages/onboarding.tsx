@@ -38,9 +38,9 @@ export default function Onboarding() {
         email: userData.email,
         pregnancyStage: userData.pregnancyStage,
         pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined,
-        dueDate: userData.dueDate || undefined,
+        dueDate: userData.dueDate ? new Date(userData.dueDate) : undefined,
         isPostpartum: userData.pregnancyStage === "postpartum",
-        babyBirthDate: userData.babyBirthDate || undefined,
+        babyBirthDate: userData.babyBirthDate ? new Date(userData.babyBirthDate) : undefined,
         pregnancyExperience: userData.pregnancyExperience,
         birthExperience: userData.birthExperience,
         supportNeeds: userData.supportNeeds,
@@ -65,70 +65,10 @@ export default function Onboarding() {
     },
   });
 
-  const validatePregnancyData = () => {
-    const week = parseInt(formData.pregnancyWeek);
-    const stage = formData.pregnancyStage;
-    const dueDate = formData.dueDate;
 
-    // Skip validation if no week or stage provided
-    if (!week || !stage || stage === "postpartum") {
-      return { isValid: true, error: "" };
-    }
-
-    // Check trimester-week alignment
-    const trimesterRanges = {
-      first: { min: 1, max: 12 },
-      second: { min: 13, max: 27 },
-      third: { min: 28, max: 42 }
-    };
-
-    const range = trimesterRanges[stage];
-    if (!range) {
-      return { isValid: true, error: "" };
-    }
-
-    if (week < range.min || week > range.max) {
-      return {
-        isValid: false,
-        error: `Week ${week} doesn't match ${stage} trimester (weeks ${range.min}-${range.max})`
-      };
-    }
-
-    // Check due date alignment if provided
-    if (dueDate) {
-      const today = new Date();
-      const due = new Date(dueDate);
-      const weeksFromToday = Math.ceil((due.getTime() - today.getTime()) / (7 * 24 * 60 * 60 * 1000));
-      const expectedWeeksRemaining = 40 - week;
-      
-      // Allow 2 week variance for due date calculations
-      if (Math.abs(weeksFromToday - expectedWeeksRemaining) > 2) {
-        return {
-          isValid: false,
-          error: `Due date doesn't align with week ${week}. Expected around ${expectedWeeksRemaining} weeks from now, but due date is ${weeksFromToday} weeks away`
-        };
-      }
-    }
-
-    return { isValid: true, error: "" };
-  };
 
   const handleSubmit = () => {
     if (step < 4) {
-      if (step === 3) {
-        // Validate pregnancy data before going to final step
-        if (formData.pregnancyStage !== "postpartum") {
-          const validation = validatePregnancyData();
-          if (!validation.isValid) {
-            toast({
-              title: "Data Validation Error",
-              description: validation.error,
-              variant: "destructive",
-            });
-            return;
-          }
-        }
-      }
       setStep(step + 1);
     } else {
       // Final submission
@@ -151,22 +91,7 @@ export default function Onboarding() {
     });
   };
 
-  const getTrimesterRange = (stage: string) => {
-    switch (stage) {
-      case "first": return "weeks 1-12";
-      case "second": return "weeks 13-27";
-      case "third": return "weeks 28-40+";
-      default: return "";
-    }
-  };
 
-  const getValidationMessage = () => {
-    const validation = validatePregnancyData();
-    if (!validation.isValid) {
-      return validation.error;
-    }
-    return "";
-  };
 
   const isFormValid = () => {
     if (step === 2) {
@@ -177,8 +102,8 @@ export default function Onboarding() {
         // For postpartum: baby birth date is required
         return formData.babyBirthDate;
       } else {
-        // For pregnant: pregnancy week and due date are required
-        return formData.pregnancyWeek && formData.dueDate;
+        // For pregnant: due date is required
+        return formData.dueDate;
       }
     }
     return true;
@@ -342,31 +267,7 @@ export default function Onboarding() {
                 {formData.pregnancyStage !== "postpartum" ? (
                   // Pregnancy questions (mandatory)
                   <>
-                    <div>
-                      <Label htmlFor="pregnancyWeek">Pregnancy Week *</Label>
-                      <Input
-                        id="pregnancyWeek"
-                        type="number"
-                        value={formData.pregnancyWeek}
-                        onChange={(e) => handleInputChange("pregnancyWeek", e.target.value)}
-                        placeholder="e.g., 24"
-                        className="mt-1"
-                        min="1"
-                        max="42"
-                        required
-                      />
-                      {formData.pregnancyStage && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          {formData.pregnancyStage} trimester is {getTrimesterRange(formData.pregnancyStage)}
-                        </p>
-                      )}
-                      {getValidationMessage() && (
-                        <div className="flex items-center mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-                          <AlertCircle className="text-red-500 mr-2" size={16} />
-                          <p className="text-sm text-red-700">{getValidationMessage()}</p>
-                        </div>
-                      )}
-                    </div>
+
                     <div>
                       <Label htmlFor="dueDate">Due Date *</Label>
                       <Input
