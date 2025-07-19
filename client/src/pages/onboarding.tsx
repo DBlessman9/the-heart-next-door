@@ -437,7 +437,7 @@ export default function Onboarding() {
                 <p className="text-lg text-gray-700 mb-8 leading-relaxed">
                   {formData.pregnancyStage === "postpartum" 
                     ? "Thank you for trusting us with your story. However your journey unfolded and whatever support you need, you're not alone. We're here to walk it with you."
-                    : "Thank you for sharing. Wherever you are in your pregnancy journey, we're here to support you with care that adapts to you."
+                    : "Thank you for sharing. Wherever you are in your pregnancy journey, we're here to support you with care that meets you where you are."
                   }
                 </p>
                 <button 
