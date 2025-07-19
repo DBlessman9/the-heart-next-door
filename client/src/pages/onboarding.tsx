@@ -97,7 +97,12 @@ export default function Onboarding() {
       setStep(step + 1);
     } else {
       // Final submission
-      createUserMutation.mutate(formData);
+      const submitData = {
+        ...formData,
+        name: `${formData.firstName} ${formData.lastName}`,
+        pregnancyWeek: formData.pregnancyWeek ? parseInt(formData.pregnancyWeek) : undefined,
+      };
+      createUserMutation.mutate(submitData);
     }
   };
 

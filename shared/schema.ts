@@ -140,7 +140,13 @@ export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 }).extend({
   dueDate: z.union([z.string(), z.date()]).optional().transform((val) => {
-    if (typeof val === 'string') {
+    if (typeof val === 'string' && val) {
+      return new Date(val);
+    }
+    return val;
+  }),
+  babyBirthDate: z.union([z.string(), z.date()]).optional().transform((val) => {
+    if (typeof val === 'string' && val) {
       return new Date(val);
     }
     return val;
