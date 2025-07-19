@@ -28,6 +28,7 @@ export default function Onboarding() {
     supportNeeds: [] as string[],
     isPostpartum: false,
   });
+  const [showEmailExistsError, setShowEmailExistsError] = useState(false);
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: typeof formData) => {
@@ -61,9 +62,10 @@ export default function Onboarding() {
       
       // Check if it's a duplicate email error
       if (error?.message?.includes("duplicate_email") || error?.message?.includes("email already exists")) {
+        setShowEmailExistsError(true);
         toast({
           title: "Email already registered",
-          description: "An account with this email already exists. Try logging in instead or use a different email.",
+          description: "An account with this email already exists.",
           variant: "destructive",
         });
       } else {
@@ -149,6 +151,34 @@ export default function Onboarding() {
     }
 
     return { isValid: true, error: "" };
+  };
+
+  const handleLoginExistingUser = async () => {
+    try {
+      // Try to find user by email
+      const response = await fetch(`/api/users/email/${encodeURIComponent(formData.email)}`);
+      if (response.ok) {
+        const user = await response.json();
+        localStorage.setItem("currentUserId", user.id.toString());
+        toast({
+          title: "Welcome back!",
+          description: "You've been logged in successfully.",
+        });
+        setLocation("/");
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Unable to find your account. Please contact support.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Login error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
 
@@ -506,24 +536,71 @@ export default function Onboarding() {
                     : "Thank you for sharing. Wherever you are in your pregnancy journey, we're here to support you with care that meets you where you are."
                   }
                 </p>
-                <button 
-                  onClick={handleSubmit}
-                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                  style={{
-                    backgroundColor: 'hsl(146, 27%, 56%)',
-                    color: 'white',
-                    border: '2px solid hsl(146, 27%, 56%)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
-                  }}
-                  disabled={createUserMutation.isPending}
-                >
-                  {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
-                </button>
+                {showEmailExistsError ? (
+                  <div className="space-y-3">
+                    <p className="text-sm text-red-600 mb-4">
+                      An account with this email already exists.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      <button 
+                        onClick={handleLoginExistingUser}
+                        className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                        style={{
+                          backgroundColor: 'hsl(146, 27%, 56%)',
+                          color: 'white',
+                          border: '2px solid hsl(146, 27%, 56%)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                        }}
+                      >
+                        Login to Existing Account
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setShowEmailExistsError(false);
+                          setStep(1);
+                        }}
+                        className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors border-2"
+                        style={{
+                          backgroundColor: 'white',
+                          color: 'hsl(146, 27%, 56%)',
+                          border: '2px solid hsl(146, 27%, 56%)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = 'hsl(146, 27%, 96%)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'white';
+                        }}
+                      >
+                        Use Different Email
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={handleSubmit}
+                    className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                    style={{
+                      backgroundColor: 'hsl(146, 27%, 56%)',
+                      color: 'white',
+                      border: '2px solid hsl(146, 27%, 56%)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                    }}
+                    disabled={createUserMutation.isPending}
+                  >
+                    {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
+                  </button>
+                )}
               </div>
             </CardContent>
           </Card>

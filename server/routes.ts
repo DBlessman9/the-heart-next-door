@@ -51,6 +51,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/users/email/:email", async (req, res) => {
+    try {
+      const email = decodeURIComponent(req.params.email);
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching user by email", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
   app.put("/api/users/:id", async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
