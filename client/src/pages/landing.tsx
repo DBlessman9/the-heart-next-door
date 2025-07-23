@@ -441,7 +441,7 @@ export default function Landing() {
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                  When I faced a traumatic pregnancy and complicated delivery, I found myself grasping for peace, for clarity, for community. That experience changed me. It's what led me to write Waking Up to Grace, my story of survival, surrender, and strength in the face of a maternal health system that too often overlooks us.
+                  When I faced a high-risk pregnancy and traumatic birth I found myself grasping for peace, for clarity, for community. That experience changed me. It's what led me to write Waking Up to Grace, my story of survival, surrender, and strength in the face of a maternal health system that too often overlooks us.
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-6 text-lg">
@@ -453,7 +453,7 @@ export default function Landing() {
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                  This platform is the digital doula I needed. The around-the-clock support I prayed for. The safe haven I promised I'd build—for me, for you, for all of us.
+                  This platform is the digital doula I needed. The around-the-clock support I prayed for. The safe haven I promised I'd create—for me, for you, for all of us.
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-8 text-lg">
