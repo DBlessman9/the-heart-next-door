@@ -422,10 +422,10 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-              Built by moms, for moms
+              Built by Moms, for Moms
             </h2>
             <p className="text-xl text-gray-600">
-              A letter from our founder
+              A Letter from our Founder
             </p>
           </div>
 
@@ -433,29 +433,41 @@ export default function Landing() {
             <CardContent className="p-12">
               <div className="prose prose-lg max-w-none">
                 <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                  Dear fellow mother,
+                  Dear Mama,
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                  I know what it feels like to need support at 3 AM when everyone else is asleep. I know the overwhelming feeling of not knowing if what you're experiencing is "normal." I know the loneliness that can creep in during pregnancy and postpartum, even when surrounded by people who love you.
+                  I know what it feels like to be awake at 3 AM—aching with exhaustion, craving connection, and wondering if anyone else has ever felt what you're feeling. I know the silence that surrounds our pain, the questions that go unanswered, and the invisible weight we carry. Motherhood asks so much of us. And yet, we give and give—often without having a safe place to land ourselves.
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                  That's why I created The Heart Next Door. Every mother deserves a village, and when your village isn't physically there, technology should bridge that gap with warmth, wisdom, and genuine care.
+                  When I faced a traumatic pregnancy and complicated delivery, I found myself grasping for peace, for clarity, for community. That experience changed me. It's what led me to write Waking Up to Grace, my story of survival, surrender, and strength in the face of a maternal health system that too often overlooks us.
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                  Since sharing my journey, I've sat in rooms and forums with hundreds of mothers—listening to their stories, hearing their heartbreaks, and recognizing our shared longing: to feel seen, supported, and safe.
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                  That's why I created The Heart Next Door—not just an app, but an answer. A digital sanctuary designed to meet the real needs of motherhood with empathy, expertise, and around-the-clock care. It's the village we've been told no longer exists—now built with intention, innovation, and heart.
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                  This platform is the digital doula I needed. The around-the-clock support I prayed for. The safe haven I promised I'd build—for me, for you, for all of us.
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed mb-8 text-lg">
-                  This platform isn't just another app—it's the digital doula I wished I had, the 24/7 support system I needed, and the community that understands your journey because we've walked it too.
+                  Wherever you are in your motherhood journey, welcome home.
                 </p>
                 
                 <div className="border-t border-gray-200 pt-8">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-800 font-semibold text-xl mb-2">With love and support,</p>
+                      <p className="text-gray-800 font-semibold text-xl mb-2">With love and gratitude,</p>
                       <div className="text-2xl font-bold text-gray-800 mb-2" style={{fontFamily: 'cursive'}}>
-                        [Your Signature]
+                        Terranie Clarke
                       </div>
-                      <p className="text-gray-600">Founder & CEO</p>
+                      <p className="text-gray-600">Founder, The Heart Next Door</p>
                     </div>
                     <div className="hidden md:block">
                       <div className="w-24 h-24 bg-gradient-to-br from-rose-200 to-orange-200 rounded-full flex items-center justify-center">
