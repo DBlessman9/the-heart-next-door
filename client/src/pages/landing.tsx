@@ -11,6 +11,7 @@ import {
   Heart, 
   MessageCircle, 
   Calendar, 
+  Clock,
   BookOpen, 
   Users, 
   Shield, 
@@ -90,19 +91,19 @@ export default function Landing() {
       description: "Curated educational content from certified doulas, lactation consultants, and wellness experts",
     },
     {
+      icon: Calendar,
+      title: "Appointment Syncing",
+      description: "Keep all your prenatal appointments, checkups, and consultations organized in one place with smart reminders",
+    },
+    {
       icon: Users,
-      title: "Partner Portal",
-      description: "Connect your support person so they can be part of your wellness journey every step of the way",
+      title: "Your Village",
+      description: "Connect with local moms, join community groups, and build meaningful relationships based on location or shared experiences",
     },
     {
       icon: Heart,
       title: "Holistic Wellness",
       description: "Journal prompts, mood tracking, and mindfulness tools designed specifically for maternal health",
-    },
-    {
-      icon: Shield,
-      title: "Privacy First",
-      description: "Your data is secure and private. You control what information is shared and with whom",
     },
   ];
 
@@ -271,6 +272,8 @@ export default function Landing() {
                   pregnancy and postpartum journey.
                 </p>
               </div>
+              
+
             </div>
           </div>
 
