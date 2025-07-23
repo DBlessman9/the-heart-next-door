@@ -133,12 +133,15 @@ The application is designed as a comprehensive maternal wellness platform that p
 ## Recent Changes
 
 ### Latest Updates (2025-07-23)
-- **Marketing Landing Page**: Comprehensive email capture and interest-building page
+- **Enhanced Marketing Landing Page**: Beautiful, warm landing page with improved design and app previews
   - Created professional landing page at `/landing` route for lead generation
-  - Email signup form with optional name field and source tracking
-  - Feature showcase highlighting AI doula, partner portal, and wellness tracking
-  - Customer testimonials section with real-world use cases
-  - Responsive design with sage green color scheme matching main app
+  - Enhanced with warm rose-orange-amber gradient color palette for emotional connection
+  - Beautiful animated background elements with pulsing gradient orbs
+  - Interactive app mockup showing actual interface components and features
+  - Enhanced email signup form with gradient buttons and improved UX
+  - Feature showcase with colorful gradient icons and hover animations
+  - Customer testimonials with enhanced styling and rating displays
+  - Responsive design optimized for mobile and desktop experiences
   - Backend API endpoint for email collection with database storage
   - Success confirmation flow with next steps for subscribers
   - HIPAA compliance and privacy-first messaging for trust building
