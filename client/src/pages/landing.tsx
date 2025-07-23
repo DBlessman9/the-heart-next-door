@@ -169,43 +169,18 @@ export default function Landing() {
               Early Access Available
             </Badge>
             
-            <div className="flex items-center justify-center mb-8">
-              <div className="relative h-20 w-20 mr-6">
-                <svg viewBox="0 0 200 200" className="h-full w-full">
-                  <defs>
-                    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#dc2626" />
-                      <stop offset="100%" stopColor="#b91c1c" />
-                    </linearGradient>
-                  </defs>
-                  <path 
-                    d="M100,180 C80,160 20,120 20,80 C20,50 45,30 75,30 C85,30 95,35 100,45 C105,35 115,30 125,30 C155,30 180,50 180,80 C180,120 120,160 100,180 Z" 
-                    fill="url(#heartGradient)"
-                  />
-                  <path 
-                    d="M85,90 L85,130 L115,130 L115,100 L130,100 L130,70 L100,70 L100,55 L85,55 Z" 
-                    fill="white"
-                  />
-                </svg>
-              </div>
-              <div className="text-left">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
-                  The Heart Next Door
-                </h1>
-                <p className="text-lg text-gray-600 mt-2">
-                  The healthtech platform redefining care for pregnancy and postpartum
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-4 mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold text-gray-800 leading-tight">
+            <div className="space-y-6 mb-12">
+              <p className="text-lg text-gray-600 font-medium mb-4">
+                The healthtech platform redefining care for pregnancy and postpartum
+              </p>
+              
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-800 leading-tight">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500">
                   24/7 support system
                 </span>
                 <br />
                 <span className="text-gray-700">through pregnancy, postpartum, and beyond</span>
-              </h2>
+              </h1>
               
               <p className="text-2xl text-gray-700 font-light italic">
                 Because every mother deserves a village.
