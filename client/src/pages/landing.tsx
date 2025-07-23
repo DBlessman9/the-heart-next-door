@@ -258,7 +258,7 @@ export default function Landing() {
                   <div className="w-12 h-12 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
                     <MessageCircle className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Digital Doula</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Guided by Heart. Powered by Nia™</h3>
                 </div>
                 <div className="space-y-4">
                   <p className="text-gray-700 text-lg leading-relaxed">
