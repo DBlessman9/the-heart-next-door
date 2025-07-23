@@ -201,7 +201,7 @@ export default function Landing() {
                         <div className="w-8 h-8 bg-gradient-to-r from-sage-400 to-sage-500 rounded-full flex items-center justify-center">
                           <Heart className="w-4 h-4 text-white" />
                         </div>
-                        <span className="font-semibold text-sage-800">Maternal Wellness</span>
+                        <span className="font-semibold text-sage-800">The Heart Next Door</span>
                       </div>
                       <div className="flex gap-1">
                         <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -213,8 +213,11 @@ export default function Landing() {
                     <div className="space-y-4">
                       <div className="bg-sage-50 rounded-lg p-4">
                         <div className="flex items-center gap-3 mb-2">
-                          <div className="w-6 h-6 bg-sage-500 rounded-full flex items-center justify-center">
-                            <MessageCircle className="w-3 h-3 text-white" />
+                          <div className="relative">
+                            <div className="w-6 h-6 bg-sage-500 rounded-full flex items-center justify-center">
+                              <MessageCircle className="w-3 h-3 text-white" />
+                            </div>
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                           </div>
                           <span className="text-sm font-medium text-sage-700">Nia, Your Digital Doula</span>
                         </div>
