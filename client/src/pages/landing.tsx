@@ -197,7 +197,7 @@ export default function Landing() {
                   {/* App Mockup */}
                   <div className="bg-white rounded-xl p-4 shadow-md">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex-1 flex items-center justify-center gap-3">
                         <div className="w-8 h-8 bg-gradient-to-r from-sage-400 to-sage-500 rounded-full flex items-center justify-center">
                           <Heart className="w-4 h-4 text-white" />
                         </div>
@@ -231,7 +231,7 @@ export default function Landing() {
                         </div>
                         <div className="bg-amber-50 rounded-lg p-3 text-center">
                           <BookOpen className="w-4 h-4 text-amber-500 mx-auto mb-1" />
-                          <p className="text-xs text-amber-700 font-medium">Resources</p>
+                          <p className="text-xs text-amber-700 font-medium">Experts</p>
                         </div>
                       </div>
                       
