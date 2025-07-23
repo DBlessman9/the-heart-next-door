@@ -254,31 +254,27 @@ export default function Landing() {
             </div>
             <div className="space-y-8">
               <div className="bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
                     <MessageCircle className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Meet Nia, Your Digital Doula</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Digital Doula</h3>
                 </div>
-                <p className="text-gray-700 text-lg leading-relaxed">
-                  Available 24/7 to answer questions, provide emotional support, and guide you through 
-                  every step of your maternal wellness journey with personalized, evidence-based advice.
-                </p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-amber-400 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Calendar className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Smart Wellness Tracking</h3>
+                <div className="space-y-4">
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    <span className="font-semibold">Meet Nia.</span>
+                  </p>
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    Her name means purpose — and her purpose is you.
+                  </p>
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    She listens without judgment, responds with care, and stays by your side day or night. Available 24/7 to answer questions, provide emotional support, and guide you through every step of your maternal wellness journey with personalized, evidence-based advice.
+                  </p>
+                  <p className="text-gray-700 text-lg leading-relaxed italic">
+                    Because motherhood isn't meant to be walked alone.
+                  </p>
                 </div>
-                <p className="text-gray-700 text-lg leading-relaxed">
-                  Daily check-ins, journaling, and wellness insights that adapt to your unique 
-                  pregnancy and postpartum journey.
-                </p>
               </div>
-              
 
             </div>
           </div>
