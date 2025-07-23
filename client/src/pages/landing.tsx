@@ -201,7 +201,10 @@ export default function Landing() {
                         <div className="w-8 h-8 bg-gradient-to-r from-sage-400 to-sage-500 rounded-full flex items-center justify-center">
                           <Heart className="w-4 h-4 text-white" />
                         </div>
-                        <span className="font-semibold text-sage-800">The Heart Next Door</span>
+                        <div className="text-center">
+                          <div className="font-semibold text-sage-800 text-sm leading-tight">The Heart</div>
+                          <div className="font-semibold text-sage-800 text-sm leading-tight">Next Door</div>
+                        </div>
                       </div>
                       <div className="flex gap-1">
                         <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -230,7 +233,7 @@ export default function Landing() {
                           <p className="text-xs text-rose-700 font-medium">Daily Check-in</p>
                         </div>
                         <div className="bg-amber-50 rounded-lg p-3 text-center">
-                          <BookOpen className="w-4 h-4 text-amber-500 mx-auto mb-1" />
+                          <Users className="w-4 h-4 text-amber-500 mx-auto mb-1" />
                           <p className="text-xs text-amber-700 font-medium">Experts</p>
                         </div>
                       </div>
