@@ -303,6 +303,7 @@ export const emailSignups = pgTable("email_signups", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name"),
+  userType: text("user_type"), // "pregnant", "postpartum", "partner", "birthworker", "healthcare", "other"
   dueDate: text("due_date"),
   source: text("source").default("landing_page"),
   signupDate: timestamp("signup_date").defaultNow(),

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -19,13 +20,17 @@ import {
   Sparkles,
   Baby,
   Moon,
-  Sun
+  Sun,
+  ExternalLink,
+  Headphones,
+  BookText
 } from "lucide-react";
-// App screenshot will be added as a styled placeholder for now
+// Logo will be added as SVG for now
 
 interface EmailSignup {
   email: string;
   name?: string;
+  userType?: string;
   dueDate?: string;
   source?: string;
 }
@@ -33,6 +38,7 @@ interface EmailSignup {
 export default function Landing() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [userType, setUserType] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
@@ -63,15 +69,15 @@ export default function Landing() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      signupMutation.mutate({ email, name });
+      signupMutation.mutate({ email, name, userType });
     }
   };
 
   const features = [
     {
       icon: MessageCircle,
-      title: "AI Digital Doula",
-      description: "24/7 personalized support from Nia, your AI companion trained on maternal wellness expertise",
+      title: "Digital Doula",
+      description: "24/7 personalized support from Nia, your digital companion trained on maternal wellness expertise",
     },
     {
       icon: Calendar,
@@ -163,20 +169,48 @@ export default function Landing() {
               Early Access Available
             </Badge>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="text-gray-800">Your Digital</span>
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500">
-                Village
-              </span>
-              <br />
-              <span className="text-gray-700 text-4xl md:text-5xl">for Motherhood</span>
-            </h1>
-            
-            <p className="text-2xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
-              Experience pregnancy and postpartum with confidence. Get personalized support from your AI doula, 
-              connect with experts, and track your wellness journey—all in one beautiful, secure platform.
-            </p>
+            <div className="flex items-center justify-center mb-8">
+              <div className="relative h-20 w-20 mr-6">
+                <svg viewBox="0 0 200 200" className="h-full w-full">
+                  <defs>
+                    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#dc2626" />
+                      <stop offset="100%" stopColor="#b91c1c" />
+                    </linearGradient>
+                  </defs>
+                  <path 
+                    d="M100,180 C80,160 20,120 20,80 C20,50 45,30 75,30 C85,30 95,35 100,45 C105,35 115,30 125,30 C155,30 180,50 180,80 C180,120 120,160 100,180 Z" 
+                    fill="url(#heartGradient)"
+                  />
+                  <path 
+                    d="M85,90 L85,130 L115,130 L115,100 L130,100 L130,70 L100,70 L100,55 L85,55 Z" 
+                    fill="white"
+                  />
+                </svg>
+              </div>
+              <div className="text-left">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+                  The Heart Next Door
+                </h1>
+                <p className="text-lg text-gray-600 mt-2">
+                  The healthtech platform redefining care for pregnancy and postpartum
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-800 leading-tight">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500">
+                  24/7 support system
+                </span>
+                <br />
+                <span className="text-gray-700">through pregnancy, postpartum, and beyond</span>
+              </h2>
+              
+              <p className="text-2xl text-gray-700 font-light italic">
+                Because every mother deserves a village.
+              </p>
+            </div>
           </div>
 
           {/* App Preview Section */}
@@ -222,14 +256,13 @@ export default function Landing() {
                         </div>
                       </div>
                       
-                      <div className="bg-orange-50 rounded-lg p-3">
+                      <div className="bg-purple-50 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <Users className="w-4 h-4 text-orange-500" />
-                          <span className="text-xs font-medium text-orange-700">Partner Portal Active</span>
+                          <BookOpen className="w-4 h-4 text-purple-500" />
+                          <span className="text-xs font-medium text-purple-700">Your Learning Journey</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 bg-orange-200 rounded-full"></div>
-                          <span className="text-xs text-orange-600">Sarah is connected and following your journey</span>
+                        <div className="text-xs text-purple-600">
+                          Progress: Week 24 • 3 modules completed this week
                         </div>
                       </div>
                     </div>
@@ -243,7 +276,7 @@ export default function Landing() {
                   <div className="w-12 h-12 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
                     <MessageCircle className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Meet Nia, Your AI Doula</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Meet Nia, Your Digital Doula</h3>
                 </div>
                 <p className="text-gray-700 text-lg leading-relaxed">
                   Available 24/7 to answer questions, provide emotional support, and guide you through 
@@ -254,13 +287,13 @@ export default function Landing() {
               <div className="bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-amber-400 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Users className="w-6 h-6 text-white" />
+                    <Calendar className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Partner Portal</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Smart Wellness Tracking</h3>
                 </div>
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  Connect your support person so they can understand your journey and provide 
-                  meaningful support when you need it most.
+                  Daily check-ins, journaling, and wellness insights that adapt to your unique 
+                  pregnancy and postpartum journey.
                 </p>
               </div>
             </div>
@@ -287,6 +320,25 @@ export default function Landing() {
                       onChange={(e) => setName(e.target.value)}
                       className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base"
                     />
+                  </div>
+                  
+                  <div className="text-left">
+                    <label className="text-base font-medium text-gray-700 mb-3 block">
+                      I am a...
+                    </label>
+                    <Select value={userType} onValueChange={setUserType}>
+                      <SelectTrigger className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base">
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pregnant">Pregnant</SelectItem>
+                        <SelectItem value="postpartum">Postpartum</SelectItem>
+                        <SelectItem value="partner">Partner</SelectItem>
+                        <SelectItem value="birthworker">Birth Worker</SelectItem>
+                        <SelectItem value="healthcare">Healthcare Provider</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <div className="text-left">
@@ -387,54 +439,97 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Personal Letter Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-rose-100/50 via-orange-100/50 to-amber-100/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-              Loved by mothers everywhere
+              Built by moms, for moms
             </h2>
             <p className="text-xl text-gray-600">
-              Real stories from real mothers who've used our platform
+              A letter from our founder
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => {
-              const gradients = [
-                "from-rose-500/10 to-pink-500/10",
-                "from-orange-500/10 to-amber-500/10", 
-                "from-amber-500/10 to-yellow-500/10"
-              ];
+          <Card className="bg-white/90 backdrop-blur border-0 shadow-2xl">
+            <CardContent className="p-12">
+              <div className="prose prose-lg max-w-none">
+                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                  Dear fellow mother,
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                  I know what it feels like to need support at 3 AM when everyone else is asleep. I know the overwhelming feeling of not knowing if what you're experiencing is "normal." I know the loneliness that can creep in during pregnancy and postpartum, even when surrounded by people who love you.
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                  That's why I created The Heart Next Door. Every mother deserves a village, and when your village isn't physically there, technology should bridge that gap with warmth, wisdom, and genuine care.
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed mb-8 text-lg">
+                  This platform isn't just another app—it's the digital doula I wished I had, the 24/7 support system I needed, and the community that understands your journey because we've walked it too.
+                </p>
+                
+                <div className="border-t border-gray-200 pt-8">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-800 font-semibold text-xl mb-2">With love and support,</p>
+                      <div className="text-2xl font-bold text-gray-800 mb-2" style={{fontFamily: 'cursive'}}>
+                        [Your Signature]
+                      </div>
+                      <p className="text-gray-600">Founder & CEO</p>
+                    </div>
+                    <div className="hidden md:block">
+                      <div className="w-24 h-24 bg-gradient-to-br from-rose-200 to-orange-200 rounded-full flex items-center justify-center">
+                        <Heart className="w-10 h-10 text-rose-600" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Social Links */}
+          <div className="text-center mt-12">
+            <p className="text-gray-600 mb-6 text-lg">Connect with me and learn more:</p>
+            <div className="flex justify-center gap-6 flex-wrap">
+              <Button 
+                variant="outline" 
+                className="bg-white/80 hover:bg-white border-gray-200 hover:border-rose-300 hover:text-rose-600 transition-all duration-200"
+                asChild
+              >
+                <a href="#" className="flex items-center gap-2">
+                  <Headphones className="w-4 h-4" />
+                  Listen to My Podcast
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </Button>
               
-              return (
-                <Card key={index} className={`bg-gradient-to-br ${gradients[index]} border-0 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 backdrop-blur`}>
-                  <CardContent className="p-8">
-                    <div className="flex items-center mb-6">
-                      <div className="flex text-amber-400">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-5 h-5 fill-current" />
-                        ))}
-                      </div>
-                    </div>
-                    <blockquote className="text-gray-700 text-lg leading-relaxed mb-6 italic">
-                      "{testimonial.quote}"
-                    </blockquote>
-                    <div className="border-t border-gray-200/50 pt-4">
-                      <div className="font-semibold text-gray-800 text-lg">
-                        {testimonial.name}
-                      </div>
-                      <div className="text-gray-600 text-sm">
-                        {testimonial.location}
-                      </div>
-                      <div className="inline-block mt-2 px-3 py-1 bg-white/70 rounded-full text-xs font-medium text-gray-700">
-                        {testimonial.stage}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+              <Button 
+                variant="outline" 
+                className="bg-white/80 hover:bg-white border-gray-200 hover:border-orange-300 hover:text-orange-600 transition-all duration-200"
+                asChild
+              >
+                <a href="#" className="flex items-center gap-2">
+                  <BookText className="w-4 h-4" />
+                  Read My Books
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="bg-white/80 hover:bg-white border-gray-200 hover:border-amber-300 hover:text-amber-600 transition-all duration-200"
+                asChild
+              >
+                <a href="#" className="flex items-center gap-2">
+                  <Heart className="w-4 h-4" />
+                  Follow on Social
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -470,13 +565,13 @@ export default function Landing() {
             <div className="w-10 h-10 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white ml-3">Maternal Wellness</span>
+            <span className="text-2xl font-bold text-white ml-3">The Heart Next Door</span>
           </div>
           <p className="text-gray-300 mb-4 text-lg">
             Built with love for mothers and families everywhere
           </p>
           <p className="text-gray-400">
-            © 2025 Maternal Wellness App. Early access launching soon.
+            © 2025 The Heart Next Door. Early access launching soon.
           </p>
         </div>
       </footer>

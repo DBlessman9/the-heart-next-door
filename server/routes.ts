@@ -508,7 +508,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Email signup routes for landing page
   app.post("/api/email-signups", async (req, res) => {
     try {
-      const { email, name, dueDate, source } = req.body;
+      const { email, name, userType, dueDate, source } = req.body;
       
       // Basic validation
       if (!email || !email.includes('@')) {
@@ -518,6 +518,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const signup = await storage.createEmailSignup({
         email,
         name,
+        userType,
         dueDate,
         source: source || "landing_page",
       });
