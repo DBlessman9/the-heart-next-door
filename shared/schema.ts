@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
+  userType: text("user_type").default("mother"), // "mother", "partner"
   pregnancyWeek: integer("pregnancy_week"),
   pregnancyStage: text("pregnancy_stage"), // "first", "second", "third", "postpartum"
   dueDate: timestamp("due_date"),
@@ -20,6 +21,51 @@ export const users = pgTable("users", {
   preferences: jsonb("preferences").default({}),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+// Partnership connections between mother and partner accounts
+export const partnerships = pgTable("partnerships", {
+  id: serial("id").primaryKey(),
+  motherId: integer("mother_id").references(() => users.id).notNull(),
+  partnerId: integer("partner_id").references(() => users.id).notNull(),
+  relationshipType: text("relationship_type").notNull(), // "spouse", "partner", "other"
+  status: text("status").default("pending"), // "pending", "active", "inactive"
+  inviteCode: text("invite_code").unique(),
+  // Privacy settings for what partner can access
+  canViewCheckIns: boolean("can_view_check_ins").default(false),
+  canViewJournal: boolean("can_view_journal").default(false),
+  canViewAppointments: boolean("can_view_appointments").default(true),
+  canViewResources: boolean("can_view_resources").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  acceptedAt: timestamp("accepted_at"),
+}, (table) => ({
+  unique: unique().on(table.motherId, table.partnerId),
+}));
+
+// Partner-specific resources and education content
+export const partnerResources = pgTable("partner_resources", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // "video", "article", "guide", "checklist"
+  category: text("category").notNull(), // "understanding_pregnancy", "supporting_labor", "postpartum_support", "communication"
+  duration: text("duration"),
+  pregnancyStage: text("pregnancy_stage"),
+  url: text("url"),
+  isRequired: boolean("is_required").default(false),
+  sortOrder: integer("sort_order").default(0),
+});
+
+// Track partner completion of resources
+export const partnerProgress = pgTable("partner_progress", {
+  id: serial("id").primaryKey(),
+  partnerId: integer("partner_id").references(() => users.id).notNull(),
+  resourceId: integer("resource_id").references(() => partnerResources.id).notNull(),
+  completedAt: timestamp("completed_at").defaultNow(),
+  timeSpent: integer("time_spent"), // in minutes
+  notes: text("notes"),
+}, (table) => ({
+  unique: unique().on(table.partnerId, table.resourceId),
+}));
 
 export const chatMessages = pgTable("chat_messages", {
   id: serial("id").primaryKey(),
@@ -208,6 +254,21 @@ export const insertGroupMessageSchema = createInsertSchema(groupMessages).omit({
   createdAt: true,
 });
 
+export const insertPartnershipSchema = createInsertSchema(partnerships).omit({
+  id: true,
+  createdAt: true,
+  acceptedAt: true,
+});
+
+export const insertPartnerResourceSchema = createInsertSchema(partnerResources).omit({
+  id: true,
+});
+
+export const insertPartnerProgressSchema = createInsertSchema(partnerProgress).omit({
+  id: true,
+  completedAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
@@ -230,3 +291,9 @@ export type Membership = typeof memberships.$inferSelect;
 export type InsertMembership = z.infer<typeof insertMembershipSchema>;
 export type GroupMessage = typeof groupMessages.$inferSelect;
 export type InsertGroupMessage = z.infer<typeof insertGroupMessageSchema>;
+export type Partnership = typeof partnerships.$inferSelect;
+export type InsertPartnership = z.infer<typeof insertPartnershipSchema>;
+export type PartnerResource = typeof partnerResources.$inferSelect;
+export type InsertPartnerResource = z.infer<typeof insertPartnerResourceSchema>;
+export type PartnerProgress = typeof partnerProgress.$inferSelect;
+export type InsertPartnerProgress = z.infer<typeof insertPartnerProgressSchema>;

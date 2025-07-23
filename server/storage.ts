@@ -10,6 +10,9 @@ import {
   groups,
   memberships,
   groupMessages,
+  partnerships,
+  partnerResources,
+  partnerProgress,
   type User,
   type InsertUser,
   type ChatMessage,
@@ -32,6 +35,12 @@ import {
   type InsertMembership,
   type GroupMessage,
   type InsertGroupMessage,
+  type Partnership,
+  type InsertPartnership,
+  type PartnerResource,
+  type InsertPartnerResource,
+  type PartnerProgress,
+  type InsertPartnerProgress,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql, gte, lt, desc } from "drizzle-orm";
@@ -87,6 +96,16 @@ export interface IStorage {
   leaveGroup(userId: number, groupId: number): Promise<void>;
   getGroupMessages(groupId: number): Promise<GroupMessage[]>;
   createGroupMessage(message: InsertGroupMessage): Promise<GroupMessage>;
+
+  // Partner operations
+  createPartnership(partnership: InsertPartnership): Promise<Partnership>;
+  getPartnershipByCode(inviteCode: string): Promise<Partnership | undefined>;
+  getPartnershipByUsers(motherId: number, partnerId: number): Promise<Partnership | undefined>;
+  acceptPartnership(id: number): Promise<Partnership>;
+  updatePartnershipPermissions(id: number, permissions: Partial<Pick<Partnership, 'canViewCheckIns' | 'canViewJournal' | 'canViewAppointments' | 'canViewResources'>>): Promise<Partnership>;
+  getPartnerResources(category?: string): Promise<PartnerResource[]>;
+  createPartnerProgress(progress: InsertPartnerProgress): Promise<PartnerProgress>;
+  getPartnerProgress(partnerId: number): Promise<PartnerProgress[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -343,6 +362,51 @@ export class DatabaseStorage implements IStorage {
       ];
 
       await db.insert(memberships).values(initialMemberships);
+
+      // Seed partner resources
+      const defaultPartnerResources: InsertPartnerResource[] = [
+        {
+          title: "Understanding Pregnancy: A Partner's Guide",
+          description: "Essential information for partners supporting their pregnant loved one",
+          type: "guide",
+          category: "understanding_pregnancy",
+          duration: "15 min read",
+          pregnancyStage: "first",
+          isRequired: true,
+          sortOrder: 1,
+        },
+        {
+          title: "Supporting Your Partner During Labor",
+          description: "Practical tips for being the best birth partner",
+          type: "video",
+          category: "supporting_labor",
+          duration: "20 min",
+          pregnancyStage: "third",
+          isRequired: true,
+          sortOrder: 2,
+        },
+        {
+          title: "Effective Communication During Pregnancy",
+          description: "How to communicate effectively during this emotional time",
+          type: "article",
+          category: "communication",
+          duration: "10 min read",
+          isRequired: false,
+          sortOrder: 3,
+        },
+        {
+          title: "Postpartum Support: What Partners Need to Know",
+          description: "Supporting your partner through the fourth trimester",
+          type: "guide",
+          category: "postpartum_support",
+          duration: "18 min read",
+          pregnancyStage: "postpartum",
+          isRequired: true,
+          sortOrder: 4,
+        },
+      ];
+
+      await db.insert(partnerResources).values(defaultPartnerResources);
     } catch (error) {
       console.error("Error seeding data:", error);
     }
@@ -679,6 +743,91 @@ export class DatabaseStorage implements IStorage {
       .values(insertMessage)
       .returning();
     return message;
+  }
+
+  // Partner operations
+  async createPartnership(insertPartnership: InsertPartnership): Promise<Partnership> {
+    const [partnership] = await db
+      .insert(partnerships)
+      .values(insertPartnership)
+      .returning();
+    return partnership;
+  }
+
+  async getPartnershipByCode(inviteCode: string): Promise<Partnership | undefined> {
+    const [partnership] = await db
+      .select()
+      .from(partnerships)
+      .where(eq(partnerships.inviteCode, inviteCode));
+    return partnership || undefined;
+  }
+
+  async getPartnershipByUsers(motherId: number, partnerId: number): Promise<Partnership | undefined> {
+    const [partnership] = await db
+      .select()
+      .from(partnerships)
+      .where(
+        and(
+          eq(partnerships.motherId, motherId),
+          eq(partnerships.partnerId, partnerId)
+        )
+      );
+    return partnership || undefined;
+  }
+
+  async acceptPartnership(id: number): Promise<Partnership> {
+    const [partnership] = await db
+      .update(partnerships)
+      .set({ 
+        status: "active",
+        acceptedAt: new Date()
+      })
+      .where(eq(partnerships.id, id))
+      .returning();
+    return partnership;
+  }
+
+  async updatePartnershipPermissions(
+    id: number, 
+    permissions: Partial<Pick<Partnership, 'canViewCheckIns' | 'canViewJournal' | 'canViewAppointments' | 'canViewResources'>>
+  ): Promise<Partnership> {
+    const [partnership] = await db
+      .update(partnerships)
+      .set(permissions)
+      .where(eq(partnerships.id, id))
+      .returning();
+    return partnership;
+  }
+
+  async getPartnerResources(category?: string): Promise<PartnerResource[]> {
+    if (category) {
+      return await db
+        .select()
+        .from(partnerResources)
+        .where(eq(partnerResources.category, category))
+        .orderBy(partnerResources.sortOrder);
+    }
+    
+    return await db
+      .select()
+      .from(partnerResources)
+      .orderBy(partnerResources.sortOrder);
+  }
+
+  async createPartnerProgress(insertProgress: InsertPartnerProgress): Promise<PartnerProgress> {
+    const [progress] = await db
+      .insert(partnerProgress)
+      .values(insertProgress)
+      .returning();
+    return progress;
+  }
+
+  async getPartnerProgress(partnerId: number): Promise<PartnerProgress[]> {
+    return await db
+      .select()
+      .from(partnerProgress)
+      .where(eq(partnerProgress.partnerId, partnerId))
+      .orderBy(partnerProgress.completedAt);
   }
 }
 

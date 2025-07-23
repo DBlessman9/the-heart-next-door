@@ -11,6 +11,8 @@ import {
   insertGroupSchema,
   insertMembershipSchema,
   insertGroupMessageSchema,
+  insertPartnershipSchema,
+  insertPartnerProgressSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -413,6 +415,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(appointments);
     } catch (error) {
       res.status(500).json({ message: "Error fetching appointments", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Partner routes
+  app.post("/api/partnerships", async (req, res) => {
+    try {
+      const validatedPartnership = insertPartnershipSchema.parse(req.body);
+      // Generate a unique invite code
+      const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const partnership = await storage.createPartnership({
+        ...validatedPartnership,
+        inviteCode
+      });
+      res.status(201).json(partnership);
+    } catch (error) {
+      console.error("Error creating partnership:", error);
+      res.status(500).json({ message: "Failed to create partnership" });
+    }
+  });
+
+  app.get("/api/partnerships/code/:code", async (req, res) => {
+    try {
+      const { code } = req.params;
+      const partnership = await storage.getPartnershipByCode(code);
+      if (!partnership) {
+        return res.status(404).json({ message: "Partnership not found" });
+      }
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error getting partnership by code:", error);
+      res.status(500).json({ message: "Failed to get partnership" });
+    }
+  });
+
+  app.post("/api/partnerships/:id/accept", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const partnership = await storage.acceptPartnership(id);
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error accepting partnership:", error);
+      res.status(500).json({ message: "Failed to accept partnership" });
+    }
+  });
+
+  app.patch("/api/partnerships/:id/permissions", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const permissions = req.body;
+      const partnership = await storage.updatePartnershipPermissions(id, permissions);
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error updating partnership permissions:", error);
+      res.status(500).json({ message: "Failed to update permissions" });
+    }
+  });
+
+  app.get("/api/partner-resources", async (req, res) => {
+    try {
+      const { category } = req.query;
+      const resources = await storage.getPartnerResources(category as string);
+      res.json(resources);
+    } catch (error) {
+      console.error("Error getting partner resources:", error);
+      res.status(500).json({ message: "Failed to get partner resources" });
+    }
+  });
+
+  app.post("/api/partner-progress", async (req, res) => {
+    try {
+      const validatedProgress = insertPartnerProgressSchema.parse(req.body);
+      const progress = await storage.createPartnerProgress(validatedProgress);
+      res.status(201).json(progress);
+    } catch (error) {
+      console.error("Error creating partner progress:", error);
+      res.status(500).json({ message: "Failed to create partner progress" });
+    }
+  });
+
+  app.get("/api/partner-progress/:partnerId", async (req, res) => {
+    try {
+      const partnerId = parseInt(req.params.partnerId);
+      const progress = await storage.getPartnerProgress(partnerId);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error getting partner progress:", error);
+      res.status(500).json({ message: "Failed to get partner progress" });
     }
   });
 

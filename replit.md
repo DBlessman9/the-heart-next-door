@@ -132,7 +132,24 @@ The application is designed as a comprehensive maternal wellness platform that p
 
 ## Recent Changes
 
-### Latest Updates (2025-07-19)
+### Latest Updates (2025-07-23)
+- **Partner Portal Implementation**: Complete partner-facing side for spouses/partners
+  - Added comprehensive partnership database schema with permissions and invite system
+  - Created partner onboarding flow with 3-step registration process
+  - Built partner dashboard with learning resources, insights, and appointment sharing
+  - Implemented privacy controls allowing mothers to choose what partners can access
+  - Added partner-specific educational content and progress tracking
+  - Created invite code system for secure partner connections
+  - Partner settings page with notification preferences and privacy controls
+  - Support for viewing mom's daily check-ins, appointments, and shared resources
+  - Real-time partnership status tracking and connection management
+- **Enhanced Floating Chat Interface**: Completely redesigned chat modal for optimal user experience
+  - Fixed user message visibility issues with proper sage green styling
+  - Removed intrusive "Nia is here..." tooltip that was blocking mobile screens
+  - Clean minimal interface with just the green chat icon
+  - Restructured modal layout to ensure input box is always visible at bottom
+  - Centered modal positioning for better screen compatibility
+  - Improved message display with better spacing and readability
 - **New Insights/Dashboard Page**: Comprehensive wellness journey visualization
   - Added "Insights" tab to main navigation with chart icon
   - Key metrics display: journal streak, pregnancy week, learning progress, mood trends
@@ -142,19 +159,6 @@ The application is designed as a comprehensive maternal wellness platform that p
   - Support team/village member display from expert network
   - Planning tools section: baby names, birth plan, nursery checklist buttons
   - Robust error handling for date formatting and data validation
-  - Real-time data integration from existing user activities
-- **Enhanced Floating Chat Interface**: Completely redesigned chat modal for optimal user experience
-  - Fixed user message visibility issues with proper sage green styling
-  - Removed cluttered contextual greetings for clean, minimal chat experience
-  - Restructured modal layout to ensure input box is always visible at bottom
-  - Centered modal positioning for better screen compatibility
-  - Improved message display with better spacing and readability
-  - Clean empty state showing "Start a conversation with Nia"
-- **Chat UI Improvements**: Professional messaging interface matching app's design theme
-  - Sage green user messages with white text for proper contrast
-  - Fixed input box positioning and visibility issues
-  - Proper scroll behavior within message area
-  - Enhanced button styling with consistent color scheme
 
 ### Previous Updates (2025-07-18)
 - **Simplified Check-in System**: Condensed daily check-in to 3 focused questions:
