@@ -171,12 +171,12 @@ export default function Landing() {
             
             <div className="space-y-6 mb-12">
               <p className="text-lg text-gray-600 font-medium mb-4">
-                The healthtech platform redefining care for pregnancy and postpartum
+                The healthtech platform redefining maternal care
               </p>
               
               <h1 className="text-4xl md:text-6xl font-bold text-gray-800 leading-tight">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500">
-                  24/7 support system
+                  Your 24/7 support system
                 </span>
                 <br />
                 <span className="text-gray-700">through pregnancy, postpartum, and beyond</span>
