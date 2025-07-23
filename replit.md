@@ -133,6 +133,15 @@ The application is designed as a comprehensive maternal wellness platform that p
 ## Recent Changes
 
 ### Latest Updates (2025-07-23)
+- **Marketing Landing Page**: Comprehensive email capture and interest-building page
+  - Created professional landing page at `/landing` route for lead generation
+  - Email signup form with optional name field and source tracking
+  - Feature showcase highlighting AI doula, partner portal, and wellness tracking
+  - Customer testimonials section with real-world use cases
+  - Responsive design with sage green color scheme matching main app
+  - Backend API endpoint for email collection with database storage
+  - Success confirmation flow with next steps for subscribers
+  - HIPAA compliance and privacy-first messaging for trust building
 - **Partner Portal Implementation**: Complete partner-facing side for spouses/partners
   - Added comprehensive partnership database schema with permissions and invite system
   - Created partner onboarding flow with 3-step registration process

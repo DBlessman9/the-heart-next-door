@@ -13,6 +13,7 @@ import {
   partnerships,
   partnerResources,
   partnerProgress,
+  emailSignups,
   type User,
   type InsertUser,
   type ChatMessage,
@@ -41,6 +42,8 @@ import {
   type InsertPartnerResource,
   type PartnerProgress,
   type InsertPartnerProgress,
+  type EmailSignup,
+  type InsertEmailSignup,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql, gte, lt, desc } from "drizzle-orm";
@@ -100,6 +103,10 @@ export interface IStorage {
   // Partner operations
   createPartnership(partnership: InsertPartnership): Promise<Partnership>;
   getPartnershipByCode(inviteCode: string): Promise<Partnership | undefined>;
+
+  // Email signup operations
+  createEmailSignup(signup: InsertEmailSignup): Promise<EmailSignup>;
+  getEmailSignups(): Promise<EmailSignup[]>;
   getPartnershipByUsers(motherId: number, partnerId: number): Promise<Partnership | undefined>;
   acceptPartnership(id: number): Promise<Partnership>;
   updatePartnershipPermissions(id: number, permissions: Partial<Pick<Partnership, 'canViewCheckIns' | 'canViewJournal' | 'canViewAppointments' | 'canViewResources'>>): Promise<Partnership>;
@@ -828,6 +835,22 @@ export class DatabaseStorage implements IStorage {
       .from(partnerProgress)
       .where(eq(partnerProgress.partnerId, partnerId))
       .orderBy(partnerProgress.completedAt);
+  }
+
+  // Email signup operations
+  async createEmailSignup(insertSignup: InsertEmailSignup): Promise<EmailSignup> {
+    const [signup] = await db
+      .insert(emailSignups)
+      .values(insertSignup)
+      .returning();
+    return signup;
+  }
+
+  async getEmailSignups(): Promise<EmailSignup[]> {
+    return await db
+      .select()
+      .from(emailSignups)
+      .orderBy(desc(emailSignups.signupDate));
   }
 }
 

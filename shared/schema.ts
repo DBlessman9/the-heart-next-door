@@ -297,3 +297,23 @@ export type PartnerResource = typeof partnerResources.$inferSelect;
 export type InsertPartnerResource = z.infer<typeof insertPartnerResourceSchema>;
 export type PartnerProgress = typeof partnerProgress.$inferSelect;
 export type InsertPartnerProgress = z.infer<typeof insertPartnerProgressSchema>;
+
+// Email signups for landing page
+export const emailSignups = pgTable("email_signups", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name"),
+  dueDate: text("due_date"),
+  source: text("source").default("landing_page"),
+  signupDate: timestamp("signup_date").defaultNow(),
+  isConverted: boolean("is_converted").default(false),
+  convertedAt: timestamp("converted_at"),
+});
+
+export const insertEmailSignupSchema = createInsertSchema(emailSignups).omit({
+  id: true,
+  signupDate: true,
+});
+
+export type EmailSignup = typeof emailSignups.$inferSelect;
+export type InsertEmailSignup = z.infer<typeof insertEmailSignupSchema>;

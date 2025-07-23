@@ -505,6 +505,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Email signup routes for landing page
+  app.post("/api/email-signups", async (req, res) => {
+    try {
+      const { email, name, dueDate, source } = req.body;
+      
+      // Basic validation
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ message: "Valid email is required" });
+      }
+
+      const signup = await storage.createEmailSignup({
+        email,
+        name,
+        dueDate,
+        source: source || "landing_page",
+      });
+      
+      res.json(signup);
+    } catch (error) {
+      console.error("Error creating email signup:", error);
+      if (error.message?.includes('unique constraint')) {
+        res.status(400).json({ message: "Email already registered" });
+      } else {
+        res.status(500).json({ message: "Failed to register email" });
+      }
+    }
+  });
+
+  app.get("/api/email-signups", async (req, res) => {
+    try {
+      const signups = await storage.getEmailSignups();
+      res.json(signups);
+    } catch (error) {
+      console.error("Error fetching email signups:", error);
+      res.status(500).json({ message: "Failed to fetch email signups" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
