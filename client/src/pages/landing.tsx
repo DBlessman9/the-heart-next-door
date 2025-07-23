@@ -464,7 +464,7 @@ export default function Landing() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-800 font-semibold text-xl mb-2">With love and gratitude,</p>
-                      <div className="text-2xl font-bold text-gray-800 mb-2" style={{fontFamily: 'cursive'}}>
+                      <div className="text-2xl font-normal text-gray-800 mb-2" style={{fontFamily: 'serif', fontStyle: 'italic'}}>
                         Terranie Clarke
                       </div>
                       <p className="text-gray-600">Founder, The Heart Next Door</p>
