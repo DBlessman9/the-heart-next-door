@@ -78,7 +78,7 @@ export default function Landing() {
     {
       icon: MessageCircle,
       title: "Digital Doula",
-      description: "24/7 personalized support from Nia, your digital companion trained on maternal wellness expertise",
+      description: "24/7 personalized support from Nia, your AI companion trained on maternal wellness expertise",
     },
     {
       icon: Calendar,
