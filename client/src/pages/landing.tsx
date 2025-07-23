@@ -380,10 +380,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-              Everything you need for your wellness journey
+              Everything you need to feel seen, supported, and strong.
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              From conception to postpartum, we're here to support you with tools that actually understand maternal health.
+              From conception to postpartum, we offer tools that honor your body, mind, and heart.
             </p>
           </div>
 
