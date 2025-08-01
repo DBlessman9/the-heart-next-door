@@ -38,8 +38,10 @@ interface EmailSignup {
 
 export default function Landing() {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [userType, setUserType] = useState("");
+  const [otherDescription, setOtherDescription] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
@@ -69,8 +71,14 @@ export default function Landing() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      signupMutation.mutate({ email, name, userType });
+    if (email && firstName && lastName && userType && (userType !== "other" || otherDescription)) {
+      signupMutation.mutate({ 
+        email, 
+        name: `${firstName} ${lastName}`,
+        firstName,
+        lastName,
+        userType: userType === "other" ? `other: ${otherDescription}` : userType
+      });
     }
   };
 
@@ -172,7 +180,7 @@ export default function Landing() {
             
             <div className="space-y-6 mb-12">
               <p className="text-lg text-gray-600 font-medium mb-4">
-                The healthtech platform redefining maternal care
+                Redefining maternal health. Together.
               </p>
               
               <h1 className="text-4xl md:text-6xl font-bold text-gray-800 leading-tight">
@@ -258,20 +266,14 @@ export default function Landing() {
                   <div className="w-12 h-12 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
                     <MessageCircle className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">Guided by Heart. Powered by Nia™</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 ml-4">🌟 Become a Founding Member</h3>
                 </div>
                 <div className="space-y-4">
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    <span className="font-semibold">Meet Nia.</span>
+                    Join our beta and help build the future of maternal wellness with us.
                   </p>
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    Her name means purpose — and her purpose is you.
-                  </p>
-                  <p className="text-gray-700 text-lg leading-relaxed">
-                    She listens without judgment, responds with care, and stays by your side day or night. Available 24/7 to answer questions, provide emotional support, and guide you through every step of your maternal wellness journey with personalized, evidence-based advice.
-                  </p>
-                  <p className="text-gray-700 text-lg leading-relaxed italic">
-                    Because motherhood isn't meant to be walked alone.
+                    Early access means early influence. Founding Members help shape the platform, offer feedback, and receive exclusive benefits when we launch.
                   </p>
                 </div>
               </div>
@@ -289,30 +291,46 @@ export default function Landing() {
             <Card className="bg-gradient-to-br from-white/90 to-white/70 backdrop-blur border-0 shadow-2xl">
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="text-left">
-                    <label className="text-base font-medium text-gray-700 mb-3 block">
-                      Your Name (Optional)
-                    </label>
-                    <Input
-                      type="text"
-                      placeholder="Enter your name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-left">
+                      <label className="text-base font-medium text-gray-700 mb-3 block">
+                        First Name *
+                      </label>
+                      <Input
+                        type="text"
+                        placeholder="First name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                        className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base"
+                      />
+                    </div>
+                    <div className="text-left">
+                      <label className="text-base font-medium text-gray-700 mb-3 block">
+                        Last Name *
+                      </label>
+                      <Input
+                        type="text"
+                        placeholder="Last name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                        className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base"
+                      />
+                    </div>
                   </div>
                   
                   <div className="text-left">
                     <label className="text-base font-medium text-gray-700 mb-3 block">
-                      I am a...
+                      I am a... *
                     </label>
-                    <Select value={userType} onValueChange={setUserType}>
+                    <Select value={userType} onValueChange={setUserType} required>
                       <SelectTrigger className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base">
                         <SelectValue placeholder="Select your role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pregnant">Pregnant</SelectItem>
-                        <SelectItem value="postpartum">Postpartum</SelectItem>
+                        <SelectItem value="pregnant_mom">Pregnant Mom</SelectItem>
+                        <SelectItem value="postpartum_mom">Postpartum Mom</SelectItem>
                         <SelectItem value="partner">Partner</SelectItem>
                         <SelectItem value="birthworker">Birth Worker</SelectItem>
                         <SelectItem value="healthcare">Healthcare Provider</SelectItem>
@@ -320,6 +338,22 @@ export default function Landing() {
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  {userType === "other" && (
+                    <div className="text-left">
+                      <label className="text-base font-medium text-gray-700 mb-3 block">
+                        Please specify *
+                      </label>
+                      <Input
+                        type="text"
+                        placeholder="Please describe your role"
+                        value={otherDescription}
+                        onChange={(e) => setOtherDescription(e.target.value)}
+                        required
+                        className="border-gray-200 focus:border-rose-400 focus:ring-rose-400/20 h-12 text-base"
+                      />
+                    </div>
+                  )}
                   
                   <div className="text-left">
                     <label className="text-base font-medium text-gray-700 mb-3 block">
