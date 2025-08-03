@@ -12,6 +12,18 @@ import PartnerDashboard from "@/pages/partner-dashboard";
 import PartnerSettings from "@/pages/partner-settings";
 import FloatingChat from "@/components/floating-chat";
 
+// Hide Vite console messages in development
+if (import.meta.env.DEV) {
+  const originalLog = console.log;
+  console.log = (...args) => {
+    const message = args.join(' ');
+    if (message.includes('[vite]')) {
+      return; // Skip Vite messages
+    }
+    originalLog.apply(console, args);
+  };
+}
+
 function Router() {
   return (
     <Switch>
