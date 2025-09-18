@@ -1,4 +1,4 @@
-import { MessageCircle, Heart, BookOpen, GraduationCap, UserCheck, Baby, Calendar, Users, BarChart3 } from "lucide-react";
+import { MessageCircle, Heart, UserCheck, Baby, Calendar, Users, BarChart3 } from "lucide-react";
 
 interface TabNavigationProps {
   activeTab: string;
@@ -13,8 +13,6 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
     { id: "appointments", label: "Schedule", icon: Calendar },
     { id: "community", label: "Village", icon: Users },
     { id: "experts", label: "Experts", icon: UserCheck },
-    { id: "resources", label: "Learn", icon: GraduationCap },
-    { id: "journal", label: "Journal", icon: BookOpen },
   ];
 
   return (
