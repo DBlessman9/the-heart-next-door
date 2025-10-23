@@ -450,6 +450,17 @@ export class DatabaseStorage implements IStorage {
           contactEmail: "MDHHS-MIDoula@michigan.gov",
           isExternal: true,
         },
+        {
+          name: "Project LAUNCH Detroit",
+          description: "Local Access to Uplifting Nurturing Care and Health - provides comprehensive support services for pregnant and parenting families in Detroit, focusing on reducing infant mortality and improving maternal health outcomes.",
+          type: "resource",
+          topic: "healthcare",
+          isPrivate: false,
+          createdBy: 2,
+          website: "https://www.detroitmi.gov/departments/detroit-health-department/programs-and-services/maternal-infant-and-early-childhood-home-visiting-miechv/project-launch",
+          contactEmail: "health@detroitmi.gov",
+          isExternal: true,
+        },
       ];
 
       await db.insert(groups).values(defaultGroups);
