@@ -213,11 +213,11 @@ export default function Onboarding() {
               <Heart className="text-white text-4xl" size={48} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
-              Welcome home, mama.
+              Hi there, I'm Nia. 👋
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              You were never meant to do this alone.<br/>
-              Your personalized care starts now — with 24/7 support, real experts, and the love you deserve.
+              I'm your digital doula, and I'm so glad you're here.<br/>
+              Think of me as that friend who's always in your corner — ready to listen, support you, and walk with you through every moment. Let's get to know each other.
             </p>
             <div className="space-y-4 px-4">
               <button 
