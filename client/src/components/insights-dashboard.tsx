@@ -330,33 +330,6 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
           )}
         </CardContent>
       </Card>
-
-      {/* Optional Tools Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-sage" />
-            Planning Tools
-          </CardTitle>
-          <CardDescription>Helpful tools for your journey ahead</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-20 flex flex-col gap-2">
-              <Baby className="h-6 w-6" />
-              <span className="text-sm">Baby Names</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col gap-2">
-              <BookOpen className="h-6 w-6" />
-              <span className="text-sm">Birth Plan</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col gap-2">
-              <Home className="h-6 w-6" />
-              <span className="text-sm">Nursery Checklist</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
