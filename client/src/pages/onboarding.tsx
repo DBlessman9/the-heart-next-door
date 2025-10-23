@@ -218,7 +218,8 @@ export default function Onboarding() {
             </h1>
             <p className="text-lg text-gray-600 mb-8">
               I'm your digital doula, and I'm so glad you're here.<br/>
-              Think of me as that friend who's always in your corner — ready to listen, support you, and walk with you through every moment. Let's get to know each other.
+              Think of me as a friend who listens, supports, and walks with you every step of the way.<br/>
+              Let's get to know each other.
             </p>
             <div className="space-y-4 px-4">
               <button 
