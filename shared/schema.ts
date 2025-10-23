@@ -171,6 +171,7 @@ export const appointments = pgTable("appointments", {
   source: text("source").default("manual"), // "manual", "google", "outlook"
   externalCalendarId: text("external_calendar_id"), // ID from external calendar
   lastSyncedAt: timestamp("last_synced_at"), // Last time synced from external calendar
+  isExternal: boolean("is_external").default(false), // Whether this was imported from an external calendar
   createdAt: timestamp("created_at").defaultNow(),
 });
 

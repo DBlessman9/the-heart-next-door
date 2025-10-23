@@ -478,6 +478,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             source,
             externalCalendarId: event.id,
             lastSyncedAt: new Date(),
+            isExternal: true,
           };
 
           const appointment = await storage.createAppointment(appointmentData);
