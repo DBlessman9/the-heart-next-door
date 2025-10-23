@@ -343,6 +343,163 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Calendar Sync routes
+  // Helper function to detect pregnancy-related appointments
+  const isPregnancyRelated = (title: string, description?: string): boolean => {
+    const keywords = [
+      'ob', 'obgyn', 'ob-gyn', 'ob/gyn', 'obstetric', 'gynecolog',
+      'prenatal', 'pregnancy', 'pregnant', 'ultrasound', 'sonogram',
+      'doula', 'midwife', 'midwifery', 'lactation', 'breastfeeding',
+      'maternal', 'fetal', 'baby', 'infant', 'newborn', 'birth',
+      'postpartum', 'checkup', 'check-up', 'prenatal', 'antenatal',
+      'anatomy scan', 'growth scan', 'nst', 'non-stress', 'gestational',
+      'cervix', 'labor', 'delivery', 'trimester', 'weeks pregnant',
+      'due date', 'contractions', 'monitoring', 'pediatric', 'pediatrician',
+      'hospital tour', 'birthing class', 'childbirth'
+    ];
+    
+    const searchText = `${title} ${description || ''}`.toLowerCase();
+    return keywords.some(keyword => searchText.includes(keyword));
+  };
+
+  // Auto-classify appointment type based on title/description
+  const classifyAppointmentType = (title: string, description?: string): string => {
+    const searchText = `${title} ${description || ''}`.toLowerCase();
+    
+    if (searchText.includes('ultrasound') || searchText.includes('sonogram') || searchText.includes('scan')) {
+      return 'ultrasound';
+    }
+    if (searchText.includes('doula')) {
+      return 'doula';
+    }
+    if (searchText.includes('lactation') || searchText.includes('breastfeeding')) {
+      return 'lactation';
+    }
+    if (searchText.includes('therap')) {
+      return 'therapist';
+    }
+    if (searchText.includes('baby') || searchText.includes('pediatric') || searchText.includes('newborn')) {
+      return 'baby-checkup';
+    }
+    if (searchText.includes('ob') || searchText.includes('prenatal') || searchText.includes('maternal')) {
+      return 'ob';
+    }
+    
+    return 'other';
+  };
+
+  // Connect to Google Calendar
+  app.post("/api/calendar/connect/google", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      // Return setup instructions for Google Calendar connector
+      res.json({
+        message: "To sync your Google Calendar, you need to set up the Google Calendar connector.",
+        setupRequired: true,
+        connectorId: "connector:ccfg_google-calendar_DDDBAC03DE404369B74F32E78D",
+        instructions: "Click 'Set Up Google Calendar' below to connect your calendar and automatically sync your pregnancy appointments."
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error connecting to Google Calendar", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Connect to Outlook Calendar
+  app.post("/api/calendar/connect/outlook", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      // Return setup instructions for Outlook connector
+      res.json({
+        message: "To sync your Outlook Calendar, you need to set up the Outlook connector.",
+        setupRequired: true,
+        connectorId: "connector:ccfg_outlook_01K4BBCKRJKP82N3PYQPZQ6DAK",
+        instructions: "Click 'Set Up Outlook' below to connect your calendar and automatically sync your pregnancy appointments."
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error connecting to Outlook Calendar", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Sync appointments from external calendar
+  app.post("/api/calendar/sync/:source", async (req, res) => {
+    try {
+      const { source } = req.params; // 'google' or 'outlook'
+      const { userId, events } = req.body;
+      
+      if (!events || !Array.isArray(events)) {
+        return res.status(400).json({ message: "Events array is required" });
+      }
+
+      const syncedAppointments = [];
+      const skippedCount = {
+        notPregnancyRelated: 0,
+        alreadySynced: 0,
+        invalid: 0
+      };
+
+      for (const event of events) {
+        try {
+          // Skip if not pregnancy-related
+          if (!isPregnancyRelated(event.title || event.summary, event.description)) {
+            skippedCount.notPregnancyRelated++;
+            continue;
+          }
+
+          // Check if already synced
+          const existing = await storage.getAppointmentByExternalId(event.id, source);
+          if (existing) {
+            skippedCount.alreadySynced++;
+            continue;
+          }
+
+          // Parse date and time
+          const startDate = new Date(event.start?.dateTime || event.start?.date);
+          if (isNaN(startDate.getTime())) {
+            skippedCount.invalid++;
+            continue;
+          }
+
+          const endDate = event.end?.dateTime ? new Date(event.end.dateTime) : new Date(startDate.getTime() + 60 * 60 * 1000);
+          const duration = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
+
+          // Create appointment
+          const appointmentData = {
+            userId,
+            title: event.title || event.summary || 'Appointment',
+            description: event.description || undefined,
+            type: classifyAppointmentType(event.title || event.summary, event.description),
+            date: startDate,
+            time: startDate.toTimeString().slice(0, 5),
+            duration: duration || 60,
+            location: event.location || undefined,
+            reminders: true,
+            source,
+            externalCalendarId: event.id,
+            lastSyncedAt: new Date(),
+          };
+
+          const appointment = await storage.createAppointment(appointmentData);
+          syncedAppointments.push(appointment);
+        } catch (err) {
+          console.error('Error syncing individual event:', err);
+          skippedCount.invalid++;
+        }
+      }
+
+      res.json({
+        success: true,
+        syncedCount: syncedAppointments.length,
+        skipped: skippedCount,
+        appointments: syncedAppointments,
+        message: `Successfully synced ${syncedAppointments.length} pregnancy-related appointment(s) from ${source}.`
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error syncing calendar", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
   // Community routes
   app.get("/api/community/groups", async (req, res) => {
     try {

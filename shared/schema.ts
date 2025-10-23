@@ -167,6 +167,10 @@ export const appointments = pgTable("appointments", {
   notes: text("notes"),
   isRecurring: boolean("is_recurring").default(false),
   recurringType: text("recurring_type"), // "weekly", "monthly", "custom"
+  // Calendar sync fields
+  source: text("source").default("manual"), // "manual", "google", "outlook"
+  externalCalendarId: text("external_calendar_id"), // ID from external calendar
+  lastSyncedAt: timestamp("last_synced_at"), // Last time synced from external calendar
   createdAt: timestamp("created_at").defaultNow(),
 });
 

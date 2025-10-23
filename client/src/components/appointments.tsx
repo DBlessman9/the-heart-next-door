@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Clock, Plus, User as UserIcon, Phone, Mail, MapPin, Bell, Users, ExternalLink } from "lucide-react";
+import { Calendar, Clock, Plus, User as UserIcon, Phone, Mail, MapPin, Bell, Users, ExternalLink, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -111,6 +111,8 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [showCalendarSyncDialog, setShowCalendarSyncDialog] = useState(false);
+  const [selectedCalendarProvider, setSelectedCalendarProvider] = useState<'google' | 'outlook' | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -143,6 +145,11 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
   const pastAppointments = allAppointments
     .filter(apt => new Date(apt.date) < new Date())
     .sort((a, b) => new Date(b.date + ' ' + b.time).getTime() - new Date(a.date + ' ' + a.time).getTime());
+
+  const handleCalendarSync = (provider: 'google' | 'outlook') => {
+    setSelectedCalendarProvider(provider);
+    setShowCalendarSyncDialog(true);
+  };
 
   const AddAppointmentDialog = () => {
     const [formData, setFormData] = useState({
@@ -531,12 +538,24 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
               <span className="font-medium">Calendar Sync</span>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1.5"
+                onClick={() => handleCalendarSync('google')}
+                data-testid="button-sync-google"
+              >
                 <Mail size={14} />
                 Gmail
                 <ExternalLink size={12} />
               </Button>
-              <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1.5"
+                onClick={() => handleCalendarSync('outlook')}
+                data-testid="button-sync-outlook"
+              >
                 <Calendar size={14} />
                 Outlook
                 <ExternalLink size={12} />
@@ -620,6 +639,88 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
 
       <AddAppointmentDialog />
       <AppointmentDetailsDialog />
+      
+      {/* Calendar Sync Dialog */}
+      <Dialog open={showCalendarSyncDialog} onOpenChange={setShowCalendarSyncDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="text-sage" />
+              Sync Your {selectedCalendarProvider === 'google' ? 'Google' : 'Outlook'} Calendar
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-sage/10 p-4 rounded-lg">
+              <h4 className="font-semibold text-deep-teal mb-2">How Calendar Sync Works</h4>
+              <p className="text-sm text-muted-foreground">
+                Connect your {selectedCalendarProvider === 'google' ? 'Google' : 'Outlook'} calendar to automatically import all your pregnancy and postpartum-related appointments. We'll smart-filter and sync appointments that contain keywords like:
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {['OB/GYN', 'Ultrasound', 'Prenatal', 'Doula', 'Lactation', 'Baby Checkup', 'Pediatrician'].map((keyword) => (
+                  <Badge key={keyword} variant="secondary" className="text-xs">
+                    {keyword}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-semibold text-deep-teal">Benefits of Calendar Sync:</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>All your pregnancy appointments in one place</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Automatically categorizes appointments (OB, ultrasound, doula, etc.)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Keep your calendar updated - no need to manually add appointments</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Share with your partner or support person easily</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="border-t pt-4">
+              <p className="text-sm text-muted-foreground mb-4">
+                To enable calendar sync, you'll need to connect your {selectedCalendarProvider === 'google' ? 'Google' : 'Microsoft'} account. This is a one-time setup that takes about 30 seconds.
+              </p>
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCalendarSyncDialog(false)}
+                  className="flex-1"
+                >
+                  Maybe Later
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowCalendarSyncDialog(false);
+                    toast({
+                      title: "Calendar Integration Coming Soon!",
+                      description: `We're working on finalizing the ${selectedCalendarProvider === 'google' ? 'Google' : 'Outlook'} Calendar integration. You'll be able to sync your appointments automatically very soon!`,
+                    });
+                  }}
+                  style={{ 
+                    backgroundColor: 'hsl(146, 27%, 56%)', 
+                    color: 'white'
+                  }}
+                  className="flex-1 hover:opacity-90"
+                  data-testid="button-connect-calendar"
+                >
+                  Connect {selectedCalendarProvider === 'google' ? 'Google' : 'Outlook'} Calendar
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

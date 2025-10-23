@@ -93,6 +93,7 @@ export interface IStorage {
   createAppointment(appointment: InsertAppointment): Promise<Appointment>;
   updateAppointment(id: number, appointment: Partial<InsertAppointment>): Promise<Appointment>;
   deleteAppointment(id: number): Promise<void>;
+  getAppointmentByExternalId(externalId: string, source: string): Promise<Appointment | null>;
 
   // Community operations
   getGroups(userId?: number): Promise<Group[]>;
@@ -681,6 +682,17 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAppointment(id: number): Promise<void> {
     await db.delete(appointments).where(eq(appointments.id, id));
+  }
+
+  async getAppointmentByExternalId(externalId: string, source: string): Promise<Appointment | null> {
+    const [appointment] = await db.select()
+      .from(appointments)
+      .where(and(
+        eq(appointments.externalCalendarId, externalId),
+        eq(appointments.source, source)
+      ))
+      .limit(1);
+    return appointment || null;
   }
 
   // Community operations
