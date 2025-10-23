@@ -313,7 +313,7 @@ export default function Onboarding() {
           <Card className="mt-8 mb-8">
             <CardContent className="p-6">
               <h2 className="text-2xl font-bold text-deep-teal mb-6 text-center">
-                Tell us about yourself
+                Tell me about yourself
               </h2>
               <div className="space-y-4">
                 <div>
