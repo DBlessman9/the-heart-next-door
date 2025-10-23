@@ -133,6 +133,32 @@ The application is designed as a comprehensive maternal wellness platform that p
 ## Recent Changes
 
 ### Latest Updates (2025-10-23)
+- **Partner/Supporter Matching System**: Complete invite-based connection system for spouses/partners/supporters
+  - Added `partnerships` table with invite codes, permissions, status tracking, and expiration dates
+  - Added `partnerUpdates` table for event tracking (check-ins, appointments, journal entries, resources)
+  - Atomic partner registration endpoint with transactional integrity:
+    - POST /api/partners/register validates invite code, creates user, and links accounts in single transaction
+    - Proper rollback: deletes user if redemption fails to prevent orphaned accounts
+    - Retry support: reuses existing partner accounts to avoid duplicate email errors
+    - Clear error messages and loading states for all failure scenarios
+  - Mom onboarding includes optional partner invitation step (Step 4)
+    - Generates unique 8-10 character invite code with 7-day default expiration
+    - Shareable code for spouse/partner/supporter to join
+    - Skip option for moms who don't want to invite anyone yet
+  - Partner onboarding requires valid invite code to create account
+    - 3-step process: user type selection, code entry, profile creation
+    - Validates code before allowing registration
+    - Links accounts atomically on successful registration
+  - Permission system with visibility presets:
+    - full_support: Partner sees everything (check-ins, journal, appointments, resources)
+    - essentials_only: Limited to appointments and key updates
+    - appointments_only: Only shared appointments
+    - custom: Granular toggle controls (canViewCheckIns, canViewJournal, canViewAppointments, canViewResources)
+  - Backend API routes for partnership management:
+    - GET /api/partnerships/:userId - Get user's partnership connections
+    - POST /api/partnerships/generate - Generate invite code for mom
+    - POST /api/partners/register - Atomic partner registration with rollback
+    - GET /api/partners/:partnerId/updates - Retrieve partner updates based on permissions
 - **Regional Access Control with Waitlist System**: Implemented Detroit-area targeting with graceful waitlist for national expansion
   - Added zipCode field to user schema for region-based access control
   - Added waitlistUser boolean flag to track users outside Detroit area
