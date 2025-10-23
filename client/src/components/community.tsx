@@ -387,7 +387,7 @@ export default function Community({ userId, user }: CommunityProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="resource">Detroit Resources</SelectItem>
+                <SelectItem value="resource">Resources</SelectItem>
                 <SelectItem value="location">Location</SelectItem>
                 <SelectItem value="birth_month">Birth Month</SelectItem>
                 <SelectItem value="topic">Topic</SelectItem>
@@ -401,7 +401,16 @@ export default function Community({ userId, user }: CommunityProps) {
 
           <div className="grid gap-4">
             {filteredGroups.map((group: GroupWithDetails) => (
-              <Card key={group.id} className="hover:shadow-md transition-shadow">
+              <Card 
+                key={group.id} 
+                className={`hover:shadow-md transition-shadow ${group.isExternal && group.website ? 'cursor-pointer' : ''}`}
+                onClick={() => {
+                  if (group.isExternal && group.website) {
+                    window.open(group.website, '_blank');
+                  }
+                }}
+                data-testid={`card-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
+              >
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -447,7 +456,10 @@ export default function Community({ userId, user }: CommunityProps) {
                     </div>
                     {group.isExternal && group.website ? (
                       <Button
-                        onClick={() => window.open(group.website, '_blank')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(group.website, '_blank');
+                        }}
                         size="sm"
                         className="bg-sage hover:bg-sage/90"
                         data-testid={`button-visit-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
@@ -457,7 +469,10 @@ export default function Community({ userId, user }: CommunityProps) {
                       </Button>
                     ) : (
                       <Button
-                        onClick={() => joinGroupMutation.mutate(group.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          joinGroupMutation.mutate(group.id);
+                        }}
                         size="sm"
                         variant="outline"
                         disabled={group.userMembership}

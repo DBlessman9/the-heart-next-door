@@ -745,7 +745,7 @@ export class DatabaseStorage implements IStorage {
   // Community operations
   async getGroups(userId?: number): Promise<Group[]> {
     await this.ensureSeeded();
-    const allGroups = await db.select().from(groups).orderBy(groups.createdAt);
+    const allGroups = await db.select().from(groups).orderBy(groups.name);
     
     if (userId) {
       // Check membership status for each group
