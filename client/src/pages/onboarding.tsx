@@ -395,7 +395,7 @@ export default function Onboarding() {
                       <SelectItem value="second">Second trimester (14–27 weeks)</SelectItem>
                       <SelectItem value="third">Third trimester (28+ weeks)</SelectItem>
                       <SelectItem value="postpartum">Postpartum / 4th trimester</SelectItem>
-                      <SelectItem value="supporter">Partner/supporter</SelectItem>
+                      <SelectItem value="supporter">Partner / Supporter</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
