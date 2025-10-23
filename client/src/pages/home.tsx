@@ -50,7 +50,11 @@ export default function Home() {
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen">
       <AppHeader user={user} />
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabNavigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        pregnancyStage={user.pregnancyStage}
+      />
       
       <div className="pb-4">
         {activeTab === "checkin" && <DailyCheckIn userId={currentUserId} user={user} />}

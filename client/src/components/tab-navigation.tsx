@@ -3,10 +3,11 @@ import { MessageCircle, Heart, UserCheck, Baby, Calendar, Users, BarChart3 } fro
 interface TabNavigationProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  pregnancyStage?: string;
 }
 
-export default function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
-  const tabs = [
+export default function TabNavigation({ activeTab, onTabChange, pregnancyStage }: TabNavigationProps) {
+  const allTabs = [
     { id: "checkin", label: "Check-in", icon: Heart },
     { id: "baby", label: "Baby", icon: Baby },
     { id: "insights", label: "Insights", icon: BarChart3 },
@@ -14,6 +15,11 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
     { id: "community", label: "Village", icon: Users },
     { id: "experts", label: "Experts", icon: UserCheck },
   ];
+
+  // Hide Baby tab for users trying to conceive
+  const tabs = pregnancyStage === "trying_to_conceive" 
+    ? allTabs.filter(tab => tab.id !== "baby")
+    : allTabs;
 
   return (
     <nav className="bg-white border-t border-gray-100 sticky top-0 z-10">
