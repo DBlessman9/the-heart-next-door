@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +10,25 @@ import { Heart, AlertCircle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import maternalIcon from "@assets/generated_images/Pregnant_woman_silhouette_sage_green_dbe68746.png";
+import maternalIcon from "@assets/generated_images/Pregnant_woman_bun_hairstyle_sage_272a5b6e.png";
+
+const TypingText = ({ text, speed = 50, delay = 0 }: { text: string; speed?: number; delay?: number }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (currentIndex < text.length) {
+        setDisplayedText(text.substring(0, currentIndex + 1));
+        setCurrentIndex(currentIndex + 1);
+      }
+    }, currentIndex === 0 ? delay : speed);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, text, speed, delay]);
+
+  return <>{displayedText}</>;
+};
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
@@ -214,12 +232,14 @@ export default function Onboarding() {
               <img src={maternalIcon} alt="Maternal care" className="w-full h-full object-cover rounded-full animate-pulse" style={{ animationDuration: '3s' }} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
-              Hi mama, I'm Nia.
+              <TypingText text="Hi mama, I'm Nia." speed={80} delay={500} />
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              I'm your digital doula, and I'm so glad you're here.<br/>
-              Think of me as a friend who listens, supports, and walks with you every step of the way.<br/>
-              Let's get to know each other.
+              <TypingText text="I'm your digital doula, and I'm so glad you're here." speed={40} delay={2000} />
+              <br/>
+              <TypingText text="Think of me as a friend who listens, supports, and walks with you every step of the way." speed={40} delay={5000} />
+              <br/>
+              <TypingText text="Let's get to know each other." speed={50} delay={9500} />
             </p>
             <div className="space-y-4 px-4">
               <button 
