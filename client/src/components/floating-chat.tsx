@@ -29,7 +29,7 @@ export default function FloatingChat() {
   // Get contextual greeting based on current page
   const getContextualGreeting = () => {
     const greetings = {
-      "/": "Hi mama! How are you feeling today? I'm here whenever you need support.",
+      "/": "Hi there! How are you feeling today? I'm here whenever you need support.",
       "/checkin": "Ready for your daily check-in? I'm here if you want to talk through how you're feeling.",
       "/journal": "Journaling can be so healing. Want to explore your thoughts together?",
       "/baby": "Learning about your little one's development? I love talking about this exciting journey!",
@@ -37,7 +37,7 @@ export default function FloatingChat() {
       "/appointments": "Managing appointments can feel overwhelming. I'm here to help you stay organized.",
       "/experts": "Finding the right support team is so important. Want to talk about what you're looking for?",
       "/resources": "There's so much to learn! I'm here to help you navigate all this information.",
-      "/community": "Connection with other mamas can be so powerful. How are you feeling about community?"
+      "/community": "Connection with others can be so powerful. How are you feeling about community?"
     };
     
     return greetings[location as keyof typeof greetings] || greetings["/"];

@@ -157,6 +157,26 @@ export class DatabaseStorage implements IStorage {
       // Seed default affirmations
       const defaultAffirmations: InsertAffirmation[] = [
         {
+          content: "I am exactly where I need to be in my journey. I trust in divine timing.",
+          pregnancyStage: "trying_to_conceive",
+          isActive: true,
+        },
+        {
+          content: "My body is capable and wise. I honor my journey with patience and self-love.",
+          pregnancyStage: "trying_to_conceive",
+          isActive: true,
+        },
+        {
+          content: "I release worry and embrace hope. Each day is a gift of possibility.",
+          pregnancyStage: "trying_to_conceive",
+          isActive: true,
+        },
+        {
+          content: "I am creating a beautiful life for myself right now. My body knows how to nurture and protect my baby.",
+          pregnancyStage: "first",
+          isActive: true,
+        },
+        {
           content: "I am strong, capable, and surrounded by love. My body knows how to nurture and protect my baby.",
           pregnancyStage: "second",
           isActive: true,

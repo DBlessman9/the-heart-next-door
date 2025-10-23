@@ -102,7 +102,9 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
         <div className="w-20 h-20 bg-gradient-to-br from-coral to-muted-gold rounded-full flex items-center justify-center mx-auto mb-4">
           <Heart className="text-white" size={32} />
         </div>
-        <h3 className="text-xl font-semibold text-deep-teal mb-2">How are you feeling today, mama?</h3>
+        <h3 className="text-xl font-semibold text-deep-teal mb-2">
+          How are you feeling today{user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}?
+        </h3>
         <p className="text-gray-600">
           {hasCheckedIn ? "Thank you for checking in today!" : "Your wellness matters. Let's take this moment for you."}
         </p>
@@ -147,7 +149,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                 <p className="text-sm text-sage font-medium">
                   {feeling === "peaceful" ? "What a beautiful feeling to hold today. You're doing wonderfully." :
                    feeling === "anxious" ? "It's okay to feel anxious. You're supported and not alone in this journey." :
-                   feeling === "tired" ? "Rest when you can, mama. Your body is doing incredible work." :
+                   feeling === "tired" ? `Rest when you can${user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}. Your body is ${user.pregnancyStage === "trying_to_conceive" ? "amazing" : "doing incredible work"}.` :
                    feeling === "overwhelmed" ? "Take it one breath at a time. You're stronger than you know." :
                    feeling === "grateful" ? "Gratitude is such a powerful feeling. You're radiating positivity." :
                    "Every feeling is valid. You're doing an amazing job."}
@@ -193,10 +195,12 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
             {hasCheckedIn && bodyCare && (
               <div className="mt-4 p-3 bg-sage/10 rounded-lg">
                 <p className="text-sm text-sage font-medium">
-                  {bodyCare === "not-yet" ? "No pressure, mama. Even small acts of self-care count. Maybe start with a glass of water?" :
+                  {bodyCare === "not-yet" ? `No pressure${user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}. Even small acts of self-care count. Maybe start with a glass of water?` :
                    bodyCare === "a-little" ? "Every little bit counts. You're taking steps to care for yourself." :
                    bodyCare === "yes-tried" ? "You're making an effort and that's what matters. Keep going!" :
-                   "Beautiful! Your body and baby are grateful for the nourishment you're giving them."}
+                   user.pregnancyStage === "trying_to_conceive" 
+                     ? "Beautiful! Your body is grateful for the nourishment you're giving it."
+                     : "Beautiful! Your body and baby are grateful for the nourishment you're giving them."}
                 </p>
               </div>
             )}
@@ -262,7 +266,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
           ) : (
             <div className="bg-sage/10 rounded-lg p-4">
               <p className="text-sage font-medium">
-                Thank you for taking time to check in with yourself today, mama. 
+                Thank you for taking time to check in with yourself today{user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}. 
                 Remember, you're doing an amazing job. 💚
               </p>
             </div>
