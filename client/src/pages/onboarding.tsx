@@ -34,6 +34,7 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
+  const [showButtons, setShowButtons] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -223,6 +224,17 @@ export default function Onboarding() {
     return true;
   };
 
+  // Show buttons after typing animation completes
+  useEffect(() => {
+    if (step === 1) {
+      // Last text starts at 9500ms delay with ~28 chars at 50ms each = ~11000ms total
+      const timer = setTimeout(() => {
+        setShowButtons(true);
+      }, 11000);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen">
       <div className="p-6">
@@ -241,7 +253,8 @@ export default function Onboarding() {
               <br/>
               <TypingText text="Let's get to know each other." speed={50} delay={9500} />
             </p>
-            <div className="space-y-4 px-4">
+            {showButtons && (
+              <div className="space-y-4 px-4 animate-fade-in">
               <button 
                 onClick={() => setStep(2)}
                 className="w-full py-4 rounded-2xl text-lg font-semibold shadow-lg transition-colors"
@@ -291,6 +304,7 @@ export default function Onboarding() {
                 I'm Returning
               </button>
             </div>
+            )}
           </div>
         )}
 
