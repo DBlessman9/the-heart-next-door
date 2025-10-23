@@ -213,7 +213,7 @@ export default function Onboarding() {
               <Heart className="text-white text-4xl" size={48} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
-              Hi there, I'm Nia. 👋
+              Hi mama, I'm Nia.
             </h1>
             <p className="text-lg text-gray-600 mb-8">
               I'm your digital doula, and I'm so glad you're here.<br/>
