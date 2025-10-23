@@ -132,7 +132,19 @@ The application is designed as a comprehensive maternal wellness platform that p
 
 ## Recent Changes
 
-### Latest Updates (2025-07-23)
+### Latest Updates (2025-10-23)
+- **Regional Access Control with Waitlist System**: Implemented Detroit-area targeting with graceful waitlist for national expansion
+  - Added zipCode field to user schema for region-based access control
+  - Added waitlistUser boolean flag to track users outside Detroit area
+  - Created comprehensive list of Detroit and surrounding metro area zip codes
+  - Backend automatically checks zip codes and flags non-Detroit users as waitlist members
+  - Built beautiful waitlist thank-you page with warm messaging about founding waitlist
+  - Onboarding flow now routes Detroit users to main app, non-Detroit users to waitlist page
+  - Messaging emphasizes "Now serving Detroit-area moms first" while welcoming national users to join waitlist
+  - Updated onboarding form to collect city/state and zip code separately
+  - Changed "Tell us about yourself" to "Tell me about yourself" for consistent Nia voice
+
+### Previous Updates (2025-07-23)
 - **Enhanced Marketing Landing Page**: Beautiful, warm landing page with improved design and app previews
   - Created professional landing page at `/landing` route for lead generation
   - Enhanced with warm rose-orange-amber gradient color palette for emotional connection

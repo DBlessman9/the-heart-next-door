@@ -16,11 +16,35 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Detroit area zip codes (Detroit and surrounding areas)
+  const detroitZipCodes = [
+    // Detroit proper
+    "48201", "48202", "48203", "48204", "48205", "48206", "48207", "48208", "48209", "48210",
+    "48211", "48212", "48213", "48214", "48215", "48216", "48217", "48218", "48219", "48220",
+    "48221", "48222", "48223", "48224", "48225", "48226", "48227", "48228", "48229", "48230",
+    "48231", "48232", "48233", "48234", "48235", "48236", "48237", "48238", "48239", "48240",
+    "48242", "48243",
+    // Surrounding metro areas
+    "48067", "48070", "48071", "48072", "48073", "48075", "48076", "48220", "48221", "48223",
+    "48224", "48225", "48226", "48227", "48228", "48229", "48230", "48331", "48334", "48335",
+    "48336", "48340", "48341", "48342", "48346", "48347", "48348", "48375", "48377", "48380",
+  ];
+
   // User routes
   app.post("/api/users", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      const user = await storage.createUser(userData);
+      
+      // Check if zip code is in Detroit area
+      const isDetroitArea = userData.zipCode ? detroitZipCodes.includes(userData.zipCode) : false;
+      
+      // Set waitlist flag for non-Detroit users
+      const userDataWithWaitlist = {
+        ...userData,
+        waitlistUser: !isDetroitArea,
+      };
+      
+      const user = await storage.createUser(userDataWithWaitlist);
       res.json(user);
     } catch (error) {
       console.error("User creation error:", error);

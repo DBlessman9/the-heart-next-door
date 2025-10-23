@@ -40,6 +40,7 @@ export default function Onboarding() {
     lastName: "",
     email: "",
     location: "",
+    zipCode: "",
     pregnancyWeek: "",
     pregnancyStage: "",
     dueDate: "",
@@ -58,6 +59,8 @@ export default function Onboarding() {
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
+        location: userData.location,
+        zipCode: userData.zipCode,
         pregnancyStage: userData.pregnancyStage,
         pregnancyWeek: userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined,
         dueDate: userData.dueDate ? new Date(userData.dueDate) : undefined,
@@ -72,11 +75,17 @@ export default function Onboarding() {
     },
     onSuccess: (user) => {
       localStorage.setItem("currentUserId", user.id.toString());
-      toast({
-        title: "Welcome to your digital village!",
-        description: "Your profile has been created successfully.",
-      });
-      setLocation("/");
+      
+      // Route based on waitlist status
+      if (user.waitlistUser) {
+        setLocation("/waitlist");
+      } else {
+        toast({
+          title: "Welcome to your digital village!",
+          description: "Your profile has been created successfully.",
+        });
+        setLocation("/");
+      }
     },
     onError: (error: any) => {
       console.error("Profile creation error:", error);
@@ -211,7 +220,7 @@ export default function Onboarding() {
 
   const isFormValid = () => {
     if (step === 2) {
-      return formData.firstName && formData.lastName && formData.email && formData.location && formData.pregnancyStage;
+      return formData.firstName && formData.lastName && formData.email && formData.location && formData.zipCode && formData.pregnancyStage;
     }
     if (step === 3) {
       if (formData.pregnancyStage === "postpartum") {
@@ -355,6 +364,19 @@ export default function Onboarding() {
                     onChange={(e) => handleInputChange("location", e.target.value)}
                     placeholder="City, State (e.g., Detroit, MI)"
                     className="mt-1"
+                    data-testid="input-location"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="zipCode">Zip Code</Label>
+                  <Input
+                    id="zipCode"
+                    value={formData.zipCode}
+                    onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                    placeholder="Enter your zip code"
+                    className="mt-1"
+                    maxLength={5}
+                    data-testid="input-zipcode"
                   />
                   <p className="text-xs text-gray-500 mt-1.5">Now serving Detroit-area moms first 💛 Not in Detroit yet? Join our national waitlist and we'll welcome you soon.</p>
                 </div>

@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Landing from "@/pages/landing";
 import Onboarding from "@/pages/onboarding";
+import Waitlist from "@/pages/waitlist";
 import PartnerOnboarding from "@/pages/partner-onboarding";
 import PartnerDashboard from "@/pages/partner-dashboard";
 import PartnerSettings from "@/pages/partner-settings";
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/landing" component={Landing} />
       <Route path="/onboarding" component={Onboarding} />
+      <Route path="/waitlist" component={Waitlist} />
       <Route path="/partner-onboarding" component={PartnerOnboarding} />
       <Route path="/partner-dashboard" component={PartnerDashboard} />
       <Route path="/partner-settings" component={PartnerSettings} />

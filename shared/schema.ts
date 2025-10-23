@@ -9,6 +9,8 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
   location: text("location"), // City, State
+  zipCode: text("zip_code"), // Zip code for region-based access
+  waitlistUser: boolean("waitlist_user").default(false), // True if outside Detroit area
   userType: text("user_type").default("mother"), // "mother", "partner"
   pregnancyWeek: integer("pregnancy_week"),
   pregnancyStage: text("pregnancy_stage"), // "first", "second", "third", "postpartum"
