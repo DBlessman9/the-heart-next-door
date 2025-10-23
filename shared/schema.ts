@@ -29,20 +29,39 @@ export const users = pgTable("users", {
 export const partnerships = pgTable("partnerships", {
   id: serial("id").primaryKey(),
   motherId: integer("mother_id").references(() => users.id).notNull(),
-  partnerId: integer("partner_id").references(() => users.id).notNull(),
+  partnerId: integer("partner_id").references(() => users.id),
   relationshipType: text("relationship_type").notNull(), // "spouse", "partner", "other"
-  status: text("status").default("pending"), // "pending", "active", "inactive"
+  status: text("status").default("pending"), // "pending", "active", "inactive", "revoked", "expired"
   inviteCode: text("invite_code").unique(),
+  expiresAt: timestamp("expires_at"), // Invite code expiration (default 7 days)
+  redeemedAt: timestamp("redeemed_at"), // When partner accepted invite
+  nickname: text("nickname"), // Optional friendly name for partner
   // Privacy settings for what partner can access
-  canViewCheckIns: boolean("can_view_check_ins").default(false),
+  visibilityPreset: text("visibility_preset").default("essentials_only"), // "full_support", "essentials_only", "appointments_only", "custom"
+  canViewCheckIns: boolean("can_view_check_ins").default(true),
   canViewJournal: boolean("can_view_journal").default(false),
   canViewAppointments: boolean("can_view_appointments").default(true),
   canViewResources: boolean("can_view_resources").default(true),
+  lastNotifiedAt: timestamp("last_notified_at"), // Track last update notification sent
   createdAt: timestamp("created_at").defaultNow(),
   acceptedAt: timestamp("accepted_at"),
 }, (table) => ({
   unique: unique().on(table.motherId, table.partnerId),
 }));
+
+// Partner update events - tracks what updates partners can see
+export const partnerUpdates = pgTable("partner_updates", {
+  id: serial("id").primaryKey(),
+  motherId: integer("mother_id").references(() => users.id).notNull(),
+  partnerId: integer("partner_id").references(() => users.id).notNull(),
+  partnershipId: integer("partnership_id").references(() => partnerships.id).notNull(),
+  eventType: text("event_type").notNull(), // "check_in", "appointment", "journal_summary", "milestone"
+  title: text("title").notNull(), // User-friendly title for the update
+  summary: text("summary"), // Brief description of the update
+  payloadSnapshot: jsonb("payload_snapshot").default({}), // Sanitized data subset
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 // Partner-specific resources and education content
 export const partnerResources = pgTable("partner_resources", {
@@ -272,6 +291,11 @@ export const insertPartnerProgressSchema = createInsertSchema(partnerProgress).o
   completedAt: true,
 });
 
+export const insertPartnerUpdateSchema = createInsertSchema(partnerUpdates).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
@@ -300,6 +324,8 @@ export type PartnerResource = typeof partnerResources.$inferSelect;
 export type InsertPartnerResource = z.infer<typeof insertPartnerResourceSchema>;
 export type PartnerProgress = typeof partnerProgress.$inferSelect;
 export type InsertPartnerProgress = z.infer<typeof insertPartnerProgressSchema>;
+export type PartnerUpdate = typeof partnerUpdates.$inferSelect;
+export type InsertPartnerUpdate = z.infer<typeof insertPartnerUpdateSchema>;
 
 // Email signups for landing page
 export const emailSignups = pgTable("email_signups", {

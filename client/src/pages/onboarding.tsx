@@ -51,6 +51,11 @@ export default function Onboarding() {
     isPostpartum: false,
   });
   const [showEmailExistsError, setShowEmailExistsError] = useState(false);
+  const [wantsPartnerInvite, setWantsPartnerInvite] = useState<boolean | null>(null);
+  const [partnerInviteCode, setPartnerInviteCode] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [enteredInviteCode, setEnteredInviteCode] = useState("");
+  const [inviteCodeError, setInviteCodeError] = useState("");
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: typeof formData) => {
@@ -69,22 +74,25 @@ export default function Onboarding() {
         pregnancyExperience: userData.pregnancyExperience,
         birthExperience: userData.birthExperience,
         supportNeeds: userData.supportNeeds,
+        userType: userData.pregnancyStage === "supporter" ? "partner" : "mother",
         preferences: {},
       });
       return response.json();
     },
     onSuccess: (user) => {
       localStorage.setItem("currentUserId", user.id.toString());
+      setUserId(user.id);
       
       // Route based on waitlist status
       if (user.waitlistUser) {
         setLocation("/waitlist");
       } else {
+        // For moms and trying_to_conceive, proceed to partner invitation step
         toast({
-          title: "Welcome to your digital village!",
-          description: "Your profile has been created successfully.",
+          title: "Profile created!",
+          description: "Almost done...",
         });
-        setLocation("/");
+        setStep(4); // Move to partner invitation step
       }
     },
     onError: (error: any) => {
@@ -108,12 +116,91 @@ export default function Onboarding() {
     },
   });
 
+  const generateInviteCodeMutation = useMutation({
+    mutationFn: async ({ motherId }: { motherId: number }) => {
+      const response = await apiRequest("POST", "/api/partnerships/generate", {
+        motherId,
+        relationshipType: "partner",
+      });
+      return response.json();
+    },
+    onSuccess: (partnership) => {
+      setPartnerInviteCode(partnership.inviteCode);
+      toast({
+        title: "Invite code generated!",
+        description: "Share this code with your partner to connect.",
+      });
+    },
+    onError: (error) => {
+      console.error("Error generating invite code:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate invite code. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const registerPartnerMutation = useMutation({
+    mutationFn: async ({ inviteCode, userData }: { inviteCode: string; userData: typeof formData }) => {
+      const response = await apiRequest("POST", "/api/partners/register", {
+        inviteCode: inviteCode.toUpperCase(),
+        userData: {
+          name: `${userData.firstName} ${userData.lastName}`,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          location: userData.location,
+          zipCode: userData.zipCode,
+          pregnancyStage: userData.pregnancyStage,
+          userType: "partner",
+          preferences: {},
+        },
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("currentUserId", data.user.id.toString());
+      toast({
+        title: "Successfully connected!",
+        description: "You're now connected with your partner's journey.",
+      });
+      setLocation("/");
+    },
+    onError: (error: any) => {
+      console.error("Error registering partner:", error);
+      const message = error?.message || "Invalid or expired invite code";
+      setInviteCodeError(message);
+      toast({
+        title: "Error",
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+
 
 
   const handleSubmit = () => {
-    if (step < 4) {
-      // Validate due date before proceeding from step 3
-      if (step === 3 && formData.pregnancyStage !== "postpartum") {
+    if (step === 2) {
+      setStep(3);
+    } else if (step === 3) {
+      // For partners, use atomic registration endpoint
+      if (formData.pregnancyStage === "supporter") {
+        if (!enteredInviteCode) {
+          setInviteCodeError("Please enter an invite code");
+          return;
+        }
+        // Atomically register partner and link to mother
+        registerPartnerMutation.mutate({
+          inviteCode: enteredInviteCode,
+          userData: formData,
+        });
+        return;
+      }
+      
+      // Validate due date before submission for pregnant users
+      if (formData.pregnancyStage !== "postpartum" && formData.pregnancyStage !== "trying_to_conceive") {
         const validation = validateDueDate();
         if (!validation.isValid) {
           toast({
@@ -124,9 +211,8 @@ export default function Onboarding() {
           return;
         }
       }
-      setStep(step + 1);
-    } else {
-      // Final submission
+      
+      // Create user on step 3 (for moms and trying_to_conceive)
       const submitData = {
         ...formData,
         name: `${formData.firstName} ${formData.lastName}`,
@@ -134,6 +220,14 @@ export default function Onboarding() {
       };
       createUserMutation.mutate(submitData);
     }
+  };
+
+  const handlePartnerInviteComplete = () => {
+    toast({
+      title: "Welcome to your digital village!",
+      description: "Your profile has been created successfully.",
+    });
+    setLocation("/");
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -226,6 +320,12 @@ export default function Onboarding() {
       if (formData.pregnancyStage === "postpartum") {
         // For postpartum: baby birth date is required
         return formData.babyBirthDate;
+      } else if (formData.pregnancyStage === "supporter") {
+        // For supporters: invite code is required
+        return enteredInviteCode && enteredInviteCode.length >= 6;
+      } else if (formData.pregnancyStage === "trying_to_conceive") {
+        // No additional fields required for trying to conceive
+        return true;
       } else {
         // For pregnant: due date is required
         return formData.dueDate;
@@ -500,14 +600,47 @@ export default function Onboarding() {
                       </div>
                     </div>
                   </>
-                ) : formData.pregnancyStage === "trying_to_conceive" || formData.pregnancyStage === "supporter" ? (
-                  // Minimal questions for trying to conceive or supporters
+                ) : formData.pregnancyStage === "trying_to_conceive" ? (
+                  // Minimal questions for trying to conceive
                   <>
                     <div className="text-center py-8">
                       <p className="text-gray-600">
-                        {formData.pregnancyStage === "trying_to_conceive" 
-                          ? "We're here for you on your journey. Let's get you connected with Nia!"
-                          : "Thank you for being a supporter. Let's get you connected with our community!"}
+                        We're here for you on your journey. Let's get you connected with Nia!
+                      </p>
+                    </div>
+                  </>
+                ) : formData.pregnancyStage === "supporter" ? (
+                  // Partner/supporter needs invite code
+                  <>
+                    <div>
+                      <Label htmlFor="inviteCode" className="text-base font-medium">Enter Your Invite Code</Label>
+                      <p className="text-sm text-gray-500 mb-3">
+                        Your partner should have shared an invite code with you. Enter it here to connect.
+                      </p>
+                      <Input
+                        id="inviteCode"
+                        type="text"
+                        value={enteredInviteCode}
+                        onChange={(e) => {
+                          setEnteredInviteCode(e.target.value.toUpperCase());
+                          setInviteCodeError("");
+                        }}
+                        placeholder="Enter 8-character code"
+                        className="mt-1 uppercase text-center text-lg tracking-wider"
+                        maxLength={10}
+                        required
+                        data-testid="input-invite-code"
+                      />
+                      {inviteCodeError && (
+                        <div className="flex items-center mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                          <AlertCircle className="text-red-500 mr-2" size={16} />
+                          <p className="text-sm text-red-700">{inviteCodeError}</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-600">
+                        Don't have a code? Ask your partner to generate one during their sign-up.
                       </p>
                     </div>
                   </>
@@ -600,9 +733,9 @@ export default function Onboarding() {
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
                   }}
-                  disabled={createUserMutation.isPending || !isFormValid()}
+                  disabled={createUserMutation.isPending || registerPartnerMutation.isPending || !isFormValid()}
                 >
-                  Continue
+                  {registerPartnerMutation.isPending ? "Connecting..." : createUserMutation.isPending ? "Creating profile..." : "Continue"}
                 </button>
               </div>
             </CardContent>
@@ -617,20 +750,26 @@ export default function Onboarding() {
                   <Heart className="text-white text-2xl" size={32} />
                 </div>
 
-                <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                  {formData.pregnancyStage === "postpartum" 
-                    ? "Thank you for trusting us with your story. However your journey unfolded and whatever support you need, you're not alone. We're here to walk it with you."
-                    : "Thank you for sharing. Wherever you are in your pregnancy journey, we're here to support you with care that meets you where you are."
-                  }
-                </p>
-                {showEmailExistsError ? (
-                  <div className="space-y-3">
-                    <p className="text-sm text-red-600 mb-4">
-                      An account with this email already exists.
+                <h3 className="text-2xl font-bold text-deep-teal mb-3">
+                  One more thing...
+                </h3>
+                
+                {wantsPartnerInvite === null ? (
+                  <div>
+                    <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+                      Would you like to invite your partner or a supporter to stay connected with your journey?
                     </p>
-                    <div className="flex flex-col gap-3">
+                    <p className="text-sm text-gray-600 mb-8">
+                      They'll be able to see updates you choose to share, helping them support you better.
+                    </p>
+                    <div className="space-y-3">
                       <button 
-                        onClick={handleLoginExistingUser}
+                        onClick={() => {
+                          setWantsPartnerInvite(true);
+                          if (userId) {
+                            generateInviteCodeMutation.mutate({ motherId: userId });
+                          }
+                        }}
                         className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
                         style={{
                           backgroundColor: 'hsl(146, 27%, 56%)',
@@ -638,18 +777,19 @@ export default function Onboarding() {
                           border: '2px solid hsl(146, 27%, 56%)'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 50%)';
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 56%)';
                         }}
+                        data-testid="button-invite-partner"
                       >
-                        Login to Existing Account
+                        Yes, invite my partner
                       </button>
                       <button 
                         onClick={() => {
-                          setShowEmailExistsError(false);
-                          setStep(1);
+                          setWantsPartnerInvite(false);
+                          handlePartnerInviteComplete();
                         }}
                         className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors border-2"
                         style={{
@@ -658,35 +798,57 @@ export default function Onboarding() {
                           border: '2px solid hsl(146, 27%, 56%)'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'hsl(146, 27%, 96%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 96%)';
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'white';
+                          e.currentTarget.style.backgroundColor = 'white';
                         }}
+                        data-testid="button-skip-partner-invite"
                       >
-                        Use Different Email
+                        Skip for now
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <button 
-                    onClick={handleSubmit}
-                    className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                    style={{
-                      backgroundColor: 'hsl(146, 27%, 56%)',
-                      color: 'white',
-                      border: '2px solid hsl(146, 27%, 56%)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
-                    }}
-                    disabled={createUserMutation.isPending}
-                  >
-                    {createUserMutation.isPending ? "Creating Profile..." : "Complete Setup"}
-                  </button>
+                  <div>
+                    {partnerInviteCode ? (
+                      <div>
+                        <p className="text-lg text-gray-700 mb-6">
+                          Share this code with your partner or supporter:
+                        </p>
+                        <div className="bg-sage/10 border-2 border-sage rounded-xl p-6 mb-6">
+                          <p className="text-3xl font-bold text-deep-teal tracking-wider" data-testid="text-invite-code">
+                            {partnerInviteCode}
+                          </p>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-8">
+                          This code expires in 7 days. They can use it during sign-up to connect with you.
+                        </p>
+                        <button 
+                          onClick={handlePartnerInviteComplete}
+                          className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                          style={{
+                            backgroundColor: 'hsl(146, 27%, 56%)',
+                            color: 'white',
+                            border: '2px solid hsl(146, 27%, 56%)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                          }}
+                          data-testid="button-complete-onboarding"
+                        >
+                          Continue to Home
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-gray-600 mb-4">Generating your invite code...</p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </CardContent>

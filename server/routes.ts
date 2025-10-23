@@ -1,8 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import { getNiaResponse, generateJournalPrompt } from "./services/openai";
 import {
+  users,
   insertUserSchema,
   insertChatMessageSchema,
   insertJournalEntrySchema,
@@ -13,6 +16,7 @@ import {
   insertGroupMessageSchema,
   insertPartnershipSchema,
   insertPartnerProgressSchema,
+  insertPartnerUpdateSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -526,6 +530,194 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error getting partner progress:", error);
       res.status(500).json({ message: "Failed to get partner progress" });
+    }
+  });
+
+  // Enhanced partnership routes
+  app.post("/api/partnerships/generate", async (req, res) => {
+    try {
+      const { motherId, relationshipType, nickname } = req.body;
+      if (!motherId || !relationshipType) {
+        return res.status(400).json({ message: "motherId and relationshipType are required" });
+      }
+      const partnership = await storage.generateInviteCodeForMother(motherId, relationshipType, nickname);
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error generating invite code:", error);
+      res.status(500).json({ message: "Failed to generate invite code" });
+    }
+  });
+
+  // Atomic partner registration with invite code (creates user + redeems code in one transaction)
+  app.post("/api/partners/register", async (req, res) => {
+    let createdUser: any = null;
+    
+    try {
+      const { inviteCode, userData } = req.body;
+      
+      if (!inviteCode) {
+        return res.status(400).json({ message: "inviteCode is required" });
+      }
+      
+      // Validate user data
+      const validatedUserData = insertUserSchema.parse(userData);
+      
+      // First, validate the invite code exists and is valid
+      const partnership = await storage.getPartnershipByCode(inviteCode.toUpperCase());
+      if (!partnership) {
+        return res.status(400).json({ message: "Invalid invite code" });
+      }
+      
+      if (partnership.status !== "pending" || partnership.partnerId) {
+        return res.status(400).json({ message: "This invite code has already been used or is invalid" });
+      }
+      
+      if (partnership.expiresAt && new Date(partnership.expiresAt) < new Date()) {
+        return res.status(400).json({ message: "This invite code has expired" });
+      }
+      
+      // Check if user already exists (for retry scenarios)
+      let user = await storage.getUserByEmail(validatedUserData.email);
+      
+      if (user) {
+        // User exists, check if they're a partner
+        if (user.userType !== "partner") {
+          return res.status(400).json({ message: "An account with this email already exists" });
+        }
+        // Existing partner user, try to redeem the code
+        createdUser = null; // Don't mark for rollback since we didn't create it
+      } else {
+        // Create the partner user
+        user = await storage.createUser({
+          ...validatedUserData,
+          userType: "partner"
+        });
+        createdUser = user; // Mark for potential rollback
+      }
+      
+      // Redeem the code to link accounts
+      try {
+        const linkedPartnership = await storage.redeemInviteCode(inviteCode.toUpperCase(), user.id);
+        res.json({ user, partnership: linkedPartnership });
+      } catch (redemptionError) {
+        // ROLLBACK: If we just created the user and redemption fails, delete the user
+        if (createdUser) {
+          try {
+            await db.delete(users).where(eq(users.id, createdUser.id));
+            console.log(`Rolled back user creation for ID ${createdUser.id} due to redemption failure`);
+          } catch (deleteError) {
+            console.error("Failed to rollback user creation:", deleteError);
+          }
+        }
+        
+        console.error("Error redeeming code:", redemptionError);
+        const message = redemptionError instanceof Error ? redemptionError.message : "Failed to link with partner";
+        return res.status(400).json({ message });
+      }
+    } catch (error) {
+      // ROLLBACK: If we created a user but hit an error, delete it
+      if (createdUser) {
+        try {
+          await db.delete(users).where(eq(users.id, createdUser.id));
+          console.log(`Rolled back user creation for ID ${createdUser.id} due to error`);
+        } catch (deleteError) {
+          console.error("Failed to rollback user creation:", deleteError);
+        }
+      }
+      
+      console.error("Error registering partner:", error);
+      if (error && typeof error === 'object' && 'code' in error && error.code === '23505') {
+        return res.status(409).json({ 
+          message: "An account with this email already exists", 
+          error: "duplicate_email" 
+        });
+      }
+      res.status(400).json({ 
+        message: "Failed to register partner", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+
+  app.post("/api/partnerships/redeem", async (req, res) => {
+    try {
+      const { inviteCode, partnerId } = req.body;
+      if (!inviteCode || !partnerId) {
+        return res.status(400).json({ message: "inviteCode and partnerId are required" });
+      }
+      const partnership = await storage.redeemInviteCode(inviteCode, partnerId);
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error redeeming invite code:", error);
+      const message = error instanceof Error ? error.message : "Failed to redeem invite code";
+      res.status(400).json({ message });
+    }
+  });
+
+  app.get("/api/partnerships/mother/:motherId", async (req, res) => {
+    try {
+      const motherId = parseInt(req.params.motherId);
+      const partnerships = await storage.getMotherPartnerships(motherId);
+      res.json(partnerships);
+    } catch (error) {
+      console.error("Error getting mother partnerships:", error);
+      res.status(500).json({ message: "Failed to get partnerships" });
+    }
+  });
+
+  app.get("/api/partnerships/partner/:partnerId", async (req, res) => {
+    try {
+      const partnerId = parseInt(req.params.partnerId);
+      const partnerships = await storage.getPartnerPartnerships(partnerId);
+      res.json(partnerships);
+    } catch (error) {
+      console.error("Error getting partner partnerships:", error);
+      res.status(500).json({ message: "Failed to get partnerships" });
+    }
+  });
+
+  app.post("/api/partnerships/:id/revoke", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const partnership = await storage.revokePartnership(id);
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error revoking partnership:", error);
+      res.status(500).json({ message: "Failed to revoke partnership" });
+    }
+  });
+
+  app.post("/api/partnerships/:id/regenerate", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const partnership = await storage.regenerateInviteCode(id);
+      res.json(partnership);
+    } catch (error) {
+      console.error("Error regenerating invite code:", error);
+      res.status(500).json({ message: "Failed to regenerate invite code" });
+    }
+  });
+
+  // Partner updates routes
+  app.get("/api/partner-updates/:partnerId", async (req, res) => {
+    try {
+      const partnerId = parseInt(req.params.partnerId);
+      const updates = await storage.getPartnerUpdates(partnerId);
+      res.json(updates);
+    } catch (error) {
+      console.error("Error getting partner updates:", error);
+      res.status(500).json({ message: "Failed to get partner updates" });
+    }
+  });
+
+  app.post("/api/partner-updates/:updateId/read", async (req, res) => {
+    try {
+      const updateId = parseInt(req.params.updateId);
+      const update = await storage.markPartnerUpdateAsRead(updateId);
+      res.json(update);
+    } catch (error) {
+      console.error("Error marking update as read:", error);
+      res.status(500).json({ message: "Failed to mark update as read" });
     }
   });
 

@@ -13,6 +13,7 @@ import {
   partnerships,
   partnerResources,
   partnerProgress,
+  partnerUpdates,
   emailSignups,
   type User,
   type InsertUser,
@@ -42,6 +43,8 @@ import {
   type InsertPartnerResource,
   type PartnerProgress,
   type InsertPartnerProgress,
+  type PartnerUpdate,
+  type InsertPartnerUpdate,
   type EmailSignup,
   type InsertEmailSignup,
 } from "@shared/schema";
@@ -103,16 +106,29 @@ export interface IStorage {
   // Partner operations
   createPartnership(partnership: InsertPartnership): Promise<Partnership>;
   getPartnershipByCode(inviteCode: string): Promise<Partnership | undefined>;
-
-  // Email signup operations
-  createEmailSignup(signup: InsertEmailSignup): Promise<EmailSignup>;
-  getEmailSignups(): Promise<EmailSignup[]>;
   getPartnershipByUsers(motherId: number, partnerId: number): Promise<Partnership | undefined>;
   acceptPartnership(id: number): Promise<Partnership>;
   updatePartnershipPermissions(id: number, permissions: Partial<Pick<Partnership, 'canViewCheckIns' | 'canViewJournal' | 'canViewAppointments' | 'canViewResources'>>): Promise<Partnership>;
   getPartnerResources(category?: string): Promise<PartnerResource[]>;
   createPartnerProgress(progress: InsertPartnerProgress): Promise<PartnerProgress>;
   getPartnerProgress(partnerId: number): Promise<PartnerProgress[]>;
+  
+  // Enhanced partnership operations
+  generateInviteCodeForMother(motherId: number, relationshipType: string, nickname?: string): Promise<Partnership>;
+  redeemInviteCode(inviteCode: string, partnerId: number): Promise<Partnership>;
+  getMotherPartnerships(motherId: number): Promise<Partnership[]>;
+  getPartnerPartnerships(partnerId: number): Promise<Partnership[]>;
+  revokePartnership(partnershipId: number): Promise<Partnership>;
+  regenerateInviteCode(partnershipId: number): Promise<Partnership>;
+  
+  // Partner updates operations
+  createPartnerUpdate(update: InsertPartnerUpdate): Promise<PartnerUpdate>;
+  getPartnerUpdates(partnerId: number): Promise<PartnerUpdate[]>;
+  markPartnerUpdateAsRead(updateId: number): Promise<PartnerUpdate>;
+
+  // Email signup operations
+  createEmailSignup(signup: InsertEmailSignup): Promise<EmailSignup>;
+  getEmailSignups(): Promise<EmailSignup[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -835,6 +851,145 @@ export class DatabaseStorage implements IStorage {
       .from(partnerProgress)
       .where(eq(partnerProgress.partnerId, partnerId))
       .orderBy(partnerProgress.completedAt);
+  }
+
+  // Enhanced partnership operations
+  async generateInviteCodeForMother(motherId: number, relationshipType: string, nickname?: string): Promise<Partnership> {
+    // Generate a unique 8-character invite code
+    const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+    
+    // Set expiration to 7 days from now
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    
+    const [partnership] = await db
+      .insert(partnerships)
+      .values({
+        motherId,
+        relationshipType,
+        inviteCode,
+        expiresAt,
+        nickname,
+        status: "pending",
+        visibilityPreset: "essentials_only",
+        canViewCheckIns: true,
+        canViewJournal: false,
+        canViewAppointments: true,
+        canViewResources: true,
+      })
+      .returning();
+    
+    return partnership;
+  }
+
+  async redeemInviteCode(inviteCode: string, partnerId: number): Promise<Partnership> {
+    // Find the partnership by invite code
+    const [partnership] = await db
+      .select()
+      .from(partnerships)
+      .where(eq(partnerships.inviteCode, inviteCode));
+    
+    if (!partnership) {
+      throw new Error("Invalid invite code");
+    }
+    
+    // Check if code has expired
+    if (partnership.expiresAt && new Date() > partnership.expiresAt) {
+      throw new Error("Invite code has expired");
+    }
+    
+    // Check if code has already been redeemed
+    if (partnership.partnerId) {
+      throw new Error("Invite code has already been used");
+    }
+    
+    // Update partnership with partner ID and activate it
+    const [updatedPartnership] = await db
+      .update(partnerships)
+      .set({
+        partnerId,
+        status: "active",
+        redeemedAt: new Date(),
+        acceptedAt: new Date(),
+      })
+      .where(eq(partnerships.id, partnership.id))
+      .returning();
+    
+    return updatedPartnership;
+  }
+
+  async getMotherPartnerships(motherId: number): Promise<Partnership[]> {
+    return await db
+      .select()
+      .from(partnerships)
+      .where(eq(partnerships.motherId, motherId))
+      .orderBy(desc(partnerships.createdAt));
+  }
+
+  async getPartnerPartnerships(partnerId: number): Promise<Partnership[]> {
+    return await db
+      .select()
+      .from(partnerships)
+      .where(eq(partnerships.partnerId, partnerId))
+      .orderBy(desc(partnerships.createdAt));
+  }
+
+  async revokePartnership(partnershipId: number): Promise<Partnership> {
+    const [partnership] = await db
+      .update(partnerships)
+      .set({ status: "revoked" })
+      .where(eq(partnerships.id, partnershipId))
+      .returning();
+    
+    return partnership;
+  }
+
+  async regenerateInviteCode(partnershipId: number): Promise<Partnership> {
+    const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    
+    const [partnership] = await db
+      .update(partnerships)
+      .set({
+        inviteCode,
+        expiresAt,
+        status: "pending",
+        partnerId: null,
+        redeemedAt: null,
+      })
+      .where(eq(partnerships.id, partnershipId))
+      .returning();
+    
+    return partnership;
+  }
+
+  // Partner updates operations
+  async createPartnerUpdate(insertUpdate: InsertPartnerUpdate): Promise<PartnerUpdate> {
+    const [update] = await db
+      .insert(partnerUpdates)
+      .values(insertUpdate)
+      .returning();
+    
+    return update;
+  }
+
+  async getPartnerUpdates(partnerId: number): Promise<PartnerUpdate[]> {
+    return await db
+      .select()
+      .from(partnerUpdates)
+      .where(eq(partnerUpdates.partnerId, partnerId))
+      .orderBy(desc(partnerUpdates.createdAt));
+  }
+
+  async markPartnerUpdateAsRead(updateId: number): Promise<PartnerUpdate> {
+    const [update] = await db
+      .update(partnerUpdates)
+      .set({ isRead: true })
+      .where(eq(partnerUpdates.id, updateId))
+      .returning();
+    
+    return update;
   }
 
   // Email signup operations
