@@ -241,7 +241,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-sage" />
-            Your Village Team
+            Your Care Team
           </CardTitle>
           <CardDescription>The experts supporting your journey</CardDescription>
         </CardHeader>
