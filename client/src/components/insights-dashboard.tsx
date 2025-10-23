@@ -1,25 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { 
   TrendingUp, 
   Calendar, 
-  BookOpen, 
   Users, 
   Heart,
   Baby,
-  Home,
-  CheckCircle2,
   Clock,
-  Target,
   Flame,
-  Award,
   User
 } from "lucide-react";
-import { format, subDays, isAfter } from "date-fns";
+import { format, isAfter } from "date-fns";
 
 interface DashboardProps {
   userId: number;
@@ -44,11 +36,6 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
   // Fetch upcoming appointments
   const { data: appointments } = useQuery({
     queryKey: [`/api/appointments/${userId}`],
-  });
-
-  // Fetch completed resources
-  const { data: completedResources } = useQuery({
-    queryKey: [`/api/resources/completed/${userId}`],
   });
 
   // Fetch support team/experts
@@ -93,13 +80,6 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
     }
   };
 
-  // Calculate completion percentage for learning modules
-  const calculateLearningProgress = () => {
-    if (!completedResources) return 0;
-    const totalModules = 25; // Assume 25 total learning modules
-    return Math.min((completedResources.length / totalModules) * 100, 100);
-  };
-
   // Get recent mood trend
   const getMoodTrend = () => {
     if (!checkinTrends || checkinTrends.length < 2) return "stable";
@@ -126,7 +106,6 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
   };
 
   const journalStreak = calculateJournalStreak();
-  const learningProgress = calculateLearningProgress();
   const moodTrend = getMoodTrend();
   const upcomingAppointments = appointments?.filter((apt: any) => {
     try {
@@ -145,7 +124,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
       </div>
 
       {/* Key Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {/* Journal Streak */}
         <Card className="text-center">
           <CardContent className="pt-6">
@@ -165,17 +144,6 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
             </div>
             <div className="text-2xl font-bold text-gray-900">{user?.pregnancyWeek || 0}</div>
             <p className="text-xs text-gray-600">Weeks</p>
-          </CardContent>
-        </Card>
-
-        {/* Learning Progress */}
-        <Card className="text-center">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-center mb-2">
-              <Award className="h-8 w-8 text-blue-500" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900">{Math.round(learningProgress)}%</div>
-            <p className="text-xs text-gray-600">Learning</p>
           </CardContent>
         </Card>
 
@@ -225,40 +193,6 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
           ) : (
             <p className="text-center text-gray-500 py-4">Start checking in daily to see your trends</p>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Learning Progress */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-sage" />
-            Learning Journey
-          </CardTitle>
-          <CardDescription>Your progress through our educational content</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Modules Completed</span>
-                <span>{completedResources?.length || 0}/25</span>
-              </div>
-              <Progress value={learningProgress} className="h-2" />
-            </div>
-            
-            {completedResources && completedResources.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="font-medium text-sm">Recent Completions:</h4>
-                {completedResources.slice(-3).map((resource: any, index: number) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <span className="text-gray-600">{resource.title}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </CardContent>
       </Card>
 
