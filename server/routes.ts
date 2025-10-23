@@ -698,6 +698,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Partner dashboard routes
+  app.get("/api/partner/dashboard/:partnerId", async (req, res) => {
+    try {
+      const partnerId = parseInt(req.params.partnerId);
+      
+      // Get partnership to find the connected mother
+      const partnerships = await storage.getPartnerPartnerships(partnerId);
+      if (!partnerships || partnerships.length === 0) {
+        return res.status(404).json({ message: "No partnership found" });
+      }
+      
+      const partnership = partnerships[0];
+      const motherId = partnership.motherId;
+      
+      // Get mother's information
+      const mother = await storage.getUser(motherId);
+      if (!mother) {
+        return res.status(404).json({ message: "Mother not found" });
+      }
+      
+      // Get recent check-ins if allowed
+      let recentCheckIns = [];
+      if (partnership.canViewCheckIns) {
+        const allCheckIns = await storage.getCheckInsByUser(motherId);
+        recentCheckIns = allCheckIns.slice(0, 5); // Last 5 check-ins
+      }
+      
+      // Get upcoming appointments if allowed
+      let upcomingAppointments = [];
+      if (partnership.canViewAppointments) {
+        const allAppointments = await storage.getAppointmentsByUser(motherId);
+        const now = new Date();
+        upcomingAppointments = allAppointments
+          .filter(apt => new Date(apt.dateTime) >= now)
+          .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime())
+          .slice(0, 3); // Next 3 appointments
+      }
+      
+      res.json({
+        mother: {
+          id: mother.id,
+          firstName: mother.firstName,
+          lastName: mother.lastName,
+          pregnancyWeek: mother.pregnancyWeek,
+          pregnancyStage: mother.pregnancyStage,
+          dueDate: mother.dueDate,
+        },
+        partnership: {
+          canViewCheckIns: partnership.canViewCheckIns,
+          canViewJournal: partnership.canViewJournal,
+          canViewAppointments: partnership.canViewAppointments,
+          canViewResources: partnership.canViewResources,
+        },
+        recentCheckIns,
+        upcomingAppointments,
+      });
+    } catch (error) {
+      console.error("Error getting partner dashboard:", error);
+      res.status(500).json({ message: "Failed to get partner dashboard" });
+    }
+  });
+
   // Partner updates routes
   app.get("/api/partner-updates/:partnerId", async (req, res) => {
     try {

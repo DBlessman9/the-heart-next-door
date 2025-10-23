@@ -1,294 +1,242 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Heart, Calendar, BookOpen, TrendingUp, MessageCircle, Settings, CheckCircle2 } from "lucide-react";
-import { useLocation } from "wouter";
-import { useState } from "react";
+import { Heart, Calendar, Activity, Baby } from "lucide-react";
+import { format } from "date-fns";
 
-interface PartnerInsight {
-  date: string;
-  feeling: string;
-  bodyCare: string;
-  feelingSupported: string;
-  notes?: string;
+interface PartnerDashboardProps {
+  userId: number;
 }
 
-interface PartnerResource {
-  id: number;
-  title: string;
-  description: string;
-  type: string;
-  category: string;
-  duration: string;
-  isRequired: boolean;
-  completed?: boolean;
-}
-
-export default function PartnerDashboard() {
-  const [, setLocation] = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  
-  const currentUserId = localStorage.getItem("currentUserId");
-  const partnerId = currentUserId ? parseInt(currentUserId) : null;
-
-  // Get partner's associated mother and check-ins (when permissions allow)
-  const { data: partnerInsights = [] } = useQuery<PartnerInsight[]>({
-    queryKey: ["/api/partner/insights", partnerId],
-    enabled: !!partnerId,
+export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
+  const { data: dashboardData, isLoading } = useQuery({
+    queryKey: ["/api/partner/dashboard", userId],
+    queryFn: async () => {
+      const response = await fetch(`/api/partner/dashboard/${userId}`);
+      if (!response.ok) throw new Error("Failed to fetch dashboard data");
+      return response.json();
+    },
   });
 
-  // Get partner-specific resources
-  const { data: partnerResources = [] } = useQuery<PartnerResource[]>({
-    queryKey: ["/api/partner-resources", selectedCategory === "all" ? undefined : selectedCategory],
-    enabled: true,
-  });
-
-  // Get partner progress
-  const { data: partnerProgress = [] } = useQuery({
-    queryKey: ["/api/partner-progress", partnerId],
-    enabled: !!partnerId,
-  });
-
-  const resourceCategories = [
-    { value: "all", label: "All Resources" },
-    { value: "understanding_pregnancy", label: "Understanding Pregnancy" },
-    { value: "supporting_labor", label: "Supporting Labor" },
-    { value: "communication", label: "Communication" },
-    { value: "postpartum_support", label: "Postpartum Support" },
-  ];
-
-  const getMotivationalMessage = () => {
-    const messages = [
-      "Your support means everything to your partner right now.",
-      "Being here shows how much you care. Thank you for showing up.",
-      "Your involvement makes this journey stronger for both of you.",
-      "Every resource you complete helps you be a better support partner.",
-    ];
-    return messages[Math.floor(Math.random() * messages.length)];
-  };
-
-  const completedResources = partnerProgress.length;
-  const totalRequiredResources = partnerResources.filter(r => r.isRequired).length;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-sage-100 p-4">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm border border-sage-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-sage-800">Partner Dashboard</h1>
-              <p className="text-sage-600 mt-1">{getMotivationalMessage()}</p>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => setLocation("/partner-settings")}
-              className="flex items-center gap-2"
-            >
-              <Settings size={16} />
-              Settings
-            </Button>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-sage/5 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center py-12">
+            <p className="text-gray-600">Loading your dashboard...</p>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white border-sage-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-sage-600">Resources Completed</p>
-                  <p className="text-2xl font-bold text-sage-800">{completedResources}</p>
-                </div>
-                <CheckCircle2 className="w-8 h-8 text-sage-500" />
-              </div>
-            </CardContent>
-          </Card>
+  if (!dashboardData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-sage/5 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center py-12">
+            <p className="text-gray-600">No partnership found. Please contact support.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-          <Card className="bg-white border-sage-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-sage-600">Learning Progress</p>
-                  <p className="text-2xl font-bold text-sage-800">
-                    {totalRequiredResources > 0 ? Math.round((completedResources / totalRequiredResources) * 100) : 0}%
-                  </p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-sage-500" />
-              </div>
-            </CardContent>
-          </Card>
+  const { mother, partnership, recentCheckIns, upcomingAppointments } = dashboardData;
 
-          <Card className="bg-white border-sage-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-sage-600">Upcoming Events</p>
-                  <p className="text-2xl font-bold text-sage-800">3</p>
-                </div>
-                <Calendar className="w-8 h-8 text-sage-500" />
-              </div>
-            </CardContent>
-          </Card>
+  // Calculate pregnancy progress
+  const pregnancyWeek = mother.pregnancyWeek || 0;
+  const weeksRemaining = Math.max(0, 40 - pregnancyWeek);
 
-          <Card className="bg-white border-sage-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-sage-600">Connection</p>
-                  <p className="text-2xl font-bold text-sage-800">Strong</p>
-                </div>
-                <Heart className="w-8 h-8 text-sage-500" />
-              </div>
-            </CardContent>
-          </Card>
+  // Baby size comparison (simplified)
+  const getBabySize = (week: number) => {
+    if (week < 8) return "Raspberry";
+    if (week < 12) return "Lime";
+    if (week < 16) return "Avocado";
+    if (week < 20) return "Banana";
+    if (week < 24) return "Papaya";
+    if (week < 28) return "Eggplant";
+    if (week < 32) return "Pineapple";
+    if (week < 36) return "Honeydew";
+    return "Watermelon";
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-sage/5 p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-4">
+            <Heart className="text-white text-3xl" size={40} />
+          </div>
+          <h1 className="text-3xl font-bold text-deep-teal mb-2" data-testid="text-partner-header">
+            Supporting {mother.firstName}
+          </h1>
+          <p className="text-gray-600">
+            Here's what's happening on her journey
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Partner Learning Resources */}
-          <Card className="bg-white border-sage-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5" />
-                Learning Resources
-              </CardTitle>
-              <div className="flex flex-wrap gap-2">
-                {resourceCategories.map((category) => (
-                  <Button
-                    key={category.value}
-                    variant={selectedCategory === category.value ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCategory(category.value)}
-                    className={selectedCategory === category.value ? "bg-sage-600 hover:bg-sage-700" : ""}
-                  >
-                    {category.label}
-                  </Button>
-                ))}
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4 max-h-96 overflow-y-auto">
-              {partnerResources.map((resource) => (
-                <div key={resource.id} className="border rounded-lg p-4 hover:bg-sage-50 transition-colors">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-sage-800">{resource.title}</h4>
-                        {resource.isRequired && (
-                          <Badge variant="secondary" className="text-xs">Required</Badge>
-                        )}
-                        {resource.completed && (
-                          <CheckCircle2 size={16} className="text-green-600" />
-                        )}
-                      </div>
-                      <p className="text-sm text-sage-600 mb-2">{resource.description}</p>
-                      <div className="flex items-center gap-4 text-xs text-sage-500">
-                        <span>{resource.type}</span>
-                        <span>{resource.duration}</span>
-                      </div>
-                    </div>
-                    <Button size="sm" variant="outline">
-                      {resource.completed ? "Review" : "Start"}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Partner Support Insights */}
-          <Card className="bg-white border-sage-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="w-5 h-5" />
-                Support Insights
-              </CardTitle>
-              <p className="text-sm text-sage-600">
-                Understanding how your partner is feeling
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-sage-50 rounded-lg p-4">
-                <h4 className="font-medium text-sage-800 mb-2">How to be supportive today:</h4>
-                <ul className="text-sm text-sage-600 space-y-1">
-                  <li>• Ask how she's feeling and really listen</li>
-                  <li>• Offer to help with daily tasks</li>
-                  <li>• Acknowledge her efforts and strength</li>
-                  <li>• Plan something special together</li>
-                </ul>
-              </div>
-
-              <Separator />
-
-              <div>
-                <h4 className="font-medium text-sage-800 mb-3">Recent Check-ins</h4>
-                <div className="space-y-3 max-h-48 overflow-y-auto">
-                  {partnerInsights.length > 0 ? (
-                    partnerInsights.slice(0, 5).map((insight, index) => (
-                      <div key={index} className="border-l-4 border-sage-300 pl-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-sage-700">
-                            {new Date(insight.date).toLocaleDateString()}
-                          </span>
-                          <Badge variant="outline" className="text-xs capitalize">
-                            {insight.feeling}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-sage-600">
-                          Feeling: {insight.feeling} • Body care: {insight.bodyCare}
-                        </p>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <MessageCircle className="w-12 h-12 text-sage-300 mx-auto mb-2" />
-                      <p className="text-sm text-sage-500">
-                        No insights available yet. Ask your partner to enable sharing in settings.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Upcoming Appointments */}
-        <Card className="bg-white border-sage-200">
+        {/* Baby Development Card */}
+        <Card data-testid="card-baby-development">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Upcoming Appointments
+            <CardTitle className="flex items-center gap-2 text-deep-teal">
+              <Baby size={24} />
+              Baby's Development
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-sage-800">20-Week Anatomy Scan</h4>
-                  <Badge>Upcoming</Badge>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-deep-teal" data-testid="text-pregnancy-week">
+                    Week {pregnancyWeek}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {weeksRemaining} weeks to go
+                  </p>
                 </div>
-                <p className="text-sm text-sage-600 mb-1">July 25, 2025 at 10:00 AM</p>
-                <p className="text-xs text-sage-500">Women's Health Center, Room 201</p>
+                <div className="text-right">
+                  <p className="text-lg font-semibold text-sage" data-testid="text-baby-size">
+                    Size of a {getBabySize(pregnancyWeek)}
+                  </p>
+                </div>
               </div>
-              
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-sage-800">Monthly Check-up</h4>
-                  <Badge variant="outline">Routine</Badge>
+              {mother.dueDate && (
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-gray-600">
+                    Due date: <span className="font-semibold text-deep-teal" data-testid="text-due-date">
+                      {format(new Date(mother.dueDate), "MMMM d, yyyy")}
+                    </span>
+                  </p>
                 </div>
-                <p className="text-sm text-sage-600 mb-1">August 1, 2025 at 2:00 PM</p>
-                <p className="text-xs text-sage-500">Dr. Rodriguez's Office</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Check-ins Card */}
+        {partnership.canViewCheckIns && (
+          <Card data-testid="card-recent-checkins">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-deep-teal">
+                <Activity size={24} />
+                Recent Check-ins
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recentCheckIns.length === 0 ? (
+                <p className="text-gray-600 text-center py-4">
+                  No check-ins yet
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {recentCheckIns.map((checkIn: any, index: number) => (
+                    <div 
+                      key={checkIn.id} 
+                      className="border-l-4 border-sage pl-4 py-2"
+                      data-testid={`checkin-${index}`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <p className="font-semibold text-deep-teal">
+                          {checkIn.createdAt ? format(new Date(checkIn.createdAt), "MMMM d") : "Recent"}
+                        </p>
+                      </div>
+                      <div className="space-y-1 text-sm">
+                        {checkIn.feeling && (
+                          <p className="text-gray-700">
+                            Feeling: <span className="font-medium">{checkIn.feeling}</span>
+                          </p>
+                        )}
+                        {checkIn.bodyCare && (
+                          <p className="text-gray-700">
+                            Self-care: <span className="font-medium">{checkIn.bodyCare}</span>
+                          </p>
+                        )}
+                        {checkIn.feelingSupported && (
+                          <p className="text-gray-700">
+                            Support level: <span className="font-medium">{checkIn.feelingSupported}</span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Upcoming Appointments Card */}
+        {partnership.canViewAppointments && (
+          <Card data-testid="card-upcoming-appointments">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-deep-teal">
+                <Calendar size={24} />
+                Upcoming Appointments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {upcomingAppointments.length === 0 ? (
+                <p className="text-gray-600 text-center py-4">
+                  No upcoming appointments
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {upcomingAppointments.map((appointment: any, index: number) => (
+                    <div 
+                      key={appointment.id}
+                      className="flex items-start gap-4 p-4 bg-sage/5 rounded-lg"
+                      data-testid={`appointment-${index}`}
+                    >
+                      <div className="flex-shrink-0 w-12 h-12 bg-sage/20 rounded-full flex items-center justify-center">
+                        <Calendar size={20} className="text-sage" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-deep-teal" data-testid={`appointment-title-${index}`}>
+                          {appointment.title}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {format(new Date(appointment.dateTime), "MMMM d, yyyy 'at' h:mm a")}
+                        </p>
+                        {appointment.location && (
+                          <p className="text-sm text-gray-600 mt-1">
+                            📍 {appointment.location}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Support Tips Card */}
+        <Card data-testid="card-support-tips">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-deep-teal">
+              <Heart size={24} />
+              Ways to Support
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 text-sm text-gray-700">
+              <div className="flex items-start gap-3">
+                <span className="text-sage text-lg">💚</span>
+                <p>Ask how she's feeling today and really listen to her response</p>
               </div>
-              
-              <div className="border rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-sage-800">Childbirth Class</h4>
-                  <Badge variant="secondary">Educational</Badge>
-                </div>
-                <p className="text-sm text-sage-600 mb-1">August 5, 2025 at 6:00 PM</p>
-                <p className="text-xs text-sage-500">Community Health Center</p>
+              <div className="flex items-start gap-3">
+                <span className="text-sage text-lg">🍽️</span>
+                <p>Prepare her favorite healthy meal or snack</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-sage text-lg">🛁</span>
+                <p>Help create a relaxing environment for her to rest</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-sage text-lg">📅</span>
+                <p>Offer to attend appointments together</p>
               </div>
             </div>
           </CardContent>

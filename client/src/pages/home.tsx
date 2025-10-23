@@ -9,6 +9,7 @@ import BabyGuidance from "@/components/baby-guidance";
 import Appointments from "@/components/appointments";
 import Community from "@/components/community";
 import InsightsDashboard from "@/components/insights-dashboard";
+import PartnerDashboard from "@/pages/partner-dashboard";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -40,6 +41,12 @@ export default function Home() {
     );
   }
 
+  // Show partner dashboard if user is a partner
+  if (user.userType === "partner") {
+    return <PartnerDashboard userId={currentUserId} />;
+  }
+
+  // Show mom's dashboard with tabs
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen">
       <AppHeader user={user} />
