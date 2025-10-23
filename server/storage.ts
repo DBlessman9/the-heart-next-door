@@ -323,89 +323,136 @@ export class DatabaseStorage implements IStorage {
 
       await db.insert(appointments).values(defaultAppointments);
 
-      // Seed default community groups
+      // Seed Detroit community support organizations and resources
       const defaultGroups: InsertGroup[] = [
         {
-          name: "Brooklyn Moms July 2025",
-          description: "Connect with other expecting mothers in Brooklyn due July 2025",
-          type: "birth_month",
-          dueDate: new Date("2025-07-15"),
+          name: "The Mom Wellness Cave",
+          description: "Detroit-based community designed to support mothers' mental, emotional, and spiritual wellbeing. Offers in-person playdates, moms-only nights, and business resources for mom entrepreneurs.",
+          type: "resource",
+          zipCode: "48228",
           isPrivate: false,
           createdBy: 2,
+          website: "https://www.themomwellnesscave.com",
+          contactEmail: "christian@christianmoon.com",
+          isExternal: true,
         },
         {
-          name: "NYC Area Moms",
-          description: "Local support group for mothers in the NYC area",
-          type: "location",
-          zipCode: "10001",
-          isPrivate: false,
-          createdBy: 2,
-        },
-        {
-          name: "Breastfeeding Support",
-          description: "Tips, encouragement, and advice for breastfeeding mothers",
-          type: "topic",
+          name: "Black Mothers Breastfeeding Association",
+          description: "Reduces racial inequities in breastfeeding support for Black families through direct services, training, and advocacy. Offers Community-based Doula Program and Breastfeeding Peer Counselor Program.",
+          type: "resource",
           topic: "breastfeeding",
           isPrivate: false,
           createdBy: 2,
+          website: "https://blackmothersbreastfeeding.org",
+          contactEmail: "communications@bmbfa.org",
+          contactPhone: "(800) 313-6141",
+          isExternal: true,
         },
         {
-          name: "NICU Warriors",
-          description: "Support for families with babies in the NICU",
-          type: "topic",
-          topic: "nicu",
+          name: "Brilliant Detroit",
+          description: "Builds community hubs in Detroit neighborhoods to support families with children ages 0-8, offering free programs in education, health, family support, and community-building.",
+          type: "resource",
+          zipCode: "48228",
           isPrivate: false,
           createdBy: 2,
+          website: "https://brilliantdetroit.org",
+          contactEmail: "info@brilliantdetroit.org",
+          contactPhone: "(313) 406-3275",
+          isExternal: true,
         },
         {
-          name: "First-Time Moms",
-          description: "Everything you need to know about becoming a first-time mom",
-          type: "topic",
-          topic: "first-time",
+          name: "Mothering Justice",
+          description: "Grassroots policy advocacy organization empowering mothers of color to take action on policies affecting families. Focus areas include reproductive justice, paid leave, and affordable childcare.",
+          type: "resource",
+          topic: "advocacy",
           isPrivate: false,
           createdBy: 2,
+          website: "https://www.motheringjustice.org",
+          contactEmail: "info@motheringjustice.org",
+          contactPhone: "(313) 340-2840",
+          isExternal: true,
         },
         {
-          name: "Postpartum Recovery",
-          description: "Support and resources for postpartum recovery and mental health",
-          type: "topic",
-          topic: "postpartum",
+          name: "Birth Detroit",
+          description: "Detroit's first and only Black-led community freestanding birth center, providing midwifery-led maternal health care. Offers prenatal, postpartum care, childbirth education, and community workshops.",
+          type: "resource",
+          topic: "birth_center",
           isPrivate: false,
           createdBy: 2,
+          website: "https://www.birthdetroit.com",
+          contactEmail: "info@birthdetroit.com",
+          contactPhone: "(313) 977-0962",
+          isExternal: true,
+        },
+        {
+          name: "Wrapped in Love Doula & Lactation",
+          description: "Full-spectrum doula support (DONA & CCI trained) and lactation services supporting families throughout pregnancy, birth, and postpartum in Metro Detroit.",
+          type: "resource",
+          topic: "doula",
+          isPrivate: false,
+          createdBy: 2,
+          contactEmail: "Wrappedinlovedoula@gmail.com",
+          isExternal: true,
+        },
+        {
+          name: "The Luke Clinic",
+          description: "Free, life-affirming prenatal care and infant care (up to 12 months) for uninsured and underinsured families in Detroit. Offers free ultrasounds, lab work, and social work support.",
+          type: "resource",
+          topic: "healthcare",
+          isPrivate: false,
+          createdBy: 2,
+          website: "https://www.thelukeclinic.org",
+          contactEmail: "office@thelukeclinic.org",
+          contactPhone: "(313) 789-7862",
+          isExternal: true,
+        },
+        {
+          name: "Remembering Cherubs",
+          description: "Detroit's only nonprofit resource center focused on pregnancy and infant loss support. Offers Care Concierge service for tailored resource lists and ongoing support programs.",
+          type: "resource",
+          topic: "loss_support",
+          isPrivate: false,
+          createdBy: 2,
+          website: "https://www.rememberingcherubs.org",
+          contactEmail: "info@rememberingcherubs.org",
+          contactPhone: "(313) 617-9254",
+          isExternal: true,
+        },
+        {
+          name: "The Baby Bond: Birth & Beyond",
+          description: "Wellness for healthy families - creating happy baby bonds. Promotes sustainable development to decrease maternal and infant mortality rates while providing holistic wellness services.",
+          type: "resource",
+          topic: "wellness",
+          isPrivate: false,
+          createdBy: 2,
+          website: "https://www.thebabybond.org",
+          isExternal: true,
+        },
+        {
+          name: "SEMPQIC",
+          description: "Southeast Michigan Perinatal Quality Improvement Coalition - works to reduce maternal morbidity and mortality in Wayne, Oakland, and Macomb counties through Project Detroit: Voices for Life.",
+          type: "resource",
+          topic: "advocacy",
+          isPrivate: false,
+          createdBy: 2,
+          website: "https://www.sempqic.org/maternalhealth",
+          contactEmail: "info@sempqic.org",
+          isExternal: true,
+        },
+        {
+          name: "Dr. Lakeshia Grant - Community Doula",
+          description: "Independent community doula serving Detroit families. For contact information, visit the Michigan Department of Health & Human Services Doula Registry.",
+          type: "resource",
+          topic: "doula",
+          isPrivate: false,
+          createdBy: 2,
+          website: "https://www.michigan.gov/mdhhs/keep-mi-healthy/maternal-and-infant-health/mdhhs-doula-initiative/mdhhs-doula-registry",
+          contactEmail: "MDHHS-MIDoula@michigan.gov",
+          isExternal: true,
         },
       ];
 
       await db.insert(groups).values(defaultGroups);
-
-      // Seed sample messages for a few groups
-      const sampleMessages: InsertGroupMessage[] = [
-        {
-          groupId: 1,
-          userId: 2,
-          content: "Hi everyone! I'm due July 20th and so excited to connect with other Brooklyn moms! 💕",
-        },
-        {
-          groupId: 3,
-          userId: 2,
-          content: "Has anyone tried the nipple shields from Medela? Looking for recommendations!",
-        },
-        {
-          groupId: 5,
-          userId: 2,
-          content: "Just wanted to share that I finally feel the first kicks! Week 20 has been amazing ✨",
-        },
-      ];
-
-      await db.insert(groupMessages).values(sampleMessages);
-
-      // Join the user to a few groups
-      const initialMemberships: InsertMembership[] = [
-        { userId: 2, groupId: 1, role: "member" },
-        { userId: 2, groupId: 3, role: "member" },
-        { userId: 2, groupId: 5, role: "member" },
-      ];
-
-      await db.insert(memberships).values(initialMemberships);
 
       // Seed partner resources
       const defaultPartnerResources: InsertPartnerResource[] = [

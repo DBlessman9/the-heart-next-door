@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, Users, MapPin, Calendar, Plus, Search, Send } from "lucide-react";
+import { MessageSquare, Users, MapPin, Calendar, Plus, Search, Send, ExternalLink, Phone, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -359,7 +359,7 @@ export default function Community({ userId, user }: CommunityProps) {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-deep-teal mb-2">The Village</h2>
-        <p className="text-gray-600 text-sm">Connect with other moms in your community</p>
+        <p className="text-gray-600 text-sm">Connect with other moms and resources in your community</p>
       </div>
 
       {/* Navigation Tabs */}
@@ -382,11 +382,12 @@ export default function Community({ userId, user }: CommunityProps) {
               />
             </div>
             <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="resource">Detroit Resources</SelectItem>
                 <SelectItem value="location">Location</SelectItem>
                 <SelectItem value="birth_month">Birth Month</SelectItem>
                 <SelectItem value="topic">Topic</SelectItem>
@@ -402,36 +403,69 @@ export default function Community({ userId, user }: CommunityProps) {
             {filteredGroups.map((group: GroupWithDetails) => (
               <Card key={group.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         {getGroupTypeIcon(group.type)}
                         <h3 className="font-semibold">{group.name}</h3>
-                        <Badge variant="secondary" className="text-xs">
-                          {getGroupTypeLabel(group.type)}
-                        </Badge>
+                        {group.isExternal && (
+                          <Badge variant="outline" className="text-xs bg-sage/10 text-sage border-sage/20">
+                            Detroit Resource
+                          </Badge>
+                        )}
                       </div>
                       {group.description && (
                         <p className="text-sm text-muted-foreground mb-2">{group.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Users size={12} />
-                          {group.memberCount} members
-                        </span>
-                        {group.latestMessage && (
-                          <span>Last activity: {format(new Date(group.latestMessage.createdAt), 'MMM d')}</span>
-                        )}
-                      </div>
+                      {group.isExternal && (group.contactEmail || group.contactPhone) && (
+                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-2">
+                          {group.contactPhone && (
+                            <span className="flex items-center gap-1">
+                              <Phone size={12} />
+                              {group.contactPhone}
+                            </span>
+                          )}
+                          {group.contactEmail && (
+                            <span className="flex items-center gap-1">
+                              <Mail size={12} />
+                              {group.contactEmail}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {!group.isExternal && (
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
+                          <span className="flex items-center gap-1">
+                            <Users size={12} />
+                            {group.memberCount} members
+                          </span>
+                          {group.latestMessage && (
+                            <span>Last activity: {format(new Date(group.latestMessage.createdAt), 'MMM d')}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <Button
-                      onClick={() => joinGroupMutation.mutate(group.id)}
-                      size="sm"
-                      variant="outline"
-                      disabled={group.userMembership}
-                    >
-                      {group.userMembership ? 'Joined' : 'Join'}
-                    </Button>
+                    {group.isExternal && group.website ? (
+                      <Button
+                        onClick={() => window.open(group.website, '_blank')}
+                        size="sm"
+                        className="bg-sage hover:bg-sage/90"
+                        data-testid={`button-visit-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        <ExternalLink size={14} className="mr-2" />
+                        Visit Website
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => joinGroupMutation.mutate(group.id)}
+                        size="sm"
+                        variant="outline"
+                        disabled={group.userMembership}
+                        data-testid={`button-join-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        {group.userMembership ? 'Joined' : 'Join'}
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
