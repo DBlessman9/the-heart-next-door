@@ -39,6 +39,7 @@ export default function Onboarding() {
     firstName: "",
     lastName: "",
     email: "",
+    location: "",
     pregnancyWeek: "",
     pregnancyStage: "",
     dueDate: "",
@@ -210,7 +211,7 @@ export default function Onboarding() {
 
   const isFormValid = () => {
     if (step === 2) {
-      return formData.firstName && formData.lastName && formData.email && formData.pregnancyStage;
+      return formData.firstName && formData.lastName && formData.email && formData.location && formData.pregnancyStage;
     }
     if (step === 3) {
       if (formData.pregnancyStage === "postpartum") {
@@ -345,6 +346,17 @@ export default function Onboarding() {
                     placeholder="Enter your email"
                     className="mt-1"
                   />
+                </div>
+                <div>
+                  <Label htmlFor="location">What city or area do you call home?</Label>
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => handleInputChange("location", e.target.value)}
+                    placeholder="City, State (e.g., Detroit, MI)"
+                    className="mt-1"
+                  />
+                  <p className="text-xs text-gray-500 mt-1.5">We're currently piloting in Detroit and serving Detroit-area moms first ❤️</p>
                 </div>
                 <div>
                   <Label htmlFor="pregnancyStage">Stage of Pregnancy</Label>

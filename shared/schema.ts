@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
+  location: text("location"), // City, State
   userType: text("user_type").default("mother"), // "mother", "partner"
   pregnancyWeek: integer("pregnancy_week"),
   pregnancyStage: text("pregnancy_stage"), // "first", "second", "third", "postpartum"
