@@ -210,7 +210,7 @@ export default function Onboarding() {
       <div className="p-6">
         {step === 1 && (
           <div className="text-center mt-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6 p-4 animate-fade-in">
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6 p-1 animate-fade-in">
               <img src={maternalIcon} alt="Maternal care" className="w-full h-full object-cover rounded-full animate-pulse" style={{ animationDuration: '3s' }} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
