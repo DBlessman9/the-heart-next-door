@@ -56,6 +56,7 @@ export default function Onboarding() {
   const [userId, setUserId] = useState<number | null>(null);
   const [enteredInviteCode, setEnteredInviteCode] = useState("");
   const [inviteCodeError, setInviteCodeError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: typeof formData) => {
@@ -314,7 +315,7 @@ export default function Onboarding() {
 
   const isFormValid = () => {
     if (step === 2) {
-      return formData.firstName && formData.lastName && formData.email && formData.location && formData.zipCode && formData.pregnancyStage;
+      return formData.firstName && formData.lastName && formData.email && formData.location && formData.zipCode && formData.pregnancyStage && termsAccepted;
     }
     if (step === 3) {
       if (formData.pregnancyStage === "postpartum") {
@@ -498,6 +499,40 @@ export default function Onboarding() {
                       <SelectItem value="supporter">Partner / Supporter</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Terms and Conditions Checkbox */}
+                <div className="flex items-start space-x-3 pt-4 pb-2">
+                  <Checkbox
+                    id="terms"
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                    data-testid="checkbox-terms"
+                    className="mt-1"
+                  />
+                  <Label 
+                    htmlFor="terms" 
+                    className="text-sm text-gray-600 leading-relaxed cursor-pointer"
+                  >
+                    I agree to The Heart Next Door's{" "}
+                    <a 
+                      href="/terms" 
+                      target="_blank"
+                      className="text-sage underline hover:text-sage/80"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Terms & Conditions
+                    </a>
+                    {" "}and{" "}
+                    <a 
+                      href="/privacy" 
+                      target="_blank"
+                      className="text-sage underline hover:text-sage/80"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Privacy Policy
+                    </a>
+                  </Label>
                 </div>
               </div>
               <div className="mt-6 pb-4">

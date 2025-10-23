@@ -11,6 +11,8 @@ import Waitlist from "@/pages/waitlist";
 import PartnerOnboarding from "@/pages/partner-onboarding";
 import PartnerDashboard from "@/pages/partner-dashboard";
 import PartnerSettings from "@/pages/partner-settings";
+import TermsAndConditions from "@/pages/terms-and-conditions";
+import PrivacyPolicy from "@/pages/privacy-policy";
 import FloatingChat from "@/components/floating-chat";
 
 // Hide Vite console messages in development
@@ -35,6 +37,8 @@ function Router() {
       <Route path="/partner-onboarding" component={PartnerOnboarding} />
       <Route path="/partner-dashboard" component={PartnerDashboard} />
       <Route path="/partner-settings" component={PartnerSettings} />
+      <Route path="/terms" component={TermsAndConditions} />
+      <Route path="/privacy" component={PrivacyPolicy} />
       <Route component={NotFound} />
     </Switch>
   );
