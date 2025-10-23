@@ -356,7 +356,7 @@ export default function Onboarding() {
                     placeholder="City, State (e.g., Detroit, MI)"
                     className="mt-1"
                   />
-                  <p className="text-xs text-gray-500 mt-1.5">We're currently piloting in Detroit and serving Detroit-area moms first ❤️</p>
+                  <p className="text-xs text-gray-500 mt-1.5">Now serving Detroit-area moms first 💛 Not in Detroit yet? Join our national waitlist and we'll welcome you soon.</p>
                 </div>
                 <div>
                   <Label htmlFor="pregnancyStage">Stage of Pregnancy</Label>
