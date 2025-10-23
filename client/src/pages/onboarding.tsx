@@ -381,19 +381,21 @@ export default function Onboarding() {
                   <p className="text-xs text-gray-500 mt-1.5">Now serving Detroit-area moms first 💛 Not in Detroit yet? Join our national waitlist and we'll welcome you soon.</p>
                 </div>
                 <div>
-                  <Label htmlFor="pregnancyStage">Stage of Pregnancy</Label>
+                  <Label htmlFor="pregnancyStage">Where are you in your journey?</Label>
                   <Select 
                     value={formData.pregnancyStage} 
                     onValueChange={(value) => handleInputChange("pregnancyStage", value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1" data-testid="select-pregnancy-stage">
                       <SelectValue placeholder="Select your current stage" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="first">First Trimester</SelectItem>
-                      <SelectItem value="second">Second Trimester</SelectItem>
-                      <SelectItem value="third">Third Trimester</SelectItem>
-                      <SelectItem value="postpartum">Postpartum</SelectItem>
+                      <SelectItem value="trying_to_conceive">Trying to conceive</SelectItem>
+                      <SelectItem value="first">First trimester (0–13 weeks)</SelectItem>
+                      <SelectItem value="second">Second trimester (14–27 weeks)</SelectItem>
+                      <SelectItem value="third">Third trimester (28+ weeks)</SelectItem>
+                      <SelectItem value="postpartum">Postpartum / 4th trimester</SelectItem>
+                      <SelectItem value="supporter">Other / Supporter</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -429,10 +431,89 @@ export default function Onboarding() {
                 A few more details
               </h2>
               <div className="space-y-4">
-                {formData.pregnancyStage !== "postpartum" ? (
-                  // Pregnancy questions (mandatory)
+                {formData.pregnancyStage === "postpartum" ? (
+                  // Postpartum questions
                   <>
+                    <div>
+                      <Label htmlFor="babyBirthDate">When was your baby born? *</Label>
+                      <Input
+                        id="babyBirthDate"
+                        type="date"
+                        value={formData.babyBirthDate}
+                        onChange={(e) => handleInputChange("babyBirthDate", e.target.value)}
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label className="text-base font-medium">Would you like to share a little about your birth so we can better support you?</Label>
+                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
+                      <div className="space-y-3">
+                        {[
+                          "Baby arrived full-term",
+                          "Baby was preterm", 
+                          "Vaginal birth",
+                          "Cesarean birth",
+                          "Planned induction",
+                          "Emergency delivery",
+                          "NICU stay",
+                          "Complications during birth",
+                          "We lost our baby",
+                          "I'm still processing my experience",
+                          "I'd rather not say"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`birth-${option}`}
+                              checked={formData.birthExperience.includes(option)}
+                              onCheckedChange={(checked) => handleCheckboxChange('birthExperience', option, checked as boolean)}
+                            />
+                            <Label htmlFor={`birth-${option}`} className="text-sm font-normal">{option}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
+                    <div>
+                      <Label className="text-base font-medium">Would you like support with any of the following?</Label>
+                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
+                      <div className="space-y-3">
+                        {[
+                          "Breastfeeding / feeding routines",
+                          "Emotional wellness / mood",
+                          "Sleep & recovery",
+                          "Birth healing / trauma",
+                          "Scheduling care and appointments",
+                          "Connecting with other moms",
+                          "None right now"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`support-${option}`}
+                              checked={formData.supportNeeds.includes(option)}
+                              onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
+                            />
+                            <Label htmlFor={`support-${option}`} className="text-sm font-normal">{option}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : formData.pregnancyStage === "trying_to_conceive" || formData.pregnancyStage === "supporter" ? (
+                  // Minimal questions for trying to conceive or supporters
+                  <>
+                    <div className="text-center py-8">
+                      <p className="text-gray-600">
+                        {formData.pregnancyStage === "trying_to_conceive" 
+                          ? "We're here for you on your journey. Let's get you connected with Nia!"
+                          : "Thank you for being a supporter. Let's get you connected with our community!"}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  // Pregnancy questions for first, second, third trimesters
+                  <>
                     <div>
                       <Label htmlFor="dueDate">Due Date *</Label>
                       <Input
@@ -497,75 +578,6 @@ export default function Onboarding() {
                               onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
                             />
                             <Label htmlFor={`pregnancy-support-${option}`} className="text-sm font-normal">{option}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  // Postpartum questions
-                  <>
-                    <div>
-                      <Label htmlFor="babyBirthDate">When was your baby born? *</Label>
-                      <Input
-                        id="babyBirthDate"
-                        type="date"
-                        value={formData.babyBirthDate}
-                        onChange={(e) => handleInputChange("babyBirthDate", e.target.value)}
-                        className="mt-1"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label className="text-base font-medium">Would you like to share a little about your birth so we can better support you?</Label>
-                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
-                      <div className="space-y-3">
-                        {[
-                          "Baby arrived full-term",
-                          "Baby was preterm", 
-                          "Vaginal birth",
-                          "Cesarean birth",
-                          "Planned induction",
-                          "Emergency delivery",
-                          "NICU stay",
-                          "Complications during birth",
-                          "We lost our baby",
-                          "I'm still processing my experience",
-                          "I'd rather not say"
-                        ].map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`birth-${option}`}
-                              checked={formData.birthExperience.includes(option)}
-                              onCheckedChange={(checked) => handleCheckboxChange('birthExperience', option, checked as boolean)}
-                            />
-                            <Label htmlFor={`birth-${option}`} className="text-sm font-normal">{option}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-base font-medium">Would you like support with any of the following?</Label>
-                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
-                      <div className="space-y-3">
-                        {[
-                          "Breastfeeding / feeding routines",
-                          "Emotional wellness / mood",
-                          "Sleep & recovery",
-                          "Birth healing / trauma",
-                          "Scheduling care and appointments",
-                          "Connecting with other moms",
-                          "None right now"
-                        ].map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`support-${option}`}
-                              checked={formData.supportNeeds.includes(option)}
-                              onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
-                            />
-                            <Label htmlFor={`support-${option}`} className="text-sm font-normal">{option}</Label>
                           </div>
                         ))}
                       </div>
