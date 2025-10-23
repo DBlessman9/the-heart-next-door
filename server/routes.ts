@@ -42,9 +42,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if zip code is in Detroit area
       const isDetroitArea = userData.zipCode ? detroitZipCodes.includes(userData.zipCode) : false;
       
+      // Calculate pregnancy week from due date if not provided
+      let pregnancyWeek = userData.pregnancyWeek;
+      if (!pregnancyWeek && userData.dueDate) {
+        const dueDate = new Date(userData.dueDate);
+        const today = new Date();
+        const daysUntilDue = Math.floor((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        const weeksUntilDue = Math.floor(daysUntilDue / 7);
+        pregnancyWeek = Math.max(0, 40 - weeksUntilDue);
+      }
+      
       // Set waitlist flag for non-Detroit users
       const userDataWithWaitlist = {
         ...userData,
+        pregnancyWeek,
         waitlistUser: !isDetroitArea,
       };
       
@@ -721,14 +732,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get recent check-ins if allowed
       let recentCheckIns = [];
       if (partnership.canViewCheckIns) {
-        const allCheckIns = await storage.getCheckInsByUser(motherId);
+        const allCheckIns = await storage.getCheckIns(motherId);
         recentCheckIns = allCheckIns.slice(0, 5); // Last 5 check-ins
       }
       
       // Get upcoming appointments if allowed
       let upcomingAppointments = [];
       if (partnership.canViewAppointments) {
-        const allAppointments = await storage.getAppointmentsByUser(motherId);
+        const allAppointments = await storage.getAppointments(motherId);
         const now = new Date();
         upcomingAppointments = allAppointments
           .filter(apt => new Date(apt.dateTime) >= now)
