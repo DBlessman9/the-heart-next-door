@@ -375,7 +375,7 @@ export default function Community({ userId, user }: CommunityProps) {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
               <Input
-                placeholder="Search groups..."
+                placeholder="Search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -410,7 +410,7 @@ export default function Community({ userId, user }: CommunityProps) {
                         <h3 className="font-semibold">{group.name}</h3>
                         {group.isExternal && (
                           <Badge variant="outline" className="text-xs bg-sage/10 text-sage border-sage/20">
-                            Detroit Resource
+                            Resource
                           </Badge>
                         )}
                       </div>
