@@ -17,97 +17,111 @@ export default function PrivacyPolicy() {
 
       <Card>
         <CardContent className="p-8 prose prose-sm max-w-none">
-          <h1 className="text-3xl font-bold text-deep-teal mb-4">Privacy Policy</h1>
+          <h1 className="text-3xl font-bold text-deep-teal mb-4">The Heart Next Door App – Privacy Policy</h1>
           
           <p className="text-sm text-gray-500 mb-6">Last updated: January 2026</p>
 
           <p className="mb-6">
-            At The Heart Next Door ("we," "us," or "our"), we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our mobile or web application (the "App").
+            This Privacy Policy describes how The Heart Next Door LLC ("we," "us," or "our") collects, uses, and protects information from users ("you") of The Heart Next Door App (the "App"). By using the App, you agree to the terms of this Privacy Policy and our Terms & Conditions.
           </p>
 
           <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">1. Information We Collect</h2>
           
-          <h3 className="text-xl font-semibold text-deep-teal mt-6 mb-3">Personal Information</h3>
-          <p className="mb-4">When you create an account, we may collect:</p>
+          <p className="mb-4">We collect only the information needed to provide a safe, personalized, and meaningful experience.</p>
+
+          <h3 className="text-xl font-semibold text-deep-teal mt-6 mb-3">A. Information You Provide</h3>
           <ul className="list-disc pl-6 mb-6">
-            <li>Name and email address</li>
-            <li>Location information (city, state, zip code)</li>
-            <li>Pregnancy stage and related wellness information</li>
-            <li>Any information you provide in check-ins, journal entries, or chat conversations</li>
+            <li>Name, email address, and location (city/state) when you create an account.</li>
+            <li>Pregnancy or parenting details (e.g., stage of pregnancy or postpartum).</li>
+            <li>Messages, responses, or entries submitted through chat, journaling, or check-in features.</li>
+            <li>Any additional information you choose to share through forms or surveys.</li>
           </ul>
 
-          <h3 className="text-xl font-semibold text-deep-teal mt-6 mb-3">Usage Data</h3>
-          <p className="mb-4">We automatically collect:</p>
+          <h3 className="text-xl font-semibold text-deep-teal mt-6 mb-3">B. Automatically Collected Information</h3>
           <ul className="list-disc pl-6 mb-6">
-            <li>Device information (type, operating system)</li>
-            <li>Usage patterns and interactions with the App</li>
-            <li>Log data and analytics</li>
+            <li>Device type, browser, and operating system.</li>
+            <li>IP address and general location (not precise GPS).</li>
+            <li>Usage activity such as page views, button clicks, and session duration (for analytics).</li>
           </ul>
+
+          <h3 className="text-xl font-semibold text-deep-teal mt-6 mb-3">C. Cookies & Analytics</h3>
+          <p className="mb-6">
+            We use standard cookies and analytics tools (like Google Analytics or Replit Analytics) to improve performance and understand how users interact with the App. You can manage or disable cookies through your device settings.
+          </p>
 
           <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">2. How We Use Your Information</h2>
-          <p className="mb-4">We use your information to:</p>
+          <p className="mb-4">We use the information we collect to:</p>
           <ul className="list-disc pl-6 mb-6">
-            <li>Provide personalized wellness support and resources</li>
-            <li>Deliver AI-powered chat support tailored to your pregnancy stage</li>
-            <li>Send relevant educational content and affirmations</li>
-            <li>Improve our App and user experience</li>
-            <li>Communicate with you about updates and features</li>
-            <li>Ensure the security and proper functioning of the App</li>
-          </ul>
-
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">3. Data Sharing and Disclosure</h2>
-          <p className="mb-6">
-            We do not sell your personal information. We may share your data only in the following circumstances:
-          </p>
-          <ul className="list-disc pl-6 mb-6">
-            <li><strong>Service Providers:</strong> We work with trusted third-party service providers (such as cloud hosting and AI services) who help us operate the App. These providers are contractually obligated to protect your data.</li>
-            <li><strong>Partner Connections:</strong> If you invite a partner or supporter to connect with you, we will share relevant information with them based on the permissions you set.</li>
-            <li><strong>Legal Requirements:</strong> We may disclose information if required by law or to protect the rights, property, or safety of The Heart Next Door, our users, or others.</li>
-          </ul>
-
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">4. Data Security</h2>
-          <p className="mb-6">
-            We implement industry-standard security measures to protect your personal information. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
-          </p>
-
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">5. Your Rights and Choices</h2>
-          <p className="mb-4">You have the right to:</p>
-          <ul className="list-disc pl-6 mb-6">
-            <li>Access, update, or delete your personal information</li>
-            <li>Opt out of certain communications</li>
-            <li>Request a copy of your data</li>
-            <li>Withdraw consent for data processing</li>
+            <li>Provide and personalize your App experience.</li>
+            <li>Match you with relevant maternal health and wellness resources.</li>
+            <li>Send updates, reminders, and educational materials.</li>
+            <li>Improve our products, features, and services.</li>
+            <li>Respond to questions or support requests.</li>
+            <li>Maintain App security and prevent misuse.</li>
           </ul>
           <p className="mb-6">
-            To exercise these rights, please contact us at support@theheartnextdoor.com.
+            We may use de-identified, aggregated data (never personal details) to measure outcomes, improve services, and share insights with trusted partners or funders.
           </p>
 
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">6. Data Retention</h2>
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">3. How We Protect Your Information</h2>
+          <p className="mb-4">
+            We implement administrative, technical, and physical safeguards to protect your information. Examples include:
+          </p>
+          <ul className="list-disc pl-6 mb-6">
+            <li>Data encryption during transmission (HTTPS).</li>
+            <li>Limited staff access based on job role.</li>
+            <li>Secure storage in encrypted databases.</li>
+          </ul>
           <p className="mb-6">
-            We retain your personal information for as long as necessary to provide our services and comply with legal obligations. You may request deletion of your account at any time.
+            Despite these safeguards, no online service can guarantee 100% security. You use the App at your own risk.
           </p>
 
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">7. Children's Privacy</h2>
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">4. Sharing Your Information</h2>
+          <p className="mb-4">We do not sell or rent your personal data. We may share limited information in these cases:</p>
+          <ul className="list-disc pl-6 mb-6">
+            <li><strong>With Your Consent:</strong> If you choose to connect with a "Maternal Changemaker" partner or referral.</li>
+            <li><strong>With Service Providers:</strong> Vendors who help operate the App (hosting, analytics, messaging). They are bound by confidentiality agreements.</li>
+            <li><strong>For Legal Reasons:</strong> To comply with law, regulation, or legal process.</li>
+            <li><strong>In Business Transfers:</strong> If The Heart Next Door merges, sells assets, or reorganizes, your data may transfer as part of that process.</li>
+          </ul>
+
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">5. HIPAA & Sensitive Information</h2>
           <p className="mb-6">
-            The App is not intended for individuals under the age of 18. We do not knowingly collect personal information from children.
+            The Heart Next Door App is not a covered entity under HIPAA, but we voluntarily uphold its spirit. If we partner with licensed providers who fall under HIPAA, their use of your data will follow HIPAA regulations. We do not store or transmit medical records or diagnostic data without your explicit consent.
           </p>
 
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">8. Third-Party Links</h2>
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">6. Retention & Deletion</h2>
           <p className="mb-6">
-            The App may contain links to third-party websites or services. We are not responsible for the privacy practices of these third parties.
+            We retain your information as long as needed to provide the App's services or comply with legal obligations. You can request account deletion at any time by emailing support@theheartnextdoor.com, and we will permanently remove your personal data within 30 days (unless required by law to retain it longer).
           </p>
 
-          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">9. Changes to This Privacy Policy</h2>
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">7. Your Rights</h2>
+          <p className="mb-4">Depending on your location, you may have the right to:</p>
+          <ul className="list-disc pl-6 mb-6">
+            <li>Access and review the personal data we hold about you.</li>
+            <li>Request correction or deletion of inaccurate data.</li>
+            <li>Withdraw consent for certain uses.</li>
+            <li>Opt out of promotional emails.</li>
+          </ul>
           <p className="mb-6">
-            We may update this Privacy Policy from time to time. The "last updated" date will reflect any changes. Continued use of the App constitutes acceptance of the updated policy.
+            To exercise these rights, contact privacy@theheartnextdoor.com.
+          </p>
+
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">8. Children's Privacy</h2>
+          <p className="mb-6">
+            The App is intended for adult users (18+). We do not knowingly collect personal information from children under 13. If you believe your child has provided us data, please contact us to delete it.
+          </p>
+
+          <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">9. Updates to This Policy</h2>
+          <p className="mb-6">
+            We may update this Privacy Policy periodically. We will post the new version in the App with the "last updated" date and, where appropriate, notify you by email. Continued use of the App means you accept the updated policy.
           </p>
 
           <h2 className="text-2xl font-bold text-deep-teal mt-8 mb-4">10. Contact Us</h2>
           <p className="mb-6">
-            If you have questions about this Privacy Policy, please contact:<br />
             The Heart Next Door LLC<br />
             Detroit, MI 48226<br />
-            📧 support@theheartnextdoor.com
+            📧 privacy@theheartnextdoor.com
           </p>
         </CardContent>
       </Card>
