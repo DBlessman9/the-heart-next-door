@@ -10,6 +10,7 @@ import { Heart, AlertCircle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import maternalIcon from "@assets/generated_images/Pregnant_woman_silhouette_sage_green_dbe68746.png";
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
@@ -209,8 +210,8 @@ export default function Onboarding() {
       <div className="p-6">
         {step === 1 && (
           <div className="text-center mt-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6">
-              <Heart className="text-white text-4xl" size={48} />
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6 overflow-hidden">
+              <img src={maternalIcon} alt="Maternal care" className="w-24 h-24 object-contain" />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
               Hi mama, I'm Nia.
