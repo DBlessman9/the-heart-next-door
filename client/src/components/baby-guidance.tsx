@@ -359,50 +359,6 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         </CardContent>
       </Card>
 
-
-
-      {/* Learning Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="text-deep-teal" size={20} />
-            This Week's Learning
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <h4 className="font-semibold text-deep-teal">{guidance.learningContent.title}</h4>
-            <p className="text-sm text-muted-foreground">{guidance.learningContent.description}</p>
-            
-            {/* Show related resources if available */}
-            {resources && resources.length > 0 && (
-              <div className="mt-3 space-y-2">
-                <h5 className="text-sm font-medium text-deep-teal">Related Resources:</h5>
-                <div className="space-y-1">
-                  {resources.slice(0, 2).map((resource: any) => (
-                    <div key={resource.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{resource.title}</p>
-                        <p className="text-xs text-muted-foreground">{resource.type} • {resource.duration}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-2"
-              onClick={() => onTabChange?.('resources')}
-            >
-              Explore All Resources
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Quick Access to Current Week */}
       {!isCurrentWeek && (
         <div className="text-center">
