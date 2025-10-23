@@ -133,6 +133,21 @@ The application is designed as a comprehensive maternal wellness platform that p
 ## Recent Changes
 
 ### Latest Updates (2025-10-23)
+- **Partner Dashboard Implementation**: Built complete partner view with real-time pregnancy tracking
+  - Created dedicated partner dashboard showing connected mom's journey
+  - Displays mom's first name with "Supporting {firstName}" personalized header
+  - Baby development card with auto-calculated pregnancy week, baby size comparison, and due date
+  - Recent check-ins section with permissions-based filtering
+  - Upcoming appointments view for shared calendar events
+  - Support tips card with actionable partner guidance
+  - Route detection: Home page automatically shows partner dashboard for partner userType
+  - GET /api/partner/dashboard/:partnerId endpoint aggregates all partner-relevant data
+- **Automatic Pregnancy Week Calculation**: Smart backend calculation from due date
+  - When user provides due date but no pregnancy week, backend auto-calculates current week
+  - Formula: pregnancyWeek = max(0, 40 - floor(daysUntilDue / 7))
+  - Ensures partners always see accurate pregnancy week on dashboard
+  - Eliminates manual week entry requirement during onboarding
+  - Applied to POST /api/users endpoint for all new user registrations
 - **Partner/Supporter Matching System**: Complete invite-based connection system for spouses/partners/supporters
   - Added `partnerships` table with invite codes, permissions, status tracking, and expiration dates
   - Added `partnerUpdates` table for event tracking (check-ins, appointments, journal entries, resources)
@@ -158,7 +173,7 @@ The application is designed as a comprehensive maternal wellness platform that p
     - GET /api/partnerships/:userId - Get user's partnership connections
     - POST /api/partnerships/generate - Generate invite code for mom
     - POST /api/partners/register - Atomic partner registration with rollback
-    - GET /api/partners/:partnerId/updates - Retrieve partner updates based on permissions
+    - GET /api/partner/dashboard/:partnerId - Get partner dashboard data with mom info, check-ins, appointments
 - **Regional Access Control with Waitlist System**: Implemented Detroit-area targeting with graceful waitlist for national expansion
   - Added zipCode field to user schema for region-based access control
   - Added waitlistUser boolean flag to track users outside Detroit area
