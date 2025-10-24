@@ -452,7 +452,7 @@ export class DatabaseStorage implements IStorage {
         },
         {
           name: "Project Launch",
-          description: "Local Access to Uplifting Nurturing Care and Health - provides comprehensive support services for pregnant and parenting families in Detroit, focusing on reducing infant mortality and improving maternal health outcomes.",
+          description: "MPSI Project LAUNCH (Linking Actions for Unmet Needs in Children's Health) supports young children birth to age 8 and their families through mental health services, parent resources, and community partnerships. Funded by SAMHSA through Wayne State University.",
           type: "resource",
           topic: "healthcare",
           isPrivate: false,
