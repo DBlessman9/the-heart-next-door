@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, Users, MapPin, Calendar, Plus, Search, Send, ExternalLink, Phone, Mail } from "lucide-react";
+import { MessageSquare, Users, MapPin, Calendar, Plus, Search, Send, ExternalLink, Phone, Mail, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,7 @@ interface CommunityProps {
 interface GroupWithDetails extends Group {
   latestMessage?: GroupMessage;
   userMembership?: boolean;
+  isFavorited?: boolean;
 }
 
 export default function Community({ userId, user }: CommunityProps) {
@@ -47,11 +48,22 @@ export default function Community({ userId, user }: CommunityProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch user's groups
-  const { data: userGroups = [] } = useQuery({
+  // Fetch user's joined groups
+  const { data: joinedGroups = [] } = useQuery({
     queryKey: ["/api/community/my-groups", userId],
     enabled: !!userId,
   });
+
+  // Fetch favorites
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["/api/community/favorites", userId],
+    enabled: !!userId,
+  });
+
+  // Combine joined groups and favorites for "My Village" (deduplicate by ID)
+  const userGroups = [...joinedGroups, ...favorites.filter((fav: Group) => 
+    !joinedGroups.some((joined: Group) => joined.id === fav.id)
+  )];
 
   // Fetch available groups
   const { data: availableGroups = [] } = useQuery({
@@ -152,6 +164,66 @@ export default function Community({ userId, user }: CommunityProps) {
       });
     },
   });
+
+  // Add favorite mutation
+  const addFavoriteMutation = useMutation({
+    mutationFn: async (groupId: number) => {
+      return await apiRequest('/api/community/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, groupId }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/favorites", userId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/community/my-groups", userId] });
+      toast({
+        title: "Added to Favorites",
+        description: "Resource added to your village!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to add favorite. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Remove favorite mutation
+  const removeFavoriteMutation = useMutation({
+    mutationFn: async (groupId: number) => {
+      return await apiRequest('/api/community/favorites', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, groupId }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/favorites", userId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/community/my-groups", userId] });
+      toast({
+        title: "Removed from Favorites",
+        description: "Resource removed from your village.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to remove favorite. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const toggleFavorite = (groupId: number, isFavorited: boolean) => {
+    if (isFavorited) {
+      removeFavoriteMutation.mutate(groupId);
+    } else {
+      addFavoriteMutation.mutate(groupId);
+    }
+  };
 
   const getGroupTypeIcon = (type: string) => {
     switch (type) {
@@ -427,11 +499,11 @@ export default function Community({ userId, user }: CommunityProps) {
       {/* Navigation Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="discover">Discover Groups</TabsTrigger>
-          <TabsTrigger value="my-groups">My Groups ({userGroups.length})</TabsTrigger>
+          <TabsTrigger value="discover">Discover Village</TabsTrigger>
+          <TabsTrigger value="my-groups">My Village ({userGroups.length})</TabsTrigger>
         </TabsList>
 
-        {/* Discover Groups Tab */}
+        {/* Discover Village Tab */}
         <TabsContent value="discover" className="space-y-4">
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -466,7 +538,10 @@ export default function Community({ userId, user }: CommunityProps) {
           </div>
 
           <div className="grid gap-4">
-            {filteredGroups.map((group: GroupWithDetails) => (
+            {filteredGroups.map((group: GroupWithDetails) => {
+              const isFavorited = favorites.some((fav: Group) => fav.id === group.id);
+              
+              return (
               <Card 
                 key={group.id} 
                 className={`hover:shadow-md transition-shadow ${group.isExternal && group.website ? 'cursor-pointer' : ''}`}
@@ -484,9 +559,24 @@ export default function Community({ userId, user }: CommunityProps) {
                         {getGroupTypeIcon(group.type)}
                         <h3 className="font-semibold">{group.name}</h3>
                         {group.isExternal && (
-                          <Badge variant="outline" className={`text-xs ${getResourceTypeColor(group.topic)}`}>
-                            {getResourceTypeLabel(group.topic)}
-                          </Badge>
+                          <>
+                            <Badge variant="outline" className={`text-xs ${getResourceTypeColor(group.topic)}`}>
+                              {getResourceTypeLabel(group.topic)}
+                            </Badge>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFavorite(group.id, isFavorited);
+                              }}
+                              className="ml-auto p-1 hover:bg-sage/10 rounded transition-colors"
+                              data-testid={`button-favorite-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            >
+                              <Star 
+                                size={20} 
+                                className={isFavorited ? "fill-amber-500 text-amber-500" : "text-gray-400"}
+                              />
+                            </button>
+                          </>
                         )}
                       </div>
                       {group.description && (
@@ -550,7 +640,8 @@ export default function Community({ userId, user }: CommunityProps) {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            );
+            })}
             {filteredGroups.length === 0 && (
               <Card>
                 <CardContent className="p-8 text-center">
@@ -612,9 +703,9 @@ export default function Community({ userId, user }: CommunityProps) {
               <Card>
                 <CardContent className="p-8 text-center">
                   <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
-                  <p className="text-muted-foreground">You haven't joined any groups yet</p>
+                  <p className="text-muted-foreground">You haven't joined any resources yet</p>
                   <Button onClick={() => setActiveTab("discover")} className="mt-4 bg-sage hover:bg-sage/90">
-                    Discover Groups
+                    Discover Village
                   </Button>
                 </CardContent>
               </Card>
