@@ -153,39 +153,41 @@ export default function Community({ userId, user }: CommunityProps) {
     },
   });
 
-  const getGroupTypeIcon = (type: string, topic?: string | null) => {
-    // For external resources, show icons based on topic
-    if (type === "resource" && topic) {
-      switch (topic) {
-        case "birth_center":
-          return <span className="text-lg">🏥</span>;
-        case "breastfeeding":
-          return <span className="text-lg">🍼</span>;
-        case "doula":
-          return <span className="text-lg">🌸</span>;
-        case "healthcare":
-          return <span className="text-lg">💊</span>;
-        case "loss_support":
-          return <span className="text-lg">💙</span>;
-        case "wellness":
-          return <span className="text-lg">🌿</span>;
-        case "advocacy":
-          return <span className="text-lg">📢</span>;
-        default:
-          return <span className="text-lg">🏥</span>;
-      }
-    }
-    
-    // For community groups
+  const getGroupTypeIcon = (type: string) => {
     switch (type) {
       case "location":
         return <MapPin size={16} className="text-sage" />;
       case "birth_month":
         return <Calendar size={16} className="text-sage" />;
       case "topic":
-        return <span className="text-lg">💬</span>;
+        return <MessageSquare size={16} className="text-sage" />;
+      case "resource":
+        return null;
       default:
         return <Users size={16} className="text-sage" />;
+    }
+  };
+
+  const getResourceTypeLabel = (topic?: string | null) => {
+    if (!topic) return "Resource";
+    
+    switch (topic) {
+      case "birth_center":
+        return "Birth center";
+      case "breastfeeding":
+        return "Breastfeeding support";
+      case "doula":
+        return "Doula network";
+      case "healthcare":
+        return "Healthcare";
+      case "loss_support":
+        return "Loss support";
+      case "wellness":
+        return "Wellness";
+      case "advocacy":
+        return "Advocacy";
+      default:
+        return "Resource";
     }
   };
 
@@ -239,7 +241,7 @@ export default function Community({ userId, user }: CommunityProps) {
       <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {getGroupTypeIcon(selectedGroup?.type || "", selectedGroup?.topic)}
+            {getGroupTypeIcon(selectedGroup?.type || "")}
             {selectedGroup?.name}
           </DialogTitle>
         </DialogHeader>
@@ -422,14 +424,14 @@ export default function Community({ userId, user }: CommunityProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="birth_center">🏥 Birth center</SelectItem>
-                <SelectItem value="breastfeeding">🍼 Breastfeeding support</SelectItem>
-                <SelectItem value="doula">🌸 Doula network</SelectItem>
-                <SelectItem value="peer_group">💬 Peer group</SelectItem>
-                <SelectItem value="healthcare">💊 Healthcare</SelectItem>
-                <SelectItem value="wellness">🌿 Wellness</SelectItem>
-                <SelectItem value="advocacy">📢 Advocacy</SelectItem>
-                <SelectItem value="loss_support">💙 Loss support</SelectItem>
+                <SelectItem value="birth_center">Birth center</SelectItem>
+                <SelectItem value="breastfeeding">Breastfeeding support</SelectItem>
+                <SelectItem value="doula">Doula network</SelectItem>
+                <SelectItem value="peer_group">Peer group</SelectItem>
+                <SelectItem value="healthcare">Healthcare</SelectItem>
+                <SelectItem value="wellness">Wellness</SelectItem>
+                <SelectItem value="advocacy">Advocacy</SelectItem>
+                <SelectItem value="loss_support">Loss support</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-sage hover:bg-sage/90">
@@ -454,11 +456,11 @@ export default function Community({ userId, user }: CommunityProps) {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        {getGroupTypeIcon(group.type, group.topic)}
+                        {getGroupTypeIcon(group.type)}
                         <h3 className="font-semibold">{group.name}</h3>
                         {group.isExternal && (
                           <Badge variant="outline" className="text-xs bg-sage/10 text-sage border-sage/20">
-                            Resource
+                            {getResourceTypeLabel(group.topic)}
                           </Badge>
                         )}
                       </div>
