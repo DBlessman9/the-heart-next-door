@@ -80,11 +80,7 @@ export default function Community({ userId, user }: CommunityProps) {
   // Join group mutation
   const joinGroupMutation = useMutation({
     mutationFn: async (groupId: number) => {
-      return await apiRequest(`/api/community/groups/${groupId}/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
+      return await apiRequest('POST', `/api/community/groups/${groupId}/join`, { userId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/my-groups", userId] });
@@ -106,11 +102,7 @@ export default function Community({ userId, user }: CommunityProps) {
   // Create group mutation
   const createGroupMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest('/api/community/groups', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, createdBy: userId }),
-      });
+      return await apiRequest('POST', '/api/community/groups', { ...data, createdBy: userId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/my-groups", userId] });
@@ -142,14 +134,10 @@ export default function Community({ userId, user }: CommunityProps) {
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (message: string) => {
-      return await apiRequest('/api/community/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          groupId: selectedGroup?.id,
-          userId,
-          content: message,
-        }),
+      return await apiRequest('POST', '/api/community/messages', {
+        groupId: selectedGroup?.id,
+        userId,
+        content: message,
       });
     },
     onSuccess: () => {
@@ -168,11 +156,7 @@ export default function Community({ userId, user }: CommunityProps) {
   // Add favorite mutation
   const addFavoriteMutation = useMutation({
     mutationFn: async (groupId: number) => {
-      return await apiRequest('/api/community/favorites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, groupId }),
-      });
+      return await apiRequest('POST', '/api/community/favorites', { userId, groupId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/favorites", userId] });
@@ -194,11 +178,7 @@ export default function Community({ userId, user }: CommunityProps) {
   // Remove favorite mutation
   const removeFavoriteMutation = useMutation({
     mutationFn: async (groupId: number) => {
-      return await apiRequest('/api/community/favorites', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, groupId }),
-      });
+      return await apiRequest('DELETE', '/api/community/favorites', { userId, groupId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/favorites", userId] });
