@@ -186,8 +186,33 @@ export default function Community({ userId, user }: CommunityProps) {
         return "Wellness";
       case "advocacy":
         return "Advocacy";
+      case "peer_group":
+        return "Peer group";
       default:
         return "Resource";
+    }
+  };
+
+  const getResourceTypeColor = (topic?: string | null) => {
+    switch (topic) {
+      case "birth_center":
+        return "bg-rose-100 text-rose-700 border-rose-200";
+      case "breastfeeding":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "doula":
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      case "healthcare":
+        return "bg-green-100 text-green-700 border-green-200";
+      case "loss_support":
+        return "bg-indigo-100 text-indigo-700 border-indigo-200";
+      case "wellness":
+        return "bg-teal-100 text-teal-700 border-teal-200";
+      case "advocacy":
+        return "bg-amber-100 text-amber-700 border-amber-200";
+      case "peer_group":
+        return "bg-pink-100 text-pink-700 border-pink-200";
+      default:
+        return "bg-sage/10 text-sage border-sage/20";
     }
   };
 
@@ -459,7 +484,7 @@ export default function Community({ userId, user }: CommunityProps) {
                         {getGroupTypeIcon(group.type)}
                         <h3 className="font-semibold">{group.name}</h3>
                         {group.isExternal && (
-                          <Badge variant="outline" className="text-xs bg-sage/10 text-sage border-sage/20">
+                          <Badge variant="outline" className={`text-xs ${getResourceTypeColor(group.topic)}`}>
                             {getResourceTypeLabel(group.topic)}
                           </Badge>
                         )}
