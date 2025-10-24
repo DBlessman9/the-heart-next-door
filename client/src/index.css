@@ -24,14 +24,14 @@
   --ring: hsl(185, 24%, 31%);
   --radius: 0.5rem;
 
-  /* Custom colors for maternal wellness */
-  --sage: hsl(146, 27%, 56%);
-  --lavender: hsl(243, 100%, 93%);
-  --cream: hsl(60, 100%, 95%);
-  --warm-gray: hsl(0, 0%, 96%);
-  --deep-teal: hsl(185, 24%, 31%);
-  --coral: hsl(0, 100%, 75%);
-  --muted-gold: hsl(43, 74%, 49%);
+  /* Custom colors for maternal wellness - evoking serenity, peace, love, divinity, nurture & life */
+  --sage: hsl(146, 30%, 65%);
+  --lavender: hsl(250, 60%, 88%);
+  --cream: hsl(45, 60%, 96%);
+  --warm-gray: hsl(30, 8%, 95%);
+  --deep-teal: hsl(185, 30%, 45%);
+  --coral: hsl(15, 80%, 80%);
+  --muted-gold: hsl(43, 50%, 70%);
 }
 
 .dark {

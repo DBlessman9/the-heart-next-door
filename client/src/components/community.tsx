@@ -248,21 +248,21 @@ export default function Community({ userId, user }: CommunityProps) {
   const getResourceTypeColor = (topic?: string | null) => {
     switch (topic) {
       case "birth_center":
-        return "bg-rose-100 text-rose-700 border-rose-200";
+        return "bg-rose-50 text-rose-600 border-rose-100";
       case "breastfeeding":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-sky-50 text-sky-600 border-sky-100";
       case "doula":
-        return "bg-purple-100 text-purple-700 border-purple-200";
+        return "bg-violet-50 text-violet-600 border-violet-100";
       case "healthcare":
-        return "bg-green-100 text-green-700 border-green-200";
+        return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "loss_support":
-        return "bg-indigo-100 text-indigo-700 border-indigo-200";
+        return "bg-purple-50 text-purple-600 border-purple-100";
       case "wellness":
-        return "bg-teal-100 text-teal-700 border-teal-200";
+        return "bg-teal-50 text-teal-600 border-teal-100";
       case "advocacy":
-        return "bg-amber-100 text-amber-700 border-amber-200";
+        return "bg-orange-50 text-orange-600 border-orange-100";
       case "peer_group":
-        return "bg-pink-100 text-pink-700 border-pink-200";
+        return "bg-pink-50 text-pink-600 border-pink-100";
       default:
         return "bg-sage/10 text-sage border-sage/20";
     }
@@ -472,14 +472,14 @@ export default function Community({ userId, user }: CommunityProps) {
     <div className="p-4 space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-deep-teal mb-2">The Village</h2>
+        <h2 className="text-2xl font-bold text-deep-teal mb-2">Your Village</h2>
         <p className="text-gray-600 text-sm">Connect with other moms and resources in your community</p>
       </div>
 
       {/* Navigation Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="discover">Discover Village</TabsTrigger>
+          <TabsTrigger value="discover">Discover Villages</TabsTrigger>
           <TabsTrigger value="my-groups">My Village ({userGroups.length})</TabsTrigger>
         </TabsList>
 
@@ -553,7 +553,7 @@ export default function Community({ userId, user }: CommunityProps) {
                             >
                               <Star 
                                 size={20} 
-                                className={isFavorited ? "fill-amber-500 text-amber-500" : "text-gray-400"}
+                                className={isFavorited ? "fill-muted-gold text-muted-gold" : "text-gray-400"}
                               />
                             </button>
                           </>
