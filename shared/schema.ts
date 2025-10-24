@@ -204,6 +204,15 @@ export const memberships = pgTable("memberships", {
   unique: unique().on(table.userId, table.groupId),
 }));
 
+export const favorites = pgTable("favorites", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  groupId: integer("group_id").references(() => groups.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  unique: unique().on(table.userId, table.groupId),
+}));
+
 export const groupMessages = pgTable("group_messages", {
   id: serial("id").primaryKey(),
   groupId: integer("group_id").references(() => groups.id).notNull(),
@@ -286,6 +295,11 @@ export const insertGroupMessageSchema = createInsertSchema(groupMessages).omit({
   createdAt: true,
 });
 
+export const insertFavoriteSchema = createInsertSchema(favorites).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertPartnershipSchema = createInsertSchema(partnerships).omit({
   id: true,
   createdAt: true,
@@ -328,6 +342,8 @@ export type Membership = typeof memberships.$inferSelect;
 export type InsertMembership = z.infer<typeof insertMembershipSchema>;
 export type GroupMessage = typeof groupMessages.$inferSelect;
 export type InsertGroupMessage = z.infer<typeof insertGroupMessageSchema>;
+export type Favorite = typeof favorites.$inferSelect;
+export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
 export type Partnership = typeof partnerships.$inferSelect;
 export type InsertPartnership = z.infer<typeof insertPartnershipSchema>;
 export type PartnerResource = typeof partnerResources.$inferSelect;
