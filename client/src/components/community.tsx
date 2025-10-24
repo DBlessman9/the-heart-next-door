@@ -548,12 +548,12 @@ export default function Community({ userId, user }: CommunityProps) {
                                 e.stopPropagation();
                                 toggleFavorite(group.id, isFavorited);
                               }}
-                              className="ml-auto p-1 hover:bg-sage/10 rounded transition-colors"
+                              className="ml-auto p-1 hover:bg-sage/10 rounded transition-colors focus:outline-none"
                               data-testid={`button-favorite-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
                             >
                               <Star 
                                 size={20} 
-                                className={isFavorited ? "fill-muted-gold text-muted-gold" : "text-gray-400"}
+                                className={isFavorited ? "fill-amber-400 text-amber-400" : "text-gray-400"}
                               />
                             </button>
                           </>
@@ -639,7 +639,10 @@ export default function Community({ userId, user }: CommunityProps) {
         {/* My Groups Tab */}
         <TabsContent value="my-groups" className="space-y-4">
           <div className="grid gap-4">
-            {userGroups.map((group: GroupWithDetails) => (
+            {userGroups.map((group: GroupWithDetails) => {
+              const isFavorited = favorites.some((fav: Group) => fav.id === group.id);
+              
+              return (
               <Card key={group.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
@@ -647,38 +650,89 @@ export default function Community({ userId, user }: CommunityProps) {
                       <div className="flex items-center gap-2 mb-2">
                         {getGroupTypeIcon(group.type, group.topic)}
                         <h3 className="font-semibold">{group.name}</h3>
-                        <Badge variant="secondary" className="text-xs">
-                          {getGroupTypeLabel(group.type)}
-                        </Badge>
+                        {group.isExternal && (
+                          <>
+                            <Badge variant="outline" className={`text-xs ${getResourceTypeColor(group.topic)}`}>
+                              {getResourceTypeLabel(group.topic)}
+                            </Badge>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFavorite(group.id, isFavorited);
+                              }}
+                              className="ml-auto p-1 hover:bg-sage/10 rounded transition-colors focus:outline-none"
+                              data-testid={`button-favorite-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            >
+                              <Star 
+                                size={20} 
+                                className={isFavorited ? "fill-amber-400 text-amber-400" : "text-gray-400"}
+                              />
+                            </button>
+                          </>
+                        )}
                       </div>
                       {group.description && (
                         <p className="text-sm text-muted-foreground mb-2">{group.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Users size={12} />
-                          {group.memberCount} members
-                        </span>
-                        {group.latestMessage && (
-                          <span>Last activity: {format(new Date(group.latestMessage.createdAt), 'MMM d')}</span>
-                        )}
-                      </div>
+                      {group.isExternal && (group.contactEmail || group.contactPhone) && (
+                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-2">
+                          {group.contactPhone && (
+                            <span className="flex items-center gap-1">
+                              <Phone size={12} />
+                              {group.contactPhone}
+                            </span>
+                          )}
+                          {group.contactEmail && (
+                            <span className="flex items-center gap-1">
+                              <Mail size={12} />
+                              {group.contactEmail}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {!group.isExternal && (
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
+                          <span className="flex items-center gap-1">
+                            <Users size={12} />
+                            {group.memberCount} members
+                          </span>
+                          {group.latestMessage && (
+                            <span>Last activity: {format(new Date(group.latestMessage.createdAt), 'MMM d')}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <Button
-                      onClick={() => {
-                        setSelectedGroup(group);
-                        setIsGroupChatOpen(true);
-                      }}
-                      size="sm"
-                      className="bg-sage hover:bg-sage/90"
-                    >
-                      <MessageSquare size={16} className="mr-2" />
-                      Chat
-                    </Button>
+                    {group.isExternal && group.website ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(group.website, '_blank');
+                        }}
+                        size="sm"
+                        className="bg-sage hover:bg-sage/90"
+                        data-testid={`button-visit-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        <ExternalLink size={14} className="mr-2" />
+                        Visit Website
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setSelectedGroup(group);
+                          setIsGroupChatOpen(true);
+                        }}
+                        size="sm"
+                        className="bg-sage hover:bg-sage/90"
+                      >
+                        <MessageSquare size={16} className="mr-2" />
+                        Chat
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )
+            })}
             {userGroups.length === 0 && (
               <Card>
                 <CardContent className="p-8 text-center">
