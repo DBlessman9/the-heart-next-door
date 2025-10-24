@@ -153,14 +153,37 @@ export default function Community({ userId, user }: CommunityProps) {
     },
   });
 
-  const getGroupTypeIcon = (type: string) => {
+  const getGroupTypeIcon = (type: string, topic?: string | null) => {
+    // For external resources, show icons based on topic
+    if (type === "resource" && topic) {
+      switch (topic) {
+        case "birth_center":
+          return <span className="text-lg">🏥</span>;
+        case "breastfeeding":
+          return <span className="text-lg">🍼</span>;
+        case "doula":
+          return <span className="text-lg">🌸</span>;
+        case "healthcare":
+          return <span className="text-lg">💊</span>;
+        case "loss_support":
+          return <span className="text-lg">💙</span>;
+        case "wellness":
+          return <span className="text-lg">🌿</span>;
+        case "advocacy":
+          return <span className="text-lg">📢</span>;
+        default:
+          return <span className="text-lg">🏥</span>;
+      }
+    }
+    
+    // For community groups
     switch (type) {
       case "location":
         return <MapPin size={16} className="text-sage" />;
       case "birth_month":
         return <Calendar size={16} className="text-sage" />;
       case "topic":
-        return <MessageSquare size={16} className="text-sage" />;
+        return <span className="text-lg">💬</span>;
       default:
         return <Users size={16} className="text-sage" />;
     }
@@ -194,7 +217,19 @@ export default function Community({ userId, user }: CommunityProps) {
   const filteredGroups = availableGroups.filter((group: GroupWithDetails) => {
     const matchesSearch = group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           group.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || group.type === filterType;
+    
+    // Filter by topic for resources, or by type for community groups
+    let matchesType = filterType === "all";
+    if (!matchesType) {
+      if (group.isExternal) {
+        // For external resources, filter by topic
+        matchesType = group.topic === filterType;
+      } else {
+        // For community groups
+        matchesType = group.type === filterType || filterType === "peer_group";
+      }
+    }
+    
     return matchesSearch && matchesType;
   });
 
@@ -204,7 +239,7 @@ export default function Community({ userId, user }: CommunityProps) {
       <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {getGroupTypeIcon(selectedGroup?.type || "")}
+            {getGroupTypeIcon(selectedGroup?.type || "", selectedGroup?.topic)}
             {selectedGroup?.name}
           </DialogTitle>
         </DialogHeader>
@@ -382,15 +417,19 @@ export default function Community({ userId, user }: CommunityProps) {
               />
             </div>
             <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-52">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="resource">Resources</SelectItem>
-                <SelectItem value="location">Location</SelectItem>
-                <SelectItem value="birth_month">Birth Month</SelectItem>
-                <SelectItem value="topic">Topic</SelectItem>
+                <SelectItem value="birth_center">🏥 Birth center</SelectItem>
+                <SelectItem value="breastfeeding">🍼 Breastfeeding support</SelectItem>
+                <SelectItem value="doula">🌸 Doula network</SelectItem>
+                <SelectItem value="peer_group">💬 Peer group</SelectItem>
+                <SelectItem value="healthcare">💊 Healthcare</SelectItem>
+                <SelectItem value="wellness">🌿 Wellness</SelectItem>
+                <SelectItem value="advocacy">📢 Advocacy</SelectItem>
+                <SelectItem value="loss_support">💙 Loss support</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-sage hover:bg-sage/90">
@@ -415,7 +454,7 @@ export default function Community({ userId, user }: CommunityProps) {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        {getGroupTypeIcon(group.type)}
+                        {getGroupTypeIcon(group.type, group.topic)}
                         <h3 className="font-semibold">{group.name}</h3>
                         {group.isExternal && (
                           <Badge variant="outline" className="text-xs bg-sage/10 text-sage border-sage/20">
@@ -508,7 +547,7 @@ export default function Community({ userId, user }: CommunityProps) {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        {getGroupTypeIcon(group.type)}
+                        {getGroupTypeIcon(group.type, group.topic)}
                         <h3 className="font-semibold">{group.name}</h3>
                         <Badge variant="secondary" className="text-xs">
                           {getGroupTypeLabel(group.type)}
