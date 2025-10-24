@@ -562,22 +562,6 @@ export default function Community({ userId, user }: CommunityProps) {
                       {group.description && (
                         <p className="text-sm text-muted-foreground mb-2">{group.description}</p>
                       )}
-                      {group.isExternal && (group.contactEmail || group.contactPhone) && (
-                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-2">
-                          {group.contactPhone && (
-                            <span className="flex items-center gap-1">
-                              <Phone size={12} />
-                              {group.contactPhone}
-                            </span>
-                          )}
-                          {group.contactEmail && (
-                            <span className="flex items-center gap-1">
-                              <Mail size={12} />
-                              {group.contactEmail}
-                            </span>
-                          )}
-                        </div>
-                      )}
                       {!group.isExternal && (
                         <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
                           <span className="flex items-center gap-1">
@@ -673,22 +657,6 @@ export default function Community({ userId, user }: CommunityProps) {
                       </div>
                       {group.description && (
                         <p className="text-sm text-muted-foreground mb-2">{group.description}</p>
-                      )}
-                      {group.isExternal && (group.contactEmail || group.contactPhone) && (
-                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-2">
-                          {group.contactPhone && (
-                            <span className="flex items-center gap-1">
-                              <Phone size={12} />
-                              {group.contactPhone}
-                            </span>
-                          )}
-                          {group.contactEmail && (
-                            <span className="flex items-center gap-1">
-                              <Mail size={12} />
-                              {group.contactEmail}
-                            </span>
-                          )}
-                        </div>
                       )}
                       {!group.isExternal && (
                         <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
