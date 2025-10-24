@@ -458,7 +458,7 @@ export class DatabaseStorage implements IStorage {
           isPrivate: false,
           createdBy: 2,
           website: "https://mpsiprojectlaunch.wayne.edu/",
-          contactEmail: "health@detroitmi.gov",
+          contactEmail: "mpsi@wayne.edu",
           isExternal: true,
         },
       ];
