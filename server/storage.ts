@@ -10,6 +10,7 @@ import {
   groups,
   memberships,
   groupMessages,
+  favorites,
   partnerships,
   partnerResources,
   partnerProgress,
@@ -37,6 +38,8 @@ import {
   type InsertMembership,
   type GroupMessage,
   type InsertGroupMessage,
+  type Favorite,
+  type InsertFavorite,
   type Partnership,
   type InsertPartnership,
   type PartnerResource,
@@ -103,6 +106,12 @@ export interface IStorage {
   leaveGroup(userId: number, groupId: number): Promise<void>;
   getGroupMessages(groupId: number): Promise<GroupMessage[]>;
   createGroupMessage(message: InsertGroupMessage): Promise<GroupMessage>;
+  
+  // Favorites operations
+  addFavorite(userId: number, groupId: number): Promise<Favorite>;
+  removeFavorite(userId: number, groupId: number): Promise<void>;
+  getUserFavorites(userId: number): Promise<Group[]>;
+  isFavorited(userId: number, groupId: number): Promise<boolean>;
 
   // Partner operations
   createPartnership(partnership: InsertPartnership): Promise<Partnership>;
@@ -856,6 +865,58 @@ export class DatabaseStorage implements IStorage {
       .values(insertMessage)
       .returning();
     return message;
+  }
+
+  // Favorites operations
+  async addFavorite(userId: number, groupId: number): Promise<Favorite> {
+    const [favorite] = await db
+      .insert(favorites)
+      .values({ userId, groupId })
+      .returning();
+    return favorite;
+  }
+
+  async removeFavorite(userId: number, groupId: number): Promise<void> {
+    await db.delete(favorites)
+      .where(and(
+        eq(favorites.userId, userId),
+        eq(favorites.groupId, groupId)
+      ));
+  }
+
+  async getUserFavorites(userId: number): Promise<Group[]> {
+    return await db.select({
+      id: groups.id,
+      name: groups.name,
+      description: groups.description,
+      type: groups.type,
+      zipCode: groups.zipCode,
+      dueDate: groups.dueDate,
+      topic: groups.topic,
+      isPrivate: groups.isPrivate,
+      memberCount: groups.memberCount,
+      createdBy: groups.createdBy,
+      website: groups.website,
+      contactEmail: groups.contactEmail,
+      contactPhone: groups.contactPhone,
+      isExternal: groups.isExternal,
+      createdAt: groups.createdAt,
+    })
+    .from(groups)
+    .innerJoin(favorites, eq(favorites.groupId, groups.id))
+    .where(eq(favorites.userId, userId))
+    .orderBy(groups.name);
+  }
+
+  async isFavorited(userId: number, groupId: number): Promise<boolean> {
+    const [favorite] = await db.select()
+      .from(favorites)
+      .where(and(
+        eq(favorites.userId, userId),
+        eq(favorites.groupId, groupId)
+      ))
+      .limit(1);
+    return !!favorite;
   }
 
   // Partner operations

@@ -574,6 +574,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Favorites routes
+  app.post("/api/community/favorites", async (req, res) => {
+    try {
+      const { userId, groupId } = req.body;
+      const favorite = await storage.addFavorite(userId, groupId);
+      res.json(favorite);
+    } catch (error) {
+      res.status(400).json({ message: "Error adding favorite", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.delete("/api/community/favorites", async (req, res) => {
+    try {
+      const { userId, groupId } = req.body;
+      await storage.removeFavorite(userId, groupId);
+      res.json({ message: "Favorite removed" });
+    } catch (error) {
+      res.status(400).json({ message: "Error removing favorite", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/community/favorites/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const favorites = await storage.getUserFavorites(userId);
+      res.json(favorites);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching favorites", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  app.get("/api/community/is-favorited/:userId/:groupId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const groupId = parseInt(req.params.groupId);
+      const isFavorited = await storage.isFavorited(userId, groupId);
+      res.json({ isFavorited });
+    } catch (error) {
+      res.status(500).json({ message: "Error checking favorite status", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
   // Dashboard/Insights routes
   app.get("/api/checkins/trends/:userId", async (req, res) => {
     try {
