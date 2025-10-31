@@ -141,7 +141,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
         <Card className="text-center">
           <CardContent className="pt-6">
             <div className="flex items-center justify-center mb-2">
-              <Baby className="h-8 w-8 text-sage" />
+              <Baby className="h-8 w-8 text-blush" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{user?.pregnancyWeek || 0}</div>
             <p className="text-xs text-gray-600">Weeks</p>
@@ -167,7 +167,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-sage" />
+            <Heart className="h-5 w-5 text-blush" />
             Emotional Check-in Trends
           </CardTitle>
           <CardDescription>Your feelings over the past week</CardDescription>
@@ -201,7 +201,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-sage" />
+            <Calendar className="h-5 w-5 text-blush" />
             Upcoming Appointments
           </CardTitle>
           <CardDescription>Your scheduled check-ups and consultations</CardDescription>
@@ -240,7 +240,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-sage" />
+            <Users className="h-5 w-5 text-blush" />
             Your Care Team
           </CardTitle>
           <CardDescription>The experts supporting your journey</CardDescription>
@@ -250,7 +250,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {supportTeam.slice(0, 4).map((expert: any, index: number) => (
                 <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="h-10 w-10 bg-sage rounded-full flex items-center justify-center">
+                  <div className="h-10 w-10 bg-blush rounded-full flex items-center justify-center">
                     <User className="h-5 w-5 text-white" />
                   </div>
                   <div>

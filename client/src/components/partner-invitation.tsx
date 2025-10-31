@@ -116,13 +116,13 @@ export default function PartnerInvitation() {
   };
 
   return (
-    <Card className="bg-white border-sage-200">
+    <Card className="bg-white border-blush-200">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="w-5 h-5" />
           Partner Connection
         </CardTitle>
-        <p className="text-sm text-sage-600">
+        <p className="text-sm text-blush-600">
           Invite your partner to join your wellness journey
         </p>
       </CardHeader>
@@ -173,7 +173,7 @@ export default function PartnerInvitation() {
                   Share Link
                 </Button>
               </div>
-              <p className="text-xs text-sage-600">
+              <p className="text-xs text-blush-600">
                 Send this code to your partner so they can connect their account to yours.
               </p>
             </div>
@@ -181,15 +181,15 @@ export default function PartnerInvitation() {
         ) : (
           <div className="space-y-4">
             <div className="text-center py-6">
-              <Users className="w-12 h-12 text-sage-300 mx-auto mb-3" />
-              <h3 className="font-medium text-sage-800 mb-2">Invite Your Partner</h3>
-              <p className="text-sm text-sage-600 mb-4">
+              <Users className="w-12 h-12 text-blush-300 mx-auto mb-3" />
+              <h3 className="font-medium text-blush-800 mb-2">Invite Your Partner</h3>
+              <p className="text-sm text-blush-600 mb-4">
                 Create a connection so your partner can support your wellness journey
               </p>
               <Button 
                 onClick={() => createPartnershipMutation.mutate("spouse")}
                 disabled={createPartnershipMutation.isPending}
-                className="bg-sage-600 hover:bg-sage-700"
+                className="bg-blush-600 hover:bg-blush-700"
               >
                 {createPartnershipMutation.isPending ? "Creating..." : "Create Invitation"}
               </Button>
@@ -201,13 +201,13 @@ export default function PartnerInvitation() {
 
         {/* Privacy Settings */}
         <div className="space-y-4">
-          <h4 className="font-medium text-sage-800">What your partner can see</h4>
+          <h4 className="font-medium text-blush-800">What your partner can see</h4>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Daily Check-ins</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Share your daily wellness check-ins and mood updates
                 </p>
               </div>
@@ -220,7 +220,7 @@ export default function PartnerInvitation() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Journal Entries</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Allow access to your private journal and reflections
                 </p>
               </div>
@@ -233,7 +233,7 @@ export default function PartnerInvitation() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Appointments</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Share upcoming medical appointments and reminders
                 </p>
               </div>
@@ -246,7 +246,7 @@ export default function PartnerInvitation() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Learning Resources</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Allow access to partner-specific educational content
                 </p>
               </div>
@@ -257,8 +257,8 @@ export default function PartnerInvitation() {
             </div>
           </div>
 
-          <div className="bg-sage-50 rounded-lg p-4">
-            <p className="text-sm text-sage-600">
+          <div className="bg-blush-50 rounded-lg p-4">
+            <p className="text-sm text-blush-600">
               <strong>Privacy Note:</strong> You can change these settings at any time. 
               Your partner will only see what you're comfortable sharing.
             </p>

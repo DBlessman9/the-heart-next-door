@@ -368,7 +368,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
             <p className="text-sm text-muted-foreground mb-2">{appointment.description}</p>
           </div>
           {appointment.reminders && (
-            <Bell size={16} className="text-sage" />
+            <Bell size={16} className="text-blush" />
           )}
         </div>
         
@@ -509,13 +509,13 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
       </div>
 
       {/* Quick Add Section */}
-      <Card className="bg-sage/5 border-sage/20">
+      <Card className="bg-blush/5 border-blush/20">
         <CardContent className="p-4">
           <div className="flex justify-center">
             <Button 
               onClick={() => setIsAddDialogOpen(true)} 
               style={{ 
-                backgroundColor: 'hsl(146, 27%, 56%)', 
+                backgroundColor: 'hsl(340, 70%, 75%)', 
                 color: 'white',
                 minWidth: 'fit-content',
                 padding: '0.5rem 1rem'
@@ -534,7 +534,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Calendar className="text-sage" size={18} />
+              <Calendar className="text-blush" size={18} />
               <span className="font-medium">Calendar Sync</span>
             </div>
             <div className="flex gap-2">
@@ -567,10 +567,10 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
 
       {/* Upcoming Reminders */}
       {upcomingAppointments.length > 0 && (
-        <Card className="bg-sage/5 border-sage/20">
+        <Card className="bg-blush/5 border-blush/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bell className="text-sage" size={20} />
+              <Bell className="text-blush" size={20} />
               Upcoming Reminders
             </CardTitle>
           </CardHeader>
@@ -645,12 +645,12 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Calendar className="text-sage" />
+              <Calendar className="text-blush" />
               Sync Your {selectedCalendarProvider === 'google' ? 'Google' : 'Outlook'} Calendar
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="bg-sage/10 p-4 rounded-lg">
+            <div className="bg-blush/10 p-4 rounded-lg">
               <h4 className="font-semibold text-deep-teal mb-2">How Calendar Sync Works</h4>
               <p className="text-sm text-muted-foreground">
                 Connect your {selectedCalendarProvider === 'google' ? 'Google' : 'Outlook'} calendar to automatically import all your pregnancy and postpartum-related appointments. We'll smart-filter and sync appointments that contain keywords like:
@@ -708,7 +708,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
                     });
                   }}
                   style={{ 
-                    backgroundColor: 'hsl(146, 27%, 56%)', 
+                    backgroundColor: 'hsl(340, 70%, 75%)', 
                     color: 'white'
                   }}
                   className="flex-1 hover:opacity-90"

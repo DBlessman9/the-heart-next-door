@@ -34,7 +34,7 @@ export default function Home() {
     return (
       <div className="max-w-md mx-auto bg-white min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-sage border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blush border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-deep-teal">Loading your digital village...</p>
         </div>
       </div>

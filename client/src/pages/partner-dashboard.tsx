@@ -19,7 +19,7 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-sage/5 p-6">
+      <div className="min-h-screen bg-gradient-to-b from-white to-blush/5 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
             <p className="text-gray-600">Loading your dashboard...</p>
@@ -31,7 +31,7 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
 
   if (!dashboardData) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-sage/5 p-6">
+      <div className="min-h-screen bg-gradient-to-b from-white to-blush/5 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
             <p className="text-gray-600">No partnership found. Please contact support.</p>
@@ -61,11 +61,11 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-sage/5 p-6">
+    <div className="min-h-screen bg-gradient-to-b from-white to-blush/5 p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-4">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blush to-lavender rounded-full flex items-center justify-center mb-4">
             <Heart className="text-white text-3xl" size={40} />
           </div>
           <h1 className="text-3xl font-bold text-deep-teal mb-2" data-testid="text-partner-header">
@@ -96,7 +96,7 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-semibold text-sage" data-testid="text-baby-size">
+                  <p className="text-lg font-semibold text-blush" data-testid="text-baby-size">
                     Size of a {getBabySize(pregnancyWeek)}
                   </p>
                 </div>
@@ -133,7 +133,7 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
                   {recentCheckIns.map((checkIn: any, index: number) => (
                     <div 
                       key={checkIn.id} 
-                      className="border-l-4 border-sage pl-4 py-2"
+                      className="border-l-4 border-blush pl-4 py-2"
                       data-testid={`checkin-${index}`}
                     >
                       <div className="flex justify-between items-start mb-2">
@@ -185,11 +185,11 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
                   {upcomingAppointments.map((appointment: any, index: number) => (
                     <div 
                       key={appointment.id}
-                      className="flex items-start gap-4 p-4 bg-sage/5 rounded-lg"
+                      className="flex items-start gap-4 p-4 bg-blush/5 rounded-lg"
                       data-testid={`appointment-${index}`}
                     >
-                      <div className="flex-shrink-0 w-12 h-12 bg-sage/20 rounded-full flex items-center justify-center">
-                        <Calendar size={20} className="text-sage" />
+                      <div className="flex-shrink-0 w-12 h-12 bg-blush/20 rounded-full flex items-center justify-center">
+                        <Calendar size={20} className="text-blush" />
                       </div>
                       <div className="flex-1">
                         <p className="font-semibold text-deep-teal" data-testid={`appointment-title-${index}`}>
@@ -223,19 +223,19 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
           <CardContent>
             <div className="space-y-3 text-sm text-gray-700">
               <div className="flex items-start gap-3">
-                <span className="text-sage text-lg">💚</span>
+                <span className="text-blush text-lg">💚</span>
                 <p>Ask how she's feeling today and really listen to her response</p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-sage text-lg">🍽️</span>
+                <span className="text-blush text-lg">🍽️</span>
                 <p>Prepare her favorite healthy meal or snack</p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-sage text-lg">🛁</span>
+                <span className="text-blush text-lg">🛁</span>
                 <p>Help create a relaxing environment for her to rest</p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-sage text-lg">📅</span>
+                <span className="text-blush text-lg">📅</span>
                 <p>Offer to attend appointments together</p>
               </div>
             </div>

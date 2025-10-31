@@ -34,8 +34,8 @@ export default function TabNavigation({ activeTab, onTabChange, pregnancyStage }
               onClick={() => onTabChange(tab.id)}
               className={`flex-1 py-4 text-center border-b-2 transition-colors ${
                 isActive
-                  ? "border-sage text-sage"
-                  : "border-transparent text-gray-400 hover:text-sage"
+                  ? "border-blush text-blush"
+                  : "border-transparent text-gray-400 hover:text-blush"
               }`}
             >
               <Icon size={20} className="mx-auto mb-1" />

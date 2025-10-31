@@ -314,13 +314,13 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Baby className="text-sage" size={20} />
+            <Baby className="text-blush" size={20} />
             Your Baby This Week
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Baby Size */}
-          <div className="text-center p-4 bg-sage/10 rounded-lg">
+          <div className="text-center p-4 bg-blush/10 rounded-lg">
             <div className="text-4xl mb-2">{guidance.babySize.emoji}</div>
             <p className="font-semibold text-deep-teal">Size of a {guidance.babySize.fruit}</p>
             <p className="text-sm text-muted-foreground">{guidance.babySize.size}</p>
@@ -329,13 +329,13 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
           {/* Baby Milestones */}
           <div>
             <h4 className="font-semibold text-deep-teal mb-2 flex items-center gap-2">
-              <Sparkles size={16} className="text-sage" />
+              <Sparkles size={16} className="text-blush" />
               Amazing Developments
             </h4>
             <ul className="space-y-2">
               {guidance.babyMilestones.map((milestone, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-sage rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-blush rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm">{milestone}</span>
                 </li>
               ))}
@@ -368,7 +368,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="text-sage" size={20} />
+            <Target className="text-blush" size={20} />
             Planning Tools
           </CardTitle>
           <p className="text-sm text-muted-foreground">Helpful tools for your journey ahead</p>
@@ -412,7 +412,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
           <Button
             variant="outline"
             onClick={() => setSelectedWeek(currentWeek)}
-            className="text-sage border-sage hover:bg-sage/10"
+            className="text-blush border-blush hover:bg-blush/10"
           >
             Return to Week {currentWeek}
           </Button>
@@ -424,7 +424,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Baby className="text-sage" />
+              <Baby className="text-blush" />
               Baby Name Ideas
             </DialogTitle>
             <DialogDescription>
@@ -471,7 +471,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <BookOpen className="text-sage" />
+              <BookOpen className="text-blush" />
               Birth Plan Guide
             </DialogTitle>
             <DialogDescription>
@@ -541,7 +541,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Home className="text-sage" />
+              <Home className="text-blush" />
               Nursery Checklist
             </DialogTitle>
             <DialogDescription>

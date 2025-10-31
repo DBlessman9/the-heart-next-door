@@ -9,7 +9,7 @@ export default function TermsAndConditions() {
     <div className="max-w-4xl mx-auto bg-white min-h-screen p-6">
       <button
         onClick={() => setLocation(-1)}
-        className="flex items-center text-sage hover:text-sage/80 mb-6"
+        className="flex items-center text-blush hover:text-blush/80 mb-6"
       >
         <ArrowLeft size={20} className="mr-2" />
         Back

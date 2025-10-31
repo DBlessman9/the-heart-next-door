@@ -90,14 +90,14 @@ export default function PartnerOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-sage-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blush-50 to-blush-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-sage-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-8 h-8 text-sage-600" />
+          <div className="w-16 h-16 bg-blush-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Heart className="w-8 h-8 text-blush-600" />
           </div>
-          <CardTitle className="text-2xl text-sage-800">Join as a Partner</CardTitle>
-          <p className="text-sage-600">Support your partner's wellness journey</p>
+          <CardTitle className="text-2xl text-blush-800">Join as a Partner</CardTitle>
+          <p className="text-blush-600">Support your partner's wellness journey</p>
           
           {/* Progress indicator */}
           <div className="flex justify-center mt-4 space-x-2">
@@ -105,7 +105,7 @@ export default function PartnerOnboarding() {
               <div
                 key={stepNum}
                 className={`w-3 h-3 rounded-full ${
-                  stepNum <= step ? 'bg-sage-500' : 'bg-sage-200'
+                  stepNum <= step ? 'bg-blush-500' : 'bg-blush-200'
                 }`}
               />
             ))}
@@ -117,7 +117,7 @@ export default function PartnerOnboarding() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {step === 1 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-sage-700 mb-4">Let's get to know you</h3>
+                  <h3 className="text-lg font-semibold text-blush-700 mb-4">Let's get to know you</h3>
                   
                   <FormField
                     control={form.control}
@@ -164,7 +164,7 @@ export default function PartnerOnboarding() {
                   <Button 
                     type="button" 
                     onClick={handleNext}
-                    className="w-full bg-sage-600 hover:bg-sage-700"
+                    className="w-full bg-blush-600 hover:bg-blush-700"
                     disabled={!form.watch("firstName") || !form.watch("lastName") || !form.watch("email")}
                   >
                     Continue
@@ -174,7 +174,7 @@ export default function PartnerOnboarding() {
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-sage-700 mb-4">Your relationship</h3>
+                  <h3 className="text-lg font-semibold text-blush-700 mb-4">Your relationship</h3>
 
                   <FormField
                     control={form.control}
@@ -211,7 +211,7 @@ export default function PartnerOnboarding() {
                     <Button 
                       type="button" 
                       onClick={handleNext}
-                      className="flex-1 bg-sage-600 hover:bg-sage-700"
+                      className="flex-1 bg-blush-600 hover:bg-blush-700"
                     >
                       Continue
                     </Button>
@@ -221,7 +221,7 @@ export default function PartnerOnboarding() {
 
               {step === 3 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-sage-700 mb-4">Connect with your partner</h3>
+                  <h3 className="text-lg font-semibold text-blush-700 mb-4">Connect with your partner</h3>
 
                   <FormField
                     control={form.control}
@@ -242,7 +242,7 @@ export default function PartnerOnboarding() {
                         </FormControl>
                         <FormMessage />
                         {checkingCode && (
-                          <p className="text-sm text-sage-600">Checking code...</p>
+                          <p className="text-sm text-blush-600">Checking code...</p>
                         )}
                         {partnership && (
                           <p className="text-sm text-green-600">✓ Valid invite code</p>
@@ -254,7 +254,7 @@ export default function PartnerOnboarding() {
                     )}
                   />
 
-                  <div className="text-sm text-sage-600 bg-sage-50 p-3 rounded-lg">
+                  <div className="text-sm text-blush-600 bg-blush-50 p-3 rounded-lg">
                     <p className="font-medium mb-1">Need an invite code?</p>
                     <p>Ask your partner to share their partner invite code from their app settings.</p>
                   </div>
@@ -270,7 +270,7 @@ export default function PartnerOnboarding() {
                     </Button>
                     <Button 
                       type="submit"
-                      className="flex-1 bg-sage-600 hover:bg-sage-700"
+                      className="flex-1 bg-blush-600 hover:bg-blush-700"
                       disabled={!partnership || createPartnerMutation.isPending}
                     >
                       {createPartnerMutation.isPending ? "Creating account..." : "Join"}

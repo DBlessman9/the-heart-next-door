@@ -10,7 +10,7 @@ export default function CommunityPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="animate-spin text-sage" size={48} />
+        <Loader2 className="animate-spin text-blush" size={48} />
       </div>
     );
   }

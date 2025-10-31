@@ -208,15 +208,15 @@ export default function Community({ userId, user }: CommunityProps) {
   const getGroupTypeIcon = (type: string) => {
     switch (type) {
       case "location":
-        return <MapPin size={16} className="text-sage" />;
+        return <MapPin size={16} className="text-blush" />;
       case "birth_month":
-        return <Calendar size={16} className="text-sage" />;
+        return <Calendar size={16} className="text-blush" />;
       case "topic":
-        return <MessageSquare size={16} className="text-sage" />;
+        return <MessageSquare size={16} className="text-blush" />;
       case "resource":
         return null;
       default:
-        return <Users size={16} className="text-sage" />;
+        return <Users size={16} className="text-blush" />;
     }
   };
 
@@ -264,7 +264,7 @@ export default function Community({ userId, user }: CommunityProps) {
       case "peer_group":
         return "bg-pink-50 text-pink-600 border-pink-100";
       default:
-        return "bg-sage/10 text-sage border-sage/20";
+        return "bg-blush/10 text-blush border-blush/20";
     }
   };
 
@@ -328,8 +328,8 @@ export default function Community({ userId, user }: CommunityProps) {
             <div className="space-y-4">
               {groupMessages.map((message: GroupMessage & { userName?: string }) => (
                 <div key={message.id} className="flex gap-3">
-                  <div className="w-8 h-8 bg-sage/20 rounded-full flex items-center justify-center">
-                    <Users size={16} className="text-sage" />
+                  <div className="w-8 h-8 bg-blush/20 rounded-full flex items-center justify-center">
+                    <Users size={16} className="text-blush" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -459,7 +459,7 @@ export default function Community({ userId, user }: CommunityProps) {
             <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 bg-sage hover:bg-sage/90">
+            <Button type="submit" className="flex-1 bg-blush hover:bg-blush/90">
               Create Group
             </Button>
           </div>
@@ -511,7 +511,7 @@ export default function Community({ userId, user }: CommunityProps) {
                 <SelectItem value="loss_support">Loss support</SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-sage hover:bg-sage/90">
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-blush hover:bg-blush/90">
               <Plus size={16} className="mr-2" />
               Create
             </Button>
@@ -548,7 +548,7 @@ export default function Community({ userId, user }: CommunityProps) {
                                 e.stopPropagation();
                                 toggleFavorite(group.id, isFavorited);
                               }}
-                              className="ml-auto p-1 hover:bg-sage/10 rounded transition-colors focus:outline-none"
+                              className="ml-auto p-1 hover:bg-blush/10 rounded transition-colors focus:outline-none"
                               data-testid={`button-favorite-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
                             >
                               <Star 
@@ -581,7 +581,7 @@ export default function Community({ userId, user }: CommunityProps) {
                           window.open(group.website, '_blank');
                         }}
                         size="sm"
-                        className="bg-sage hover:bg-sage/90"
+                        className="bg-blush hover:bg-blush/90"
                         data-testid={`button-visit-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
                       >
                         <ExternalLink size={14} className="mr-2" />
@@ -611,7 +611,7 @@ export default function Community({ userId, user }: CommunityProps) {
                 <CardContent className="p-8 text-center">
                   <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
                   <p className="text-muted-foreground">No groups found</p>
-                  <Button onClick={() => setIsCreateDialogOpen(true)} className="mt-4 bg-sage hover:bg-sage/90">
+                  <Button onClick={() => setIsCreateDialogOpen(true)} className="mt-4 bg-blush hover:bg-blush/90">
                     Create the first group
                   </Button>
                 </CardContent>
@@ -644,7 +644,7 @@ export default function Community({ userId, user }: CommunityProps) {
                                 e.stopPropagation();
                                 toggleFavorite(group.id, isFavorited);
                               }}
-                              className="ml-auto p-1 hover:bg-sage/10 rounded transition-colors focus:outline-none"
+                              className="ml-auto p-1 hover:bg-blush/10 rounded transition-colors focus:outline-none"
                               data-testid={`button-favorite-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
                             >
                               <Star 
@@ -677,7 +677,7 @@ export default function Community({ userId, user }: CommunityProps) {
                           window.open(group.website, '_blank');
                         }}
                         size="sm"
-                        className="bg-sage hover:bg-sage/90"
+                        className="bg-blush hover:bg-blush/90"
                         data-testid={`button-visit-${group.name.toLowerCase().replace(/\s+/g, '-')}`}
                       >
                         <ExternalLink size={14} className="mr-2" />
@@ -690,7 +690,7 @@ export default function Community({ userId, user }: CommunityProps) {
                           setIsGroupChatOpen(true);
                         }}
                         size="sm"
-                        className="bg-sage hover:bg-sage/90"
+                        className="bg-blush hover:bg-blush/90"
                       >
                         <MessageSquare size={16} className="mr-2" />
                         Chat
@@ -706,7 +706,7 @@ export default function Community({ userId, user }: CommunityProps) {
                 <CardContent className="p-8 text-center">
                   <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
                   <p className="text-muted-foreground">You haven't joined any resources yet</p>
-                  <Button onClick={() => setActiveTab("discover")} className="mt-4 bg-sage hover:bg-sage/90">
+                  <Button onClick={() => setActiveTab("discover")} className="mt-4 bg-blush hover:bg-blush/90">
                     Discover Village
                   </Button>
                 </CardContent>

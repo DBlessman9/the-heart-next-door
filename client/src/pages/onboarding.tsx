@@ -351,8 +351,8 @@ export default function Onboarding() {
       <div className="p-6">
         {step === 1 && (
           <div className="text-center mt-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6 p-1 animate-fade-in">
-              <img src={maternalIcon} alt="Maternal care" className="w-full h-full object-cover rounded-full animate-pulse" style={{ animationDuration: '3s' }} />
+            <div className="w-32 h-32 mx-auto bg-pink-100 rounded-full flex items-center justify-center mb-6 animate-fade-in">
+              <Heart className="w-16 h-16 text-red-500 fill-red-500 animate-pulse" style={{ animationDuration: '2s' }} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
               <TypingText text="Hi, I'm Nia." speed={80} delay={500} />
@@ -370,15 +370,15 @@ export default function Onboarding() {
                 onClick={() => setStep(2)}
                 className="w-full py-4 rounded-2xl text-lg font-semibold shadow-lg transition-colors"
                 style={{
-                  backgroundColor: 'hsl(146, 27%, 56%)',
+                  backgroundColor: 'hsl(340, 70%, 75%)',
                   color: 'white',
                   border: 'none'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                  e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
                 }}
               >
                 Get Started
@@ -400,16 +400,16 @@ export default function Onboarding() {
                 className="w-full py-4 rounded-2xl text-lg font-semibold transition-colors"
                 style={{
                   backgroundColor: 'transparent',
-                  color: 'hsl(146, 27%, 56%)',
-                  border: '2px solid hsl(146, 27%, 56%)'
+                  color: 'hsl(340, 70%, 75%)',
+                  border: '2px solid hsl(340, 70%, 75%)'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
                   e.target.style.color = 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'hsl(146, 27%, 56%)';
+                  e.target.style.color = 'hsl(340, 70%, 75%)';
                 }}
               >
                 I'm Returning
@@ -518,7 +518,7 @@ export default function Onboarding() {
                     <a 
                       href="/terms" 
                       target="_blank"
-                      className="text-sage underline hover:text-sage/80"
+                      className="text-blush underline hover:text-blush/80"
                       onClick={(e) => e.stopPropagation()}
                     >
                       Terms & Conditions
@@ -527,7 +527,7 @@ export default function Onboarding() {
                     <a 
                       href="/privacy" 
                       target="_blank"
-                      className="text-sage underline hover:text-sage/80"
+                      className="text-blush underline hover:text-blush/80"
                       onClick={(e) => e.stopPropagation()}
                     >
                       Privacy Policy
@@ -540,15 +540,15 @@ export default function Onboarding() {
                   onClick={handleSubmit}
                   className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
                   style={{
-                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    backgroundColor: 'hsl(340, 70%, 75%)',
                     color: 'white',
-                    border: '2px solid hsl(146, 27%, 56%)'
+                    border: '2px solid hsl(340, 70%, 75%)'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                    e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                    e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
                   }}
                   disabled={!isFormValid()}
                 >
@@ -758,15 +758,15 @@ export default function Onboarding() {
                   onClick={handleSubmit}
                   className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
                   style={{
-                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    backgroundColor: 'hsl(340, 70%, 75%)',
                     color: 'white',
-                    border: '2px solid hsl(146, 27%, 56%)'
+                    border: '2px solid hsl(340, 70%, 75%)'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                    e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                    e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
                   }}
                   disabled={createUserMutation.isPending || registerPartnerMutation.isPending || !isFormValid()}
                 >
@@ -781,7 +781,7 @@ export default function Onboarding() {
           <Card className="mt-8 mb-8">
             <CardContent className="p-6">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-sage to-lavender rounded-full flex items-center justify-center mb-6">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blush to-lavender rounded-full flex items-center justify-center mb-6">
                   <Heart className="text-white text-2xl" size={32} />
                 </div>
 
@@ -807,15 +807,15 @@ export default function Onboarding() {
                         }}
                         className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
                         style={{
-                          backgroundColor: 'hsl(146, 27%, 56%)',
+                          backgroundColor: 'hsl(340, 70%, 75%)',
                           color: 'white',
-                          border: '2px solid hsl(146, 27%, 56%)'
+                          border: '2px solid hsl(340, 70%, 75%)'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 70%)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 75%)';
                         }}
                         data-testid="button-invite-partner"
                       >
@@ -829,11 +829,11 @@ export default function Onboarding() {
                         className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors border-2"
                         style={{
                           backgroundColor: 'white',
-                          color: 'hsl(146, 27%, 56%)',
-                          border: '2px solid hsl(146, 27%, 56%)'
+                          color: 'hsl(340, 70%, 75%)',
+                          border: '2px solid hsl(340, 70%, 75%)'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 96%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 95%)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = 'white';
@@ -851,7 +851,7 @@ export default function Onboarding() {
                         <p className="text-lg text-gray-700 mb-6">
                           Share this code with your partner or supporter:
                         </p>
-                        <div className="bg-sage/10 border-2 border-sage rounded-xl p-6 mb-6">
+                        <div className="bg-blush/10 border-2 border-blush rounded-xl p-6 mb-6">
                           <p className="text-3xl font-bold text-deep-teal tracking-wider" data-testid="text-invite-code">
                             {partnerInviteCode}
                           </p>
@@ -863,15 +863,15 @@ export default function Onboarding() {
                           onClick={handlePartnerInviteComplete}
                           className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
                           style={{
-                            backgroundColor: 'hsl(146, 27%, 56%)',
+                            backgroundColor: 'hsl(340, 70%, 75%)',
                             color: 'white',
-                            border: '2px solid hsl(146, 27%, 56%)'
+                            border: '2px solid hsl(340, 70%, 75%)'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                            e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 70%)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                            e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 75%)';
                           }}
                           data-testid="button-complete-onboarding"
                         >

@@ -44,18 +44,18 @@ export default function Resources({ user }: ResourcesProps) {
   const getResourceBgColor = (type: string) => {
     switch (type) {
       case "video":
-        return "bg-gradient-to-br from-sage to-deep-teal";
+        return "bg-gradient-to-br from-blush to-deep-teal";
       case "article":
         return "bg-gradient-to-br from-coral to-muted-gold";
       case "guide":
-        return "bg-gradient-to-br from-lavender to-sage";
+        return "bg-gradient-to-br from-lavender to-blush";
       default:
-        return "bg-gradient-to-br from-sage to-deep-teal";
+        return "bg-gradient-to-br from-blush to-deep-teal";
     }
   };
 
   const categories = [
-    { id: "sleep", label: "Sleep Tips", color: "hsl(146, 27%, 56%)" },
+    { id: "sleep", label: "Sleep Tips", color: "hsl(340, 70%, 75%)" },
     { id: "exercise", label: "Exercise", color: "hsl(264, 56%, 77%)" },
     { id: "nutrition", label: "Baby Care", color: "hsl(10, 73%, 70%)" },
     { id: "breastfeeding", label: "Breastfeeding", color: "hsl(39, 75%, 74%)" },
@@ -66,7 +66,7 @@ export default function Resources({ user }: ResourcesProps) {
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-deep-teal">Learning Hub</h3>
         <Button variant="ghost" size="sm">
-          <Search size={20} className="text-sage" />
+          <Search size={20} className="text-blush" />
         </Button>
       </div>
 

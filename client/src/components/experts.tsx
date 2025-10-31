@@ -17,7 +17,7 @@ export default function Experts() {
   });
 
   const specialties = [
-    { id: "doula", label: "Doulas", color: "hsl(146, 27%, 56%)" },
+    { id: "doula", label: "Doulas", color: "hsl(340, 70%, 75%)" },
     { id: "lactation", label: "Lactation", color: "hsl(264, 56%, 77%)" },
     { id: "therapy", label: "Therapy", color: "hsl(10, 73%, 70%)" },
     { id: "nutrition", label: "Nutrition", color: "hsl(39, 75%, 74%)" },
@@ -32,7 +32,7 @@ export default function Experts() {
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-deep-teal">Expert Network</h3>
         <Button variant="ghost" size="sm">
-          <Filter size={20} className="text-sage" />
+          <Filter size={20} className="text-blush" />
         </Button>
       </div>
 
@@ -78,7 +78,7 @@ export default function Experts() {
                     <button
                       className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
                       style={{
-                        backgroundColor: 'hsl(146, 27%, 56%)',
+                        backgroundColor: 'hsl(340, 70%, 75%)',
                         color: 'white',
                         border: 'none',
                         cursor: 'pointer'

@@ -72,7 +72,7 @@ export default function PartnerSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-sage-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blush-50 to-blush-100 p-4">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -87,26 +87,26 @@ export default function PartnerSettings() {
           </Button>
         </div>
 
-        <Card className="bg-white border-sage-200">
+        <Card className="bg-white border-blush-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
               Partner Settings
             </CardTitle>
-            <p className="text-sm text-sage-600">
+            <p className="text-sm text-blush-600">
               Manage your account and privacy preferences
             </p>
           </CardHeader>
         </Card>
 
         {/* Privacy & Permissions */}
-        <Card className="bg-white border-sage-200">
+        <Card className="bg-white border-blush-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="w-5 h-5" />
               Privacy & Permissions
             </CardTitle>
-            <p className="text-sm text-sage-600">
+            <p className="text-sm text-blush-600">
               Control what information you can access from your partner's account
             </p>
           </CardHeader>
@@ -115,7 +115,7 @@ export default function PartnerSettings() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">View Daily Check-ins</Label>
-                  <p className="text-xs text-sage-600">
+                  <p className="text-xs text-blush-600">
                     See how your partner is feeling and their wellness updates
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export default function PartnerSettings() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">View Journal Entries</Label>
-                  <p className="text-xs text-sage-600">
+                  <p className="text-xs text-blush-600">
                     Access private journal entries and reflections
                   </p>
                 </div>
@@ -145,7 +145,7 @@ export default function PartnerSettings() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">View Appointments</Label>
-                  <p className="text-xs text-sage-600">
+                  <p className="text-xs text-blush-600">
                     See upcoming medical appointments and reminders
                   </p>
                 </div>
@@ -160,7 +160,7 @@ export default function PartnerSettings() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">Access Learning Resources</Label>
-                  <p className="text-xs text-sage-600">
+                  <p className="text-xs text-blush-600">
                     View and complete partner-specific educational content
                   </p>
                 </div>
@@ -171,8 +171,8 @@ export default function PartnerSettings() {
               </div>
             </div>
 
-            <div className="bg-sage-50 rounded-lg p-4">
-              <p className="text-sm text-sage-600">
+            <div className="bg-blush-50 rounded-lg p-4">
+              <p className="text-sm text-blush-600">
                 <strong>Note:</strong> These permissions can be changed at any time by either you or your partner. 
                 Open communication about boundaries is important for a healthy relationship.
               </p>
@@ -181,7 +181,7 @@ export default function PartnerSettings() {
         </Card>
 
         {/* Connection Status */}
-        <Card className="bg-white border-sage-200">
+        <Card className="bg-white border-blush-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Share2 className="w-5 h-5" />
@@ -232,7 +232,7 @@ export default function PartnerSettings() {
                   Copy
                 </Button>
               </div>
-              <p className="text-xs text-sage-600">
+              <p className="text-xs text-blush-600">
                 Share this code with your partner so they can connect their account to yours.
               </p>
             </div>
@@ -240,7 +240,7 @@ export default function PartnerSettings() {
         </Card>
 
         {/* Notifications */}
-        <Card className="bg-white border-sage-200">
+        <Card className="bg-white border-blush-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bell className="w-5 h-5" />
@@ -251,7 +251,7 @@ export default function PartnerSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Daily Check-in Reminders</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Get notified when your partner completes their daily check-in
                 </p>
               </div>
@@ -263,7 +263,7 @@ export default function PartnerSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Appointment Reminders</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Receive reminders about upcoming appointments
                 </p>
               </div>
@@ -275,7 +275,7 @@ export default function PartnerSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-sm font-medium">Learning Suggestions</Label>
-                <p className="text-xs text-sage-600">
+                <p className="text-xs text-blush-600">
                   Get suggestions for new partner resources and courses
                 </p>
               </div>
@@ -285,7 +285,7 @@ export default function PartnerSettings() {
         </Card>
 
         {/* Account Actions */}
-        <Card className="bg-white border-sage-200">
+        <Card className="bg-white border-blush-200">
           <CardHeader>
             <CardTitle>Account Actions</CardTitle>
           </CardHeader>

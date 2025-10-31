@@ -123,7 +123,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                   disabled={hasCheckedIn}
                   className="p-3 rounded-xl text-sm font-medium transition-colors"
                   style={{
-                    backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    backgroundColor: option.selected ? 'hsl(340, 70%, 75%)' : 'hsl(0, 0%, 96%)',
                     color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
                     border: 'none',
                     cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
@@ -131,12 +131,12 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                   }}
                   onMouseEnter={(e) => {
                     if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                      e.target.style.backgroundColor = option.selected ? 'hsl(340, 70%, 70%)' : 'hsl(0, 0%, 88%)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                      e.target.style.backgroundColor = option.selected ? 'hsl(340, 70%, 75%)' : 'hsl(0, 0%, 96%)';
                     }
                   }}
                 >
@@ -145,8 +145,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
               ))}
             </div>
             {hasCheckedIn && feeling && (
-              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
-                <p className="text-sm text-sage font-medium">
+              <div className="mt-4 p-3 bg-blush/10 rounded-lg">
+                <p className="text-sm text-blush font-medium">
                   {feeling === "peaceful" ? "What a beautiful feeling to hold today. You're doing wonderfully." :
                    feeling === "anxious" ? "It's okay to feel anxious. You're supported and not alone in this journey." :
                    feeling === "tired" ? `Rest when you can${user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}. Your body is ${user.pregnancyStage === "trying_to_conceive" ? "amazing" : "doing incredible work"}.` :
@@ -171,7 +171,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                   disabled={hasCheckedIn}
                   className="p-3 rounded-xl text-sm font-medium transition-colors"
                   style={{
-                    backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    backgroundColor: option.selected ? 'hsl(340, 70%, 75%)' : 'hsl(0, 0%, 96%)',
                     color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
                     border: 'none',
                     cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
@@ -179,12 +179,12 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                   }}
                   onMouseEnter={(e) => {
                     if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                      e.target.style.backgroundColor = option.selected ? 'hsl(340, 70%, 70%)' : 'hsl(0, 0%, 88%)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                      e.target.style.backgroundColor = option.selected ? 'hsl(340, 70%, 75%)' : 'hsl(0, 0%, 96%)';
                     }
                   }}
                 >
@@ -193,8 +193,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
               ))}
             </div>
             {hasCheckedIn && bodyCare && (
-              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
-                <p className="text-sm text-sage font-medium">
+              <div className="mt-4 p-3 bg-blush/10 rounded-lg">
+                <p className="text-sm text-blush font-medium">
                   {bodyCare === "not-yet" ? `No pressure${user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}. Even small acts of self-care count. Maybe start with a glass of water?` :
                    bodyCare === "a-little" ? "Every little bit counts. You're taking steps to care for yourself." :
                    bodyCare === "yes-tried" ? "You're making an effort and that's what matters. Keep going!" :
@@ -219,7 +219,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                   disabled={hasCheckedIn}
                   className="p-3 rounded-xl text-sm font-medium transition-colors"
                   style={{
-                    backgroundColor: option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)',
+                    backgroundColor: option.selected ? 'hsl(340, 70%, 75%)' : 'hsl(0, 0%, 96%)',
                     color: option.selected ? 'white' : 'hsl(0, 0%, 40%)',
                     border: 'none',
                     cursor: hasCheckedIn ? 'not-allowed' : 'pointer',
@@ -227,12 +227,12 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
                   }}
                   onMouseEnter={(e) => {
                     if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 50%)' : 'hsl(0, 0%, 88%)';
+                      e.target.style.backgroundColor = option.selected ? 'hsl(340, 70%, 70%)' : 'hsl(0, 0%, 88%)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!hasCheckedIn) {
-                      e.target.style.backgroundColor = option.selected ? 'hsl(146, 27%, 56%)' : 'hsl(0, 0%, 96%)';
+                      e.target.style.backgroundColor = option.selected ? 'hsl(340, 70%, 75%)' : 'hsl(0, 0%, 96%)';
                     }
                   }}
                 >
@@ -241,8 +241,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
               ))}
             </div>
             {hasCheckedIn && feelingSupported && (
-              <div className="mt-4 p-3 bg-sage/10 rounded-lg">
-                <p className="text-sm text-sage font-medium">
+              <div className="mt-4 p-3 bg-blush/10 rounded-lg">
+                <p className="text-sm text-blush font-medium">
                   {feelingSupported === "not-really" ? "You're not alone, even when it feels that way. Consider reaching out to someone today." :
                    feelingSupported === "a-little" ? "It's okay to need more support. You deserve to feel surrounded by care." :
                    feelingSupported === "mostly" ? "It's wonderful that you feel supported. That makes such a difference." :
@@ -264,8 +264,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
               {createCheckInMutation.isPending ? "Checking in..." : "Complete Check-In"}
             </Button>
           ) : (
-            <div className="bg-sage/10 rounded-lg p-4">
-              <p className="text-sage font-medium">
+            <div className="bg-blush/10 rounded-lg p-4">
+              <p className="text-blush font-medium">
                 Thank you for taking time to check in with yourself today{user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}. 
                 Remember, you're doing an amazing job. 💚
               </p>

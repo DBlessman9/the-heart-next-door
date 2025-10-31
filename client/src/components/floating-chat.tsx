@@ -99,7 +99,7 @@ export default function FloatingChat() {
             onClick={handleToggle}
             className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
             style={{
-              backgroundColor: 'hsl(146, 27%, 56%)',
+              backgroundColor: 'hsl(340, 70%, 75%)',
               border: '3px solid white'
             }}
           >
@@ -119,11 +119,11 @@ export default function FloatingChat() {
           
           {/* Chat Window */}
           <Card className="relative w-full max-w-md h-[480px] flex flex-col shadow-2xl">
-            <CardHeader className="pb-3" style={{ backgroundColor: 'hsl(146, 27%, 56%)' }}>
+            <CardHeader className="pb-3" style={{ backgroundColor: 'hsl(340, 70%, 75%)' }}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                    <MessageCircle size={16} className="text-sage" />
+                    <MessageCircle size={16} className="text-blush" />
                   </div>
                   <div>
                     <CardTitle className="text-white text-lg">Nia</CardTitle>
@@ -146,7 +146,7 @@ export default function FloatingChat() {
               <ScrollArea className="h-full p-4">
                 {isLoading ? (
                   <div className="flex items-center justify-center h-32">
-                    <Loader2 className="animate-spin text-sage" size={24} />
+                    <Loader2 className="animate-spin text-blush" size={24} />
                   </div>
                 ) : (
                   <div className="space-y-3 pb-4 min-h-[200px]">
@@ -168,7 +168,7 @@ export default function FloatingChat() {
                               : "bg-gray-100 text-gray-800"
                           }`}
                           style={{
-                            backgroundColor: msg.isFromUser ? 'hsl(146, 27%, 56%)' : undefined
+                            backgroundColor: msg.isFromUser ? 'hsl(340, 70%, 75%)' : undefined
                           }}
                         >
                           <p className="text-sm leading-relaxed">{msg.content}</p>
@@ -210,7 +210,7 @@ export default function FloatingChat() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Type your message to Nia..."
-                  className="flex-1 border-gray-300 focus:border-sage focus:ring-sage"
+                  className="flex-1 border-gray-300 focus:border-blush focus:ring-sage"
                   disabled={sendMessageMutation.isPending}
                 />
                 <Button
@@ -218,7 +218,7 @@ export default function FloatingChat() {
                   disabled={!message.trim() || sendMessageMutation.isPending}
                   className="px-4"
                   style={{
-                    backgroundColor: 'hsl(146, 27%, 56%)',
+                    backgroundColor: 'hsl(340, 70%, 75%)',
                     color: 'white'
                   }}
                 >

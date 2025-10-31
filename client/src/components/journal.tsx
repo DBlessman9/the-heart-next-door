@@ -80,15 +80,15 @@ export default function Journal({ userId, user }: JournalProps) {
           onClick={handleNewEntry}
           className="px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center text-white"
           style={{
-            backgroundColor: 'hsl(146, 27%, 56%)',
+            backgroundColor: 'hsl(340, 70%, 75%)',
             border: 'none',
             cursor: 'pointer'
           }}
           onMouseEnter={(e) => {
-            e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+            e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+            e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
           }}
         >
           <Plus size={16} className="mr-2" />
@@ -107,7 +107,7 @@ export default function Journal({ userId, user }: JournalProps) {
                   onClick={() => setUsePrompt(true)}
                   className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                     usePrompt 
-                      ? 'bg-sage/20 text-sage border-sage' 
+                      ? 'bg-blush/20 text-blush border-blush' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                   style={usePrompt ? { borderWidth: '1px', borderStyle: 'solid' } : {}}
@@ -118,7 +118,7 @@ export default function Journal({ userId, user }: JournalProps) {
                   onClick={() => setUsePrompt(false)}
                   className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                     !usePrompt 
-                      ? 'bg-sage/20 text-sage border-sage' 
+                      ? 'bg-blush/20 text-blush border-blush' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                   style={!usePrompt ? { borderWidth: '1px', borderStyle: 'solid' } : {}}
@@ -129,8 +129,8 @@ export default function Journal({ userId, user }: JournalProps) {
             </div>
             
             {usePrompt && (
-              <div className="text-gray-600 mb-4 p-4 bg-sage/5 rounded-lg border-l-4 border-sage">
-                <p className="font-medium text-sage mb-2">Today's Prompt:</p>
+              <div className="text-gray-600 mb-4 p-4 bg-blush/5 rounded-lg border-l-4 border-blush">
+                <p className="font-medium text-blush mb-2">Today's Prompt:</p>
                 {(journalPrompt?.prompt || "What are three things you're grateful for today during your pregnancy journey?").split('\n').map((paragraph, index) => (
                   <p key={index} className={index > 0 ? "mt-3" : ""}>
                     {paragraph}
@@ -150,19 +150,19 @@ export default function Journal({ userId, user }: JournalProps) {
               disabled={!entryContent.trim() || createEntryMutation.isPending}
               className="mt-3 px-4 py-2 rounded-xl transition-colors font-medium text-white"
               style={{
-                backgroundColor: 'hsl(146, 27%, 56%)',
+                backgroundColor: 'hsl(340, 70%, 75%)',
                 border: 'none',
                 cursor: (!entryContent.trim() || createEntryMutation.isPending) ? 'not-allowed' : 'pointer',
                 opacity: (!entryContent.trim() || createEntryMutation.isPending) ? 0.5 : 1
               }}
               onMouseEnter={(e) => {
                 if (entryContent.trim() && !createEntryMutation.isPending) {
-                  e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                  e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (entryContent.trim() && !createEntryMutation.isPending) {
-                  e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                  e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
                 }
               }}
             >
@@ -188,7 +188,7 @@ export default function Journal({ userId, user }: JournalProps) {
                 </div>
               ) : (
                 entries.map((entry: JournalEntry) => (
-                  <div key={entry.id} className="border-l-4 border-sage pl-4 py-2">
+                  <div key={entry.id} className="border-l-4 border-blush pl-4 py-2">
                     <p className="text-sm text-gray-600 mb-1">
                       {formatDate(entry.createdAt?.toString() || "")}
                     </p>

@@ -13,7 +13,7 @@
   --card-foreground: hsl(185, 24%, 31%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(146, 27%, 56%);
+  --primary: hsl(340, 70%, 75%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(243, 100%, 93%);
   --secondary-foreground: hsl(185, 24%, 31%);
@@ -25,7 +25,7 @@
   --radius: 0.5rem;
 
   /* Custom colors for maternal wellness - evoking serenity, peace, love, divinity, nurture & life */
-  --sage: hsl(146, 30%, 65%);
+  --blush: hsl(340, 70%, 85%);
   --lavender: hsl(250, 60%, 88%);
   --cream: hsl(45, 60%, 96%);
   --warm-gray: hsl(30, 8%, 95%);
@@ -45,7 +45,7 @@
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(240, 3.7%, 15.9%);
   --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(146, 27%, 56%);
+  --primary: hsl(340, 70%, 75%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(240, 3.7%, 15.9%);
   --secondary-foreground: hsl(0, 0%, 98%);
@@ -70,8 +70,8 @@
 }
 
 @layer utilities {
-  .bg-sage {
-    background-color: hsl(var(--sage));
+  .bg-blush {
+    background-color: hsl(var(--blush));
   }
   
   .bg-lavender {
@@ -98,8 +98,8 @@
     background-color: hsl(var(--muted-gold));
   }
   
-  .text-sage {
-    color: hsl(var(--sage));
+  .text-blush {
+    color: hsl(var(--blush));
   }
   
   .text-lavender {
@@ -126,8 +126,8 @@
     color: hsl(var(--muted-gold));
   }
   
-  .border-sage {
-    border-color: hsl(var(--sage));
+  .border-blush {
+    border-color: hsl(var(--blush));
   }
   
   .border-lavender {
@@ -146,8 +146,8 @@
     border-color: hsl(var(--muted-gold));
   }
   
-  .hover\:bg-sage:hover {
-    background-color: hsl(var(--sage));
+  .hover\:bg-blush:hover {
+    background-color: hsl(var(--blush));
   }
   
   .hover\:bg-lavender:hover {

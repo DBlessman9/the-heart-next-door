@@ -4,7 +4,7 @@ import maternalIcon from "@assets/generated_images/Pregnant_woman_bun_hairstyle_
 
 export default function Waitlist() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sage/10 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blush/10 to-white flex items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center">
         <div className="mb-8 flex justify-center">
           <div className="relative">
@@ -16,10 +16,10 @@ export default function Waitlist() {
           </div>
         </div>
 
-        <Card className="border-2 border-sage/20 shadow-lg">
+        <Card className="border-2 border-blush/20 shadow-lg">
           <CardContent className="p-8 md:p-12">
             <div className="mb-6">
-              <Heart className="w-16 h-16 text-sage mx-auto mb-4" fill="currentColor" />
+              <Heart className="w-16 h-16 text-blush mx-auto mb-4" fill="currentColor" />
               <h1 className="text-3xl md:text-4xl font-bold text-deep-teal mb-4">
                 Thanks for joining, mama!
               </h1>
@@ -27,7 +27,7 @@ export default function Waitlist() {
 
             <div className="space-y-4 text-gray-700">
               <p className="text-lg md:text-xl font-medium">
-                You're officially on our <span className="text-sage font-bold">Founding Waitlist</span>.
+                You're officially on our <span className="text-blush font-bold">Founding Waitlist</span>.
               </p>
               
               <p className="text-base md:text-lg leading-relaxed">
@@ -53,7 +53,7 @@ export default function Waitlist() {
           Questions? We're here. Reach out to us anytime at{" "}
           <a 
             href="mailto:support@theheartnetxdoor.com" 
-            className="text-sage hover:underline font-medium"
+            className="text-blush hover:underline font-medium"
           >
             support@theheartnetxdoor.com
           </a>

@@ -54,7 +54,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-sage border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+          <div className="w-8 h-8 border-2 border-blush border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
           <p className="text-gray-500">Loading conversation...</p>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
       {/* Chat Header */}
       <div className="px-6 py-4 bg-lavender sticky top-0 z-0 shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-sage to-deep-teal rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-blush to-deep-teal rounded-full flex items-center justify-center">
             <Bot className="text-white" size={20} />
           </div>
           <div>
@@ -84,7 +84,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
       <div className="flex-1 px-6 py-4 space-y-4 overflow-y-auto">
         {messages.length === 0 && (
           <div className="text-center py-8">
-            <Bot className="w-16 h-16 text-sage mx-auto mb-4" />
+            <Bot className="w-16 h-16 text-blush mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-deep-teal mb-2">
               Welcome to your chat with Nia!
             </h3>
@@ -103,7 +103,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
             }`}
           >
             {!msg.isFromUser && (
-              <div className="w-8 h-8 bg-gradient-to-br from-sage to-deep-teal rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-gradient-to-br from-blush to-deep-teal rounded-full flex items-center justify-center flex-shrink-0">
                 <Bot className="text-white" size={16} />
               </div>
             )}
@@ -115,7 +115,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
                   : "bg-warm-gray text-deep-teal rounded-tl-sm"
               }`}
               style={msg.isFromUser ? {
-                backgroundColor: 'hsl(146, 27%, 56%)',
+                backgroundColor: 'hsl(340, 70%, 75%)',
                 color: 'white'
               } : {}}
             >
@@ -138,7 +138,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
         
         {sendMessageMutation.isPending && (
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-sage to-deep-teal rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-blush to-deep-teal rounded-full flex items-center justify-center flex-shrink-0">
               <Bot className="text-white" size={16} />
             </div>
             <div className="bg-warm-gray rounded-2xl rounded-tl-sm p-4 max-w-xs">
@@ -170,7 +170,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
             disabled={!message.trim() || sendMessageMutation.isPending}
             className="w-12 h-12 rounded-2xl transition-colors"
             style={{
-              backgroundColor: 'hsl(146, 27%, 56%)',
+              backgroundColor: 'hsl(340, 70%, 75%)',
               color: 'white',
               border: 'none',
               cursor: (!message.trim() || sendMessageMutation.isPending) ? 'not-allowed' : 'pointer',
@@ -178,12 +178,12 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
             }}
             onMouseEnter={(e) => {
               if (message.trim() && !sendMessageMutation.isPending) {
-                e.target.style.backgroundColor = 'hsl(146, 27%, 50%)';
+                e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
               }
             }}
             onMouseLeave={(e) => {
               if (message.trim() && !sendMessageMutation.isPending) {
-                e.target.style.backgroundColor = 'hsl(146, 27%, 56%)';
+                e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
               }
             }}
           >

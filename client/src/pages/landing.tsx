@@ -144,12 +144,12 @@ export default function Landing() {
             <div className="w-16 h-16 bg-gradient-to-r from-rose-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-sage-800 mb-2">You're on the list!</h2>
-            <p className="text-sage-600 mb-6">
+            <h2 className="text-2xl font-bold text-blush-800 mb-2">You're on the list!</h2>
+            <p className="text-blush-600 mb-6">
               Thank you for joining our early access waitlist. We'll send you updates as we prepare to launch.
             </p>
-            <div className="bg-sage-50 rounded-lg p-4">
-              <p className="text-sm text-sage-700">
+            <div className="bg-blush-50 rounded-lg p-4">
+              <p className="text-sm text-blush-700">
                 <strong>What's next?</strong><br />
                 We'll be sending early access invites to our beta program soon. 
                 Keep an eye on your inbox for exclusive updates and tips.
@@ -201,17 +201,17 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
             <div className="space-y-8">
               <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/50">
-                <div className="relative bg-gradient-to-br from-sage-50 to-sage-100 rounded-2xl p-6 shadow-lg">
+                <div className="relative bg-gradient-to-br from-blush-50 to-blush-100 rounded-2xl p-6 shadow-lg">
                   {/* App Mockup */}
                   <div className="bg-white rounded-xl p-4 shadow-md">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex-1 flex items-center justify-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-sage-400 to-sage-500 rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blush-400 to-blush-500 rounded-full flex items-center justify-center">
                           <Heart className="w-4 h-4 text-white" />
                         </div>
                         <div className="text-center">
-                          <div className="font-semibold text-sage-800 text-sm leading-tight">The Heart</div>
-                          <div className="font-semibold text-sage-800 text-sm leading-tight">Next Door</div>
+                          <div className="font-semibold text-blush-800 text-sm leading-tight">The Heart</div>
+                          <div className="font-semibold text-blush-800 text-sm leading-tight">Next Door</div>
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -222,17 +222,17 @@ export default function Landing() {
                     </div>
                     
                     <div className="space-y-4">
-                      <div className="bg-sage-50 rounded-lg p-4">
+                      <div className="bg-blush-50 rounded-lg p-4">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="relative">
-                            <div className="w-6 h-6 bg-sage-500 rounded-full flex items-center justify-center">
+                            <div className="w-6 h-6 bg-blush-500 rounded-full flex items-center justify-center">
                               <MessageCircle className="w-3 h-3 text-white" />
                             </div>
                             <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                           </div>
-                          <span className="text-sm font-medium text-sage-700">Nia, Your Digital Doula</span>
+                          <span className="text-sm font-medium text-blush-700">Nia, Your Digital Doula</span>
                         </div>
-                        <p className="text-xs text-sage-600">Good morning! How are you feeling today? I'm here to support you through your wellness journey.</p>
+                        <p className="text-xs text-blush-600">Good morning! How are you feeling today? I'm here to support you through your wellness journey.</p>
                       </div>
                       
                       <div className="grid grid-cols-2 gap-3">
