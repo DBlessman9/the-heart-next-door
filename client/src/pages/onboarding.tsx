@@ -355,7 +355,7 @@ export default function Onboarding() {
               <Heart className="w-16 h-16 text-red-500 fill-red-500 animate-pulse" style={{ animationDuration: '2s' }} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
-              <TypingText text="Hi, I'm Nia." speed={80} delay={500} />
+              <TypingText text="Hi, I'm The Heart Next Door." speed={80} delay={500} />
             </h1>
             <p className="text-lg text-gray-600 mb-8">
               <TypingText text="I'm your digital doula, and I'm so glad you're here." speed={40} delay={2000} />
