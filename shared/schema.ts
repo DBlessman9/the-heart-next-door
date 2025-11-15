@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
+  profilePhotoUrl: text("profile_photo_url"), // Profile photo URL
   location: text("location"), // City, State
   zipCode: text("zip_code"), // Zip code for region-based access
   waitlistUser: boolean("waitlist_user").default(false), // True if outside Detroit area

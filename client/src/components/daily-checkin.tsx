@@ -99,8 +99,8 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
       </Card>
 
       <div className="text-center mb-6">
-        <div className="w-20 h-20 bg-gradient-to-br from-coral to-muted-gold rounded-full flex items-center justify-center mx-auto mb-4">
-          <Heart className="text-white" size={32} />
+        <div className="w-20 h-20 bg-pink-100 border-4 border-pink-200 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Heart className="text-red-500 fill-red-500" size={32} />
         </div>
         <h3 className="text-xl font-semibold text-deep-teal mb-2">
           How are you feeling today{user.pregnancyStage === "trying_to_conceive" ? "" : ", mama"}?
@@ -259,7 +259,11 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
             <Button
               onClick={handleSubmitCheckIn}
               disabled={!feeling || !bodyCare || !feelingSupported || createCheckInMutation.isPending}
-              className="w-full bg-gradient-to-r from-coral to-muted-gold text-white py-4 text-lg font-medium hover:from-coral/90 hover:to-muted-gold/90 transition-all duration-200 disabled:opacity-50"
+              className="w-full text-white py-4 text-lg font-medium transition-all duration-200 disabled:opacity-50"
+              style={{
+                backgroundColor: 'hsl(340, 70%, 75%)',
+              }}
+              data-testid="button-complete-checkin"
             >
               {createCheckInMutation.isPending ? "Checking in..." : "Complete Check-In"}
             </Button>

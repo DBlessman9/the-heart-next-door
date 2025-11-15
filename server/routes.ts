@@ -4,6 +4,8 @@ import { storage } from "./storage";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import { getNiaResponse, generateJournalPrompt } from "./services/openai";
+import multer from "multer";
+import { readFileSync } from "fs";
 import {
   users,
   insertUserSchema,
@@ -20,6 +22,21 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configure multer for file uploads
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 1 * 1024 * 1024, // 1MB limit (after compression)
+    },
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed'));
+      }
+    },
+  });
+
   // Detroit area zip codes (Detroit and surrounding areas)
   const detroitZipCodes = [
     // Detroit proper
@@ -113,6 +130,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: "Error updating user", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Profile photo upload route
+  app.post("/api/user/upload-photo", upload.single('photo'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const userId = parseInt(req.body.userId);
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      // Convert image to base64 data URL
+      const base64Image = req.file.buffer.toString('base64');
+      const dataUrl = `data:${req.file.mimetype};base64,${base64Image}`;
+
+      // Update user's profile photo URL
+      const user = await storage.updateUser(userId, { profilePhotoUrl: dataUrl });
+      res.json(user);
+    } catch (error) {
+      console.error("Photo upload error:", error);
+      res.status(500).json({ 
+        message: "Error uploading photo", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
   });
 
