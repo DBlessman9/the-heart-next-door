@@ -79,7 +79,7 @@ const weeklyGuidanceData: WeeklyGuidance[] = [
   {
     week: 12,
     trimester: 1,
-    babySize: { fruit: "Lime", emoji: "🍋", size: "5.4cm" },
+    babySize: { fruit: "Plum", emoji: "🌸", size: "5.4cm" },
     babyMilestones: [
       "All major organs are formed",
       "Baby can swallow and make urine",

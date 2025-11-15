@@ -141,14 +141,14 @@ export default function PartnerInvitation() {
           </div>
         ) : partnership ? (
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+            <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg border border-pink-200">
               <div>
-                <p className="font-medium text-yellow-800">Invitation Sent</p>
-                <p className="text-sm text-yellow-600">
+                <p className="font-medium text-pink-800">Invitation Sent</p>
+                <p className="text-sm text-pink-600">
                   Waiting for your partner to accept the invitation
                 </p>
               </div>
-              <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+              <div className="w-3 h-3 bg-pink-500 rounded-full animate-pulse"></div>
             </div>
 
             <div className="space-y-3">

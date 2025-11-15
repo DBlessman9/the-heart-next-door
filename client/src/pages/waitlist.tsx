@@ -36,7 +36,7 @@ export default function Waitlist() {
 
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <p className="text-sm text-gray-600 italic">
-                  💛 In the meantime, we're building something special for Detroit-area moms. You'll be among the first to know when we're ready to welcome you home.
+                  💗 In the meantime, we're building something special for Detroit-area moms. You'll be among the first to know when we're ready to welcome you home.
                 </p>
               </div>
             </div>

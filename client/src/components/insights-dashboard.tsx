@@ -130,7 +130,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
         <Card className="text-center">
           <CardContent className="pt-6">
             <div className="flex items-center justify-center mb-2">
-              <Flame className="h-8 w-8 text-orange-500" />
+              <Flame className="h-8 w-8 text-pink-500" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{journalStreak}</div>
             <p className="text-xs text-gray-600">Day Streak</p>
@@ -154,7 +154,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
             <div className="flex items-center justify-center mb-2">
               <TrendingUp className={`h-8 w-8 ${
                 moodTrend === 'improving' ? 'text-green-500' : 
-                moodTrend === 'declining' ? 'text-red-500' : 'text-yellow-500'
+                moodTrend === 'declining' ? 'text-red-500' : 'text-pink-500'
               }`} />
             </div>
             <div className="text-sm font-bold text-gray-900 capitalize">{moodTrend}</div>

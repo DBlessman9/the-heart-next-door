@@ -61,7 +61,7 @@ export default function Experts() {
                       <h5 className="font-semibold text-deep-teal">{expert.name}</h5>
                       <p className="text-sm text-gray-600">{expert.title}</p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <div className="flex text-yellow-400">
+                        <div className="flex text-pink-400">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
