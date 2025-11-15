@@ -49,6 +49,10 @@ export default function Onboarding() {
     birthExperience: [] as string[],
     supportNeeds: [] as string[],
     isPostpartum: false,
+    obMidwifeName: "",
+    obMidwifeEmail: "",
+    doulaName: "",
+    doulaEmail: "",
   });
   const [showEmailExistsError, setShowEmailExistsError] = useState(false);
   const [wantsPartnerInvite, setWantsPartnerInvite] = useState<boolean | null>(null);
@@ -76,6 +80,10 @@ export default function Onboarding() {
         birthExperience: userData.birthExperience,
         supportNeeds: userData.supportNeeds,
         userType: userData.pregnancyStage === "supporter" ? "partner" : "mother",
+        obMidwifeName: userData.obMidwifeName,
+        obMidwifeEmail: userData.obMidwifeEmail,
+        doulaName: userData.doulaName,
+        doulaEmail: userData.doulaEmail,
         preferences: {},
       });
       return response.json();
@@ -93,7 +101,7 @@ export default function Onboarding() {
           title: "Profile created!",
           description: "Almost done...",
         });
-        setStep(4); // Move to partner invitation step
+        setStep(5); // Move to partner invitation step
       }
     },
     onError: (error: any) => {
@@ -213,7 +221,10 @@ export default function Onboarding() {
         }
       }
       
-      // Create user on step 3 (for moms and trying_to_conceive)
+      // Move to provider information step
+      setStep(4);
+    } else if (step === 4) {
+      // Create user with provider information
       const submitData = {
         ...formData,
         name: `${formData.firstName} ${formData.lastName}`,
@@ -778,6 +789,89 @@ export default function Onboarding() {
         )}
 
         {step === 4 && (
+          <Card className="mt-8 mb-8">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold text-deep-teal mb-2 text-center">Healthcare Provider Information</h2>
+              <p className="text-gray-600 mb-6 text-center text-sm">
+                Help us keep you safe. We'll notify your providers if any red flags arise during your journey.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="obMidwifeName" className="text-deep-teal font-medium">OB or Midwife Name</Label>
+                  <Input 
+                    id="obMidwifeName"
+                    type="text" 
+                    placeholder="Dr. Jane Smith"
+                    value={formData.obMidwifeName}
+                    onChange={(e) => handleInputChange("obMidwifeName", e.target.value)}
+                    data-testid="input-ob-midwife-name"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="obMidwifeEmail" className="text-deep-teal font-medium">OB or Midwife Email</Label>
+                  <Input 
+                    id="obMidwifeEmail"
+                    type="email" 
+                    placeholder="dr.smith@clinic.com"
+                    value={formData.obMidwifeEmail}
+                    onChange={(e) => handleInputChange("obMidwifeEmail", e.target.value)}
+                    data-testid="input-ob-midwife-email"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="doulaName" className="text-deep-teal font-medium">Doula Name <span className="text-gray-400 font-normal">(Optional)</span></Label>
+                  <Input 
+                    id="doulaName"
+                    type="text" 
+                    placeholder="Sarah Johnson"
+                    value={formData.doulaName}
+                    onChange={(e) => handleInputChange("doulaName", e.target.value)}
+                    data-testid="input-doula-name"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="doulaEmail" className="text-deep-teal font-medium">Doula Email <span className="text-gray-400 font-normal">(Optional)</span></Label>
+                  <Input 
+                    id="doulaEmail"
+                    type="email" 
+                    placeholder="sarah@doulaservices.com"
+                    value={formData.doulaEmail}
+                    onChange={(e) => handleInputChange("doulaEmail", e.target.value)}
+                    data-testid="input-doula-email"
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-8">
+                <button 
+                  onClick={handleSubmit}
+                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
+                  style={{
+                    backgroundColor: 'hsl(340, 70%, 75%)',
+                    color: 'white',
+                    border: '2px solid hsl(340, 70%, 75%)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
+                  }}
+                  disabled={createUserMutation.isPending || !formData.obMidwifeName || !formData.obMidwifeEmail}
+                  data-testid="button-continue-provider"
+                >
+                  {createUserMutation.isPending ? "Creating profile..." : "Continue"}
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 5 && (
           <Card className="mt-8 mb-8">
             <CardContent className="p-6">
               <div className="text-center">

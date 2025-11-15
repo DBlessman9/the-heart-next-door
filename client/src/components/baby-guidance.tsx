@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Baby, Heart, Brain, Sparkles, Target, BookOpen, Home, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Baby, Heart, Brain, Sparkles, Target, BookOpen, AlertCircle, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -251,7 +251,6 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
   const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   const [showBabyNames, setShowBabyNames] = useState(false);
   const [showBirthPlan, setShowBirthPlan] = useState(false);
-  const [showNurseryChecklist, setShowNurseryChecklist] = useState(false);
   
   // Find the guidance for the selected week or closest available
   const guidance = weeklyGuidanceData.find(g => g.week === selectedWeek) || 
@@ -396,11 +395,11 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
             <Button 
               variant="outline" 
               className="h-20 flex flex-col gap-2"
-              onClick={() => setShowNurseryChecklist(true)}
-              data-testid="button-nursery-checklist"
+              onClick={() => window.open('https://www.cdc.gov/hearher/maternal-warning-signs/index.html', '_blank')}
+              data-testid="button-red-flags"
             >
-              <Home className="h-6 w-6" />
-              <span className="text-sm">Nursery Checklist</span>
+              <AlertCircle className="h-6 w-6 text-red-500" />
+              <span className="text-sm">Red Flags</span>
             </Button>
           </div>
         </CardContent>
@@ -536,130 +535,6 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         </DialogContent>
       </Dialog>
 
-      {/* Nursery Checklist Dialog */}
-      <Dialog open={showNurseryChecklist} onOpenChange={setShowNurseryChecklist}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Home className="text-blush" />
-              Nursery Checklist
-            </DialogTitle>
-            <DialogDescription>
-              Essential items to prepare for baby's arrival
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <h3 className="font-semibold text-deep-teal">Sleeping</h3>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="crib" />
-                  <label htmlFor="crib" className="text-sm">Crib or bassinet</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="mattress" />
-                  <label htmlFor="mattress" className="text-sm">Firm crib mattress</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="sheets" />
-                  <label htmlFor="sheets" className="text-sm">Fitted crib sheets (3-4)</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="sleep-sacks" />
-                  <label htmlFor="sleep-sacks" className="text-sm">Sleep sacks or swaddles</label>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="font-semibold text-deep-teal">Diapering</h3>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="diapers" />
-                  <label htmlFor="diapers" className="text-sm">Diapers (newborn & size 1)</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="wipes" />
-                  <label htmlFor="wipes" className="text-sm">Baby wipes</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="changing-pad" />
-                  <label htmlFor="changing-pad" className="text-sm">Changing pad and covers</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="diaper-cream" />
-                  <label htmlFor="diaper-cream" className="text-sm">Diaper cream</label>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="font-semibold text-deep-teal">Clothing</h3>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="onesies" />
-                  <label htmlFor="onesies" className="text-sm">Onesies (5-7 in each size)</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="sleepers" />
-                  <label htmlFor="sleepers" className="text-sm">Sleepers or pajamas (5-7)</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="socks" />
-                  <label htmlFor="socks" className="text-sm">Socks and mittens</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="hat" />
-                  <label htmlFor="hat" className="text-sm">Soft hat</label>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="font-semibold text-deep-teal">Feeding</h3>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="bottles" />
-                  <label htmlFor="bottles" className="text-sm">Bottles and nipples</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="nursing-pillow" />
-                  <label htmlFor="nursing-pillow" className="text-sm">Nursing pillow</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="burp-cloths" />
-                  <label htmlFor="burp-cloths" className="text-sm">Burp cloths</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="breast-pump" />
-                  <label htmlFor="breast-pump" className="text-sm">Breast pump (if planning to pump)</label>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="font-semibold text-deep-teal">Safety & Health</h3>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="car-seat" />
-                  <label htmlFor="car-seat" className="text-sm">Infant car seat</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="thermometer" />
-                  <label htmlFor="thermometer" className="text-sm">Baby thermometer</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="first-aid" />
-                  <label htmlFor="first-aid" className="text-sm">First aid kit</label>
-                </div>
-                <div className="flex items-start gap-2 p-2 bg-gray-50 rounded">
-                  <Checkbox id="nail-clippers" />
-                  <label htmlFor="nail-clippers" className="text-sm">Baby nail clippers</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
       </Dialog>
     </div>
   );

@@ -22,6 +22,11 @@ export const users = pgTable("users", {
   birthExperience: jsonb("birth_experience").default([]),
   supportNeeds: jsonb("support_needs").default([]),
   preferences: jsonb("preferences").default({}),
+  // Provider information for red flag notifications
+  obMidwifeName: text("ob_midwife_name"),
+  obMidwifeEmail: text("ob_midwife_email"),
+  doulaName: text("doula_name"),
+  doulaEmail: text("doula_email"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

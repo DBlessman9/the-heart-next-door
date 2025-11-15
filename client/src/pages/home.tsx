@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import AppHeader from "@/components/app-header";
 import TabNavigation from "@/components/tab-navigation";
 import DailyCheckIn from "@/components/daily-checkin";
-import Experts from "@/components/experts";
 import BabyGuidance from "@/components/baby-guidance";
 import Appointments from "@/components/appointments";
 import Community from "@/components/community";
@@ -62,7 +61,6 @@ export default function Home() {
         {activeTab === "insights" && <InsightsDashboard userId={currentUserId} />}
         {activeTab === "appointments" && <Appointments userId={currentUserId} user={user} />}
         {activeTab === "community" && <Community userId={currentUserId} user={user} />}
-        {activeTab === "experts" && <Experts />}
       </div>
     </div>
   );

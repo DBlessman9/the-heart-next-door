@@ -13,7 +13,6 @@ export default function TabNavigation({ activeTab, onTabChange, pregnancyStage }
     { id: "insights", label: "Insights", icon: BarChart3 },
     { id: "appointments", label: "Schedule", icon: Calendar },
     { id: "community", label: "Village", icon: Users },
-    { id: "experts", label: "Experts", icon: UserCheck },
   ];
 
   // Hide Baby tab for users trying to conceive
