@@ -161,6 +161,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Provider lookup route
+  app.get("/api/provider/lookup", async (req, res) => {
+    try {
+      const { practice, location } = req.query;
+      
+      if (!practice || typeof practice !== 'string') {
+        return res.status(400).json({ message: "Practice name is required" });
+      }
+
+      // For now, return a simple response indicating the feature is in development
+      // In production, this would integrate with a medical provider directory API
+      // or use web search to find contact information
+      
+      res.json({
+        practice,
+        location,
+        email: null,
+        message: "Provider lookup feature is in development. Please enter contact information manually or call the office directly."
+      });
+    } catch (error) {
+      console.error("Provider lookup error:", error);
+      res.status(500).json({ 
+        message: "Error looking up provider", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+
   // Chat routes
   app.get("/api/chat/:userId", async (req, res) => {
     try {

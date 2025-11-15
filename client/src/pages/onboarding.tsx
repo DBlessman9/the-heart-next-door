@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Heart, AlertCircle } from "lucide-react";
+import { Heart, AlertCircle, Search, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -50,8 +50,10 @@ export default function Onboarding() {
     supportNeeds: [] as string[],
     isPostpartum: false,
     obMidwifeName: "",
+    obMidwifePractice: "",
     obMidwifeEmail: "",
     doulaName: "",
+    doulaPractice: "",
     doulaEmail: "",
   });
   const [showEmailExistsError, setShowEmailExistsError] = useState(false);
@@ -61,6 +63,7 @@ export default function Onboarding() {
   const [enteredInviteCode, setEnteredInviteCode] = useState("");
   const [inviteCodeError, setInviteCodeError] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isLookingUpProvider, setIsLookingUpProvider] = useState(false);
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: typeof formData) => {
@@ -81,8 +84,10 @@ export default function Onboarding() {
         supportNeeds: userData.supportNeeds,
         userType: userData.pregnancyStage === "supporter" ? "partner" : "mother",
         obMidwifeName: userData.obMidwifeName,
+        obMidwifePractice: userData.obMidwifePractice,
         obMidwifeEmail: userData.obMidwifeEmail,
         doulaName: userData.doulaName,
+        doulaPractice: userData.doulaPractice,
         doulaEmail: userData.doulaEmail,
         preferences: {},
       });
@@ -292,6 +297,62 @@ export default function Onboarding() {
     }
 
     return { isValid: true, error: "" };
+  };
+
+  const handleLookupProvider = async (type: 'ob' | 'doula') => {
+    const practiceName = type === 'ob' ? formData.obMidwifePractice : formData.doulaPractice;
+    const location = formData.location || "Detroit, MI";
+    
+    if (!practiceName) {
+      toast({
+        title: "Practice name required",
+        description: "Please enter the practice or office name to look up contact information.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsLookingUpProvider(true);
+    
+    try {
+      const response = await fetch(`/api/provider/lookup?practice=${encodeURIComponent(practiceName)}&location=${encodeURIComponent(location)}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.email) {
+          if (type === 'ob') {
+            handleInputChange('obMidwifeEmail', data.email);
+          } else {
+            handleInputChange('doulaEmail', data.email);
+          }
+          
+          toast({
+            title: "Contact info found!",
+            description: `We found contact information for ${practiceName}.`,
+          });
+        } else {
+          toast({
+            title: "No email found",
+            description: `We found ${practiceName} but couldn't locate an email address. You can add it manually or leave it blank for now.`,
+          });
+        }
+      } else {
+        toast({
+          title: "Couldn't find practice",
+          description: "Try checking the spelling or enter the information manually.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Search error",
+        description: "Couldn't complete the search. Please enter the information manually.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLookingUpProvider(false);
+    }
   };
 
   const handleLoginExistingUser = async () => {
@@ -797,52 +858,117 @@ export default function Onboarding() {
               </p>
               
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="obMidwifeName" className="text-deep-teal font-medium">OB or Midwife Name</Label>
-                  <Input 
-                    id="obMidwifeName"
-                    type="text" 
-                    placeholder="Dr. Jane Smith"
-                    value={formData.obMidwifeName}
-                    onChange={(e) => handleInputChange("obMidwifeName", e.target.value)}
-                    data-testid="input-ob-midwife-name"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="obMidwifeEmail" className="text-deep-teal font-medium">OB or Midwife Email</Label>
-                  <Input 
-                    id="obMidwifeEmail"
-                    type="email" 
-                    placeholder="dr.smith@clinic.com"
-                    value={formData.obMidwifeEmail}
-                    onChange={(e) => handleInputChange("obMidwifeEmail", e.target.value)}
-                    data-testid="input-ob-midwife-email"
-                  />
+                {/* OB/Midwife Section */}
+                <div className="space-y-4 pb-4 border-b border-gray-200">
+                  <h3 className="font-semibold text-deep-teal">OB or Midwife</h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="obMidwifeName" className="text-sm font-medium">Provider Name</Label>
+                    <Input 
+                      id="obMidwifeName"
+                      type="text" 
+                      placeholder="Dr. Jane Smith"
+                      value={formData.obMidwifeName}
+                      onChange={(e) => handleInputChange("obMidwifeName", e.target.value)}
+                      data-testid="input-ob-midwife-name"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="obMidwifePractice" className="text-sm font-medium">Office or Practice Name</Label>
+                    <Input 
+                      id="obMidwifePractice"
+                      type="text" 
+                      placeholder="Detroit Women's Health Clinic"
+                      value={formData.obMidwifePractice}
+                      onChange={(e) => handleInputChange("obMidwifePractice", e.target.value)}
+                      data-testid="input-ob-midwife-practice"
+                    />
+                    <p className="text-xs text-gray-500">This helps us find their contact info for you</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="obMidwifeEmail" className="text-sm font-medium">
+                      Email Address <span className="text-gray-400 font-normal">(Optional)</span>
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        id="obMidwifeEmail"
+                        type="email" 
+                        placeholder="office@clinic.com"
+                        value={formData.obMidwifeEmail}
+                        onChange={(e) => handleInputChange("obMidwifeEmail", e.target.value)}
+                        data-testid="input-ob-midwife-email"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleLookupProvider('ob')}
+                        disabled={isLookingUpProvider || !formData.obMidwifePractice}
+                        className="shrink-0"
+                        data-testid="button-lookup-ob"
+                      >
+                        {isLookingUpProvider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-gray-500">Don't know it? We can help you look it up!</p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="doulaName" className="text-deep-teal font-medium">Doula Name <span className="text-gray-400 font-normal">(Optional)</span></Label>
-                  <Input 
-                    id="doulaName"
-                    type="text" 
-                    placeholder="Sarah Johnson"
-                    value={formData.doulaName}
-                    onChange={(e) => handleInputChange("doulaName", e.target.value)}
-                    data-testid="input-doula-name"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="doulaEmail" className="text-deep-teal font-medium">Doula Email <span className="text-gray-400 font-normal">(Optional)</span></Label>
-                  <Input 
-                    id="doulaEmail"
-                    type="email" 
-                    placeholder="sarah@doulaservices.com"
-                    value={formData.doulaEmail}
-                    onChange={(e) => handleInputChange("doulaEmail", e.target.value)}
-                    data-testid="input-doula-email"
-                  />
+                {/* Doula Section */}
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-deep-teal">Doula <span className="text-gray-400 font-normal text-sm">(Optional)</span></h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="doulaName" className="text-sm font-medium">Doula Name</Label>
+                    <Input 
+                      id="doulaName"
+                      type="text" 
+                      placeholder="Sarah Johnson"
+                      value={formData.doulaName}
+                      onChange={(e) => handleInputChange("doulaName", e.target.value)}
+                      data-testid="input-doula-name"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="doulaPractice" className="text-sm font-medium">Practice or Business Name</Label>
+                    <Input 
+                      id="doulaPractice"
+                      type="text" 
+                      placeholder="Birth Support Services"
+                      value={formData.doulaPractice}
+                      onChange={(e) => handleInputChange("doulaPractice", e.target.value)}
+                      data-testid="input-doula-practice"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="doulaEmail" className="text-sm font-medium">Email Address</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        id="doulaEmail"
+                        type="email" 
+                        placeholder="sarah@doulaservices.com"
+                        value={formData.doulaEmail}
+                        onChange={(e) => handleInputChange("doulaEmail", e.target.value)}
+                        data-testid="input-doula-email"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleLookupProvider('doula')}
+                        disabled={isLookingUpProvider || !formData.doulaPractice}
+                        className="shrink-0"
+                        data-testid="button-lookup-doula"
+                      >
+                        {isLookingUpProvider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-gray-500">We can help find this information for you</p>
+                  </div>
                 </div>
               </div>
               
