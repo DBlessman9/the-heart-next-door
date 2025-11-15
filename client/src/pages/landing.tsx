@@ -138,10 +138,10 @@ export default function Landing() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-blush-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center shadow-2xl border-0 bg-white/90 backdrop-blur">
           <CardContent className="p-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-rose-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-r from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
             <h2 className="text-2xl font-bold text-blush-800 mb-2">You're on the list!</h2>
@@ -162,19 +162,19 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-blush-50">
       {/* Hero Section */}
       <section className="relative pt-20 pb-16 px-4 overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-rose-300/20 to-pink-300/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-orange-300/20 to-amber-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-pink-300/20 to-rose-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center mb-16">
-            <Badge className="mb-8 bg-gradient-to-r from-rose-100 to-orange-100 text-rose-800 hover:from-rose-200 hover:to-orange-200 px-6 py-3 text-base font-medium rounded-full shadow-lg border-0">
-              <Sparkles className="w-5 h-5 mr-2 text-amber-500" />
+            <Badge className="mb-8 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-800 hover:from-rose-200 hover:to-pink-200 px-6 py-3 text-base font-medium rounded-full shadow-lg border-0">
+              <Sparkles className="w-5 h-5 mr-2 text-rose-500" />
               Early Access Available
             </Badge>
             
@@ -184,7 +184,7 @@ export default function Landing() {
               </p>
               
               <h1 className="text-4xl md:text-6xl font-bold text-gray-800 leading-tight">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400">
                   Your 24/7 support system
                 </span>
                 <br />
@@ -216,7 +216,7 @@ export default function Landing() {
                       </div>
                       <div className="flex gap-1">
                         <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-pink-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                       </div>
                     </div>
@@ -240,9 +240,9 @@ export default function Landing() {
                           <Calendar className="w-4 h-4 text-rose-500 mx-auto mb-1" />
                           <p className="text-xs text-rose-700 font-medium">Daily Check-in</p>
                         </div>
-                        <div className="bg-amber-50 rounded-lg p-3 text-center">
-                          <Users className="w-4 h-4 text-amber-500 mx-auto mb-1" />
-                          <p className="text-xs text-amber-700 font-medium">Experts</p>
+                        <div className="bg-pink-50 rounded-lg p-3 text-center">
+                          <Users className="w-4 h-4 text-pink-500 mx-auto mb-1" />
+                          <p className="text-xs text-pink-700 font-medium">Experts</p>
                         </div>
                       </div>
                       
@@ -263,10 +263,10 @@ export default function Landing() {
             <div className="space-y-8">
               <div className="bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 bg-gradient-to-r from-rose-400 to-pink-400 rounded-2xl flex items-center justify-center shadow-lg">
                     <MessageCircle className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 ml-4">🌟 Become a Founding Member</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 ml-4">💖 Become a Founding Member</h3>
                 </div>
                 <div className="space-y-4">
                   <p className="text-gray-700 text-lg leading-relaxed">
@@ -371,7 +371,7 @@ export default function Landing() {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 hover:from-rose-600 hover:via-orange-600 hover:to-amber-600 text-white py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400 hover:from-rose-600 hover:via-pink-600 hover:to-rose-500 text-white py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={signupMutation.isPending}
                   >
                     {signupMutation.isPending ? (
@@ -403,7 +403,7 @@ export default function Landing() {
                       Clinically Informed
                     </div>
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-orange-500" />
+                      <Users className="w-4 h-4 text-pink-500" />
                       Partner Inclusive
                     </div>
                   </div>
@@ -415,7 +415,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-white via-rose-50/30 to-orange-50/30">
+      <section className="py-20 px-4 bg-gradient-to-br from-white via-rose-50/30 to-pink-50/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
@@ -430,9 +430,9 @@ export default function Landing() {
             {features.map((feature, index) => {
               const colors = [
                 "from-rose-400 to-pink-400",
-                "from-orange-400 to-amber-400", 
-                "from-amber-400 to-yellow-400",
-                "from-rose-400 to-orange-400",
+                "from-pink-400 to-rose-400", 
+                "from-rose-500 to-pink-500",
+                "from-pink-500 to-rose-500",
                 "from-pink-400 to-rose-400",
                 "from-green-400 to-emerald-400"
               ];
@@ -454,7 +454,7 @@ export default function Landing() {
       </section>
 
       {/* Personal Letter Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-rose-100/50 via-orange-100/50 to-amber-100/50">
+      <section className="py-20 px-4 bg-gradient-to-br from-rose-100/50 via-pink-100/50 to-rose-100/50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
@@ -506,7 +506,7 @@ export default function Landing() {
                       <p className="text-gray-600">Founder, The Heart Next Door</p>
                     </div>
                     <div className="hidden md:block">
-                      <div className="w-24 h-24 bg-gradient-to-br from-rose-200 to-orange-200 rounded-full flex items-center justify-center">
+                      <div className="w-24 h-24 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full flex items-center justify-center">
                         <Heart className="w-10 h-10 text-rose-600" />
                       </div>
                     </div>
@@ -534,7 +534,7 @@ export default function Landing() {
               
               <Button 
                 variant="outline" 
-                className="bg-white/80 hover:bg-white border-gray-200 hover:border-orange-300 hover:text-orange-600 transition-all duration-200"
+                className="bg-white/80 hover:bg-white border-gray-200 hover:border-pink-300 hover:text-pink-600 transition-all duration-200"
                 asChild
               >
                 <a href="#" className="flex items-center gap-2">
@@ -546,7 +546,7 @@ export default function Landing() {
               
               <Button 
                 variant="outline" 
-                className="bg-white/80 hover:bg-white border-gray-200 hover:border-amber-300 hover:text-amber-600 transition-all duration-200"
+                className="bg-white/80 hover:bg-white border-gray-200 hover:border-rose-300 hover:text-rose-600 transition-all duration-200"
                 asChild
               >
                 <a href="#" className="flex items-center gap-2">
@@ -561,7 +561,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-rose-600 via-orange-500 to-amber-500 relative overflow-hidden">
+      <section className="py-20 px-4 bg-gradient-to-br from-rose-600 via-pink-500 to-rose-500 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-10 right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
           <div className="absolute bottom-10 left-20 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
@@ -588,7 +588,7 @@ export default function Landing() {
       <footer className="py-12 px-4 bg-gradient-to-br from-gray-800 to-gray-900 text-center">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-rose-400 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-gradient-to-r from-rose-400 to-pink-400 rounded-2xl flex items-center justify-center shadow-lg">
               <Heart className="w-5 h-5 text-white" />
             </div>
             <span className="text-2xl font-bold text-white ml-3">The Heart Next Door</span>
