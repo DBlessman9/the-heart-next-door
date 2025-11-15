@@ -260,7 +260,7 @@ export default function Community({ userId, user }: CommunityProps) {
       case "wellness":
         return "bg-teal-50 text-teal-600 border-teal-100";
       case "advocacy":
-        return "bg-orange-50 text-orange-600 border-orange-100";
+        return "bg-pink-50 text-pink-600 border-pink-100";
       case "peer_group":
         return "bg-pink-50 text-pink-600 border-pink-100";
       default:
@@ -553,7 +553,7 @@ export default function Community({ userId, user }: CommunityProps) {
                             >
                               <Star 
                                 size={20} 
-                                className={isFavorited ? "fill-amber-400 text-amber-400" : "text-gray-400"}
+                                className={isFavorited ? "fill-pink-400 text-pink-400" : "text-gray-400"}
                               />
                             </button>
                           </>
@@ -649,7 +649,7 @@ export default function Community({ userId, user }: CommunityProps) {
                             >
                               <Star 
                                 size={20} 
-                                className={isFavorited ? "fill-amber-400 text-amber-400" : "text-gray-400"}
+                                className={isFavorited ? "fill-pink-400 text-pink-400" : "text-gray-400"}
                               />
                             </button>
                           </>
