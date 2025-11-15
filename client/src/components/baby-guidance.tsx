@@ -534,8 +534,6 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
           </div>
         </DialogContent>
       </Dialog>
-
-      </Dialog>
     </div>
   );
 }
