@@ -529,7 +529,6 @@ export default function Onboarding() {
                     maxLength={5}
                     data-testid="input-zipcode"
                   />
-                  <p className="text-xs text-gray-500 mt-1.5">Now serving Detroit-area moms first 💗 Not in Detroit? Join our waitlist and we'll welcome you soon.</p>
                 </div>
                 <div>
                   <Label htmlFor="pregnancyStage">Where are you in your journey?</Label>
