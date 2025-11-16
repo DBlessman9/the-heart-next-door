@@ -12,24 +12,6 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maternalIcon from "@assets/generated_images/Pregnant_woman_bun_hairstyle_sage_272a5b6e.png";
 
-const TypingText = ({ text, speed = 50, delay = 0 }: { text: string; speed?: number; delay?: number }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (currentIndex < text.length) {
-        setDisplayedText(text.substring(0, currentIndex + 1));
-        setCurrentIndex(currentIndex + 1);
-      }
-    }, currentIndex === 0 ? delay : speed);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, text, speed, delay]);
-
-  return <>{displayedText}</>;
-};
-
 export default function Onboarding() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -407,14 +389,10 @@ export default function Onboarding() {
     return true;
   };
 
-  // Show buttons after typing animation completes
+  // Show buttons immediately on step 1
   useEffect(() => {
     if (step === 1) {
-      // Last text starts at 9500ms delay with ~28 chars at 50ms each = ~11000ms total
-      const timer = setTimeout(() => {
-        setShowButtons(true);
-      }, 11000);
-      return () => clearTimeout(timer);
+      setShowButtons(true);
     }
   }, [step]);
 
@@ -427,14 +405,14 @@ export default function Onboarding() {
               <Heart className="w-16 h-16 text-red-500 fill-red-500 animate-pulse" style={{ animationDuration: '2s' }} />
             </div>
             <h1 className="text-3xl font-bold text-deep-teal mb-4">
-              <TypingText text="Hi, I'm The Heart Next Door." speed={80} delay={500} />
+              Hi, I'm Nia
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              <TypingText text="I'm your digital doula, and I'm so glad you're here." speed={40} delay={2000} />
+              I'm your digital doula, and I'm so glad you're here.
               <br/>
-              <TypingText text="Think of me as a friend who listens, supports, and walks with you every step of the way." speed={40} delay={5000} />
+              Think of me as a friend who listens, supports, and walks with you every step of the way.
               <br/>
-              <TypingText text="Let's get to know each other." speed={50} delay={9500} />
+              Let's get to know each other.
             </p>
             {showButtons && (
               <div className="space-y-4 px-4 animate-fade-in">
