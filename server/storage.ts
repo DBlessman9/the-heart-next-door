@@ -1167,6 +1167,52 @@ export class DatabaseStorage implements IStorage {
       .from(emailSignups)
       .orderBy(desc(emailSignups.signupDate));
   }
+
+  // Admin operations
+  async getAdminStats(): Promise<{
+    totalUsers: number;
+    activePregnancies: number;
+    redFlags: number;
+    waitlistCount: number;
+  }> {
+    const allUsers = await db.select().from(users);
+    const totalUsers = allUsers.length;
+    const activePregnancies = allUsers.filter(u => u.userType === "mother" && !u.isPostpartum && u.pregnancyStage).length;
+    const waitlistCount = allUsers.filter(u => u.waitlistUser).length;
+    
+    // TODO: Implement red flag tracking when alerts are sent
+    const redFlags = 0;
+
+    return {
+      totalUsers,
+      activePregnancies,
+      redFlags,
+      waitlistCount,
+    };
+  }
+
+  async detectRedFlags(checkIn: CheckIn, user: User): Promise<string | null> {
+    // Red flag logic: Check for concerning patterns
+    const redFlags: string[] = [];
+
+    // Flag 1: Consistently negative feelings
+    if (["anxious", "overwhelmed"].includes(checkIn.feeling || "")) {
+      redFlags.push("Persistent negative emotional state");
+    }
+
+    // Flag 2: Lack of self-care
+    if (checkIn.bodyCare === "not-yet") {
+      redFlags.push("No self-care activities reported");
+    }
+
+    // Flag 3: Lack of support
+    if (["not-really", "a-little"].includes(checkIn.feelingSupported || "")) {
+      redFlags.push("Mother reports feeling unsupported");
+    }
+
+    // Return first red flag or null
+    return redFlags.length > 0 ? redFlags[0] : null;
+  }
 }
 
 export const storage = new DatabaseStorage();
