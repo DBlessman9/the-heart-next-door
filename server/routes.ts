@@ -99,12 +99,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/users/:id", async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
       const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
       res.json(user);
     } catch (error) {
+      console.error("Error fetching user:", error);
       res.status(500).json({ message: "Error fetching user", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
@@ -125,10 +129,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/users/:id", async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
-      const updateData = req.body;
-      const user = await storage.updateUser(userId, updateData);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ message: "No update data provided" });
+      }
+      const user = await storage.updateUser(userId, req.body);
       res.json(user);
     } catch (error) {
+      console.error("Error updating user:", error);
       res.status(400).json({ message: "Error updating user", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
@@ -193,15 +203,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/chat/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
       const messages = await storage.getChatMessages(userId);
       res.json(messages);
     } catch (error) {
+      console.error("Error fetching chat messages:", error);
       res.status(500).json({ message: "Error fetching chat messages", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 
   app.post("/api/chat", async (req, res) => {
     try {
+      if (!req.body || !req.body.userId || !req.body.message) {
+        return res.status(400).json({ message: "Missing required fields: userId and message" });
+      }
+      
       const messageData = insertChatMessageSchema.parse(req.body);
       
       // Save user message
@@ -243,9 +261,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/journal/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
       const entries = await storage.getJournalEntries(userId);
       res.json(entries);
     } catch (error) {
+      console.error("Error fetching journal entries:", error);
       res.status(500).json({ message: "Error fetching journal entries", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
@@ -281,9 +303,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/checkin/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
       const checkIns = await storage.getCheckIns(userId);
       res.json(checkIns);
     } catch (error) {
+      console.error("Error fetching check-ins:", error);
       res.status(500).json({ message: "Error fetching check-ins", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
@@ -300,10 +326,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/checkin", async (req, res) => {
     try {
+      if (!req.body || !req.body.userId) {
+        return res.status(400).json({ message: "Missing required field: userId" });
+      }
       const checkInData = insertCheckInSchema.parse(req.body);
       const checkIn = await storage.createCheckIn(checkInData);
       res.json(checkIn);
     } catch (error) {
+      console.error("Error creating check-in:", error);
       res.status(400).json({ message: "Error creating check-in", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
