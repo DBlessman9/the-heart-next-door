@@ -1,0 +1,111 @@
+Hey Terranie,
+I went through the app again with the team, and here’s a clearer breakdown of what we've done
+
+Scope here
+
+1. We reviewed the entire latest Replit build
+
+We pulled up the most recent version of the Replit app and checked:
+
+What UI actually exists
+
+What is reusable as-is
+
+What still needs backend logic
+
+What needs both UI and backend
+
+Which flows need context-based or secure handling
+
+For every feature, we added notes on whether the UI exists on Replit (“true/false”) and whether reuse was possible.
+
+This ensures we’re not estimating blindly — we mapped everything line-by-line.
+
+2. AI module (Nia): Reusable UI, but backend still needs full implementation
+
+The AI module is the most advanced part of the current build, and the UI exists, which helps.
+
+But what isn’t built yet is:
+
+backend workflows
+
+security checks
+
+context awareness logic (e.g., pregnancy stage–specific responses)
+
+data validation
+
+error handling
+
+integration with the rest of the app
+
+So we reused whatever UI we could but still had to allocate hours for the backend foundation that makes the feature safe and reliable.
+
+3. Notifications: UI does not exist
+
+The notification system (push, monthly check-ins, red flags) isn’t in Replit at all.
+
+So this part includes:
+
+building the UI
+
+setting up backend logic
+
+scheduling
+
+validations
+
+QA and safety checks
+
+We’ve separated this into two groups to keep things lean and phaseable.
+
+4. Admin portal + budget model
+
+These are essential for you to manage the app, but none of this exists in Replit.
+
+So this is a fresh build — and we kept it as slim as possible.
+
+5. Village / community features
+
+We included these hours separately since they’re clearly phaseable.
+
+No UI exists for these, so these can easily be moved to a later stage.
+
+6. We removed the entire design system to reduce hours
+
+Because the current visual direction is good enough for V1, we removed:
+
+design system
+
+new components
+
+extra design cycles
+
+We are reusing the Replit design wherever possible to save time.
+
+7. What can be reused
+
+From the Replit build, here’s what’s actually helping reduce hours:
+
+screens where the UI is fully present
+
+the visual direction (removes design hours)
+
+certain layouts
+
+early versions of the Nia UI
+
+What cannot be reused is:
+
+missing UI (quite a few areas)
+
+backend logic (almost all of it)
+
+security checks
+
+notification engine
+
+admin portal
+
+any context-aware AI workflows
+
