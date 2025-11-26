@@ -125,7 +125,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
       </div>
 
       {/* Key Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {/* Journal Streak */}
         <Card className="text-center">
           <CardContent className="pt-6">
@@ -246,22 +246,33 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
           <CardDescription>The experts supporting your journey</CardDescription>
         </CardHeader>
         <CardContent>
-          {supportTeam && supportTeam.length > 0 ? (
+          {user?.obMidwifeName || user?.doulaName ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {supportTeam.slice(0, 4).map((expert: any, index: number) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              {user?.obMidwifeName && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <div className="h-10 w-10 bg-blush rounded-full flex items-center justify-center">
                     <User className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">{expert.name}</p>
-                    <p className="text-xs text-gray-600">{expert.specialty}</p>
+                    <p className="font-medium text-sm">{user.obMidwifeName}</p>
+                    <p className="text-xs text-gray-600">OB/Midwife {user.obMidwifePractice ? `• ${user.obMidwifePractice}` : ''}</p>
                   </div>
                 </div>
-              ))}
+              )}
+              {user?.doulaName && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="h-10 w-10 bg-blush rounded-full flex items-center justify-center">
+                    <User className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">{user.doulaName}</p>
+                    <p className="text-xs text-gray-600">Doula {user.doulaPractice ? `• ${user.doulaPractice}` : ''}</p>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
-            <p className="text-center text-gray-500 py-4">Build your support team by connecting with experts</p>
+            <p className="text-center text-gray-500 py-4">Add your care team providers in your profile</p>
           )}
         </CardContent>
       </Card>
