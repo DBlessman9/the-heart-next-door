@@ -171,11 +171,7 @@ export default function Appointments({ userId, user }: AppointmentsProps) {
 
     const createAppointmentMutation = useMutation({
       mutationFn: async (data: any) => {
-        return await apiRequest('/api/appointments', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
+        return await apiRequest("POST", "/api/appointments", data);
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["/api/appointments", userId] });
