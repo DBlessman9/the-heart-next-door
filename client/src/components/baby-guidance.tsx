@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Baby, Heart, Brain, Sparkles, Target, BookOpen, AlertCircle, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,27 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { differenceInWeeks } from "date-fns";
 import type { User } from "@shared/schema";
-
-interface BabyGuidanceProps {
-  userId: number;
-  user: User;
-  onTabChange?: (tab: string) => void;
-}
-
-function calculatePregnancyWeek(dueDate: string | null | undefined): number {
-  if (!dueDate) return 20;
-  try {
-    const due = new Date(dueDate);
-    const now = new Date();
-    const weeksUntilDue = differenceInWeeks(due, now);
-    const currentWeek = 40 - weeksUntilDue;
-    return Math.max(4, Math.min(40, currentWeek));
-  } catch {
-    return 20;
-  }
-}
 
 interface WeeklyGuidance {
   week: number;
@@ -261,14 +241,7 @@ const weeklyGuidanceData: WeeklyGuidance[] = [
 ];
 
 export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidanceProps) {
-  const currentWeek = useMemo(() => {
-    // Try to use due date first, fall back to pregnancyWeek, then default to 20
-    if (user.dueDate) {
-      return calculatePregnancyWeek(user.dueDate);
-    }
-    return user.pregnancyWeek || 20;
-  }, [user.dueDate, user.pregnancyWeek]);
-  
+  const currentWeek = user.pregnancyWeek || 20;
   const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   const [showBabyNames, setShowBabyNames] = useState(false);
   const [showBirthPlan, setShowBirthPlan] = useState(false);
