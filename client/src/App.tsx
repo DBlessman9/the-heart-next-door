@@ -13,6 +13,7 @@ import PartnerDashboard from "@/pages/partner-dashboard";
 import PartnerSettings from "@/pages/partner-settings";
 import TermsAndConditions from "@/pages/terms-and-conditions";
 import PrivacyPolicy from "@/pages/privacy-policy";
+import AdminPortal from "@/pages/admin";
 import FloatingChat from "@/components/floating-chat";
 
 // Hide Vite console messages in development
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/partner-settings" component={PartnerSettings} />
       <Route path="/terms" component={TermsAndConditions} />
       <Route path="/privacy" component={PrivacyPolicy} />
+      <Route path="/admin" component={AdminPortal} />
       <Route component={NotFound} />
     </Switch>
   );

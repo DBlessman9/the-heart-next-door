@@ -139,6 +139,15 @@ export interface IStorage {
   // Email signup operations
   createEmailSignup(signup: InsertEmailSignup): Promise<EmailSignup>;
   getEmailSignups(): Promise<EmailSignup[]>;
+
+  // Admin operations
+  getAdminStats(): Promise<{
+    totalUsers: number;
+    activePregnancies: number;
+    redFlags: number;
+    waitlistCount: number;
+  }>;
+  detectRedFlags(checkIn: CheckIn, user: User): Promise<string | null>;
 }
 
 export class DatabaseStorage implements IStorage {

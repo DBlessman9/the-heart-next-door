@@ -1,0 +1,77 @@
+The app’s mission is to support pregnant and postpartum mothers by providing a digital doula named Nia, daily check‑ins, personalized insights, and a community of resources. Below you will find the key features grouped by user flow and functionality.
+1. Onboarding & Account Setup
+When first launching the app, moms are greeted by Nia with a brief welcome message and are offered two options: Create Account or Log In.
+During account creation, ask for:
+Name and basic contact information.
+City or zip code for geolocation so we can personalize resources.
+Current pregnancy stage (e.g., trimester) or if postpartum.
+Due date or baby’s birth date.
+Pregnancy and birth related questions
+Agreement to terms and conditions.
+Use this information to tailor content and match users with appropriate resources.
+2. Provider & Doula Information
+Collect the user’s obstetrician, midwife or primary provider’s name and email address.
+If the user only knows the provider’s name, allow them to enter it and search our database to verify and retrieve email details.
+Allow moms to add a doula’s name and email so the app can keep them informed.
+Store this care team info so that notifications can be sent when red flags arise or when monthly summaries are ready.
+3. Partner Invitation & View‑Only Portal
+During onboarding, give moms the option to Invite Partner.
+Generate a unique code that partners can use to create their own account.
+Partners have a view‑only version of the app:
+They can see daily check‑in results and baby insights.
+They cannot edit any of the mom’s data or settings.
+
+
+Partners receive notifications when daily check‑ins are completed and if any concerns surface.
+4. Daily Experience (Affirmations & Check‑Ins Page)
+Each day moms receive a pop‑up notification and reminder to check in with an Affirmation that changes daily. These messages should feel supportive and positive.
+Upon opening the app, immediately after the affirmation, display three consistent check‑in questions:
+Feelings: How are you feeling today?
+Self‑care: Are you caring for your body?
+Support: Do you feel supported right now?
+Answers are logged and used to generate trend insights. Partners see the results; providers/doulas only see alerts (see notifications below).
+5. Notifications & Reporting
+Providers and doulas should not receive daily check‑in emails; instead:
+Red flag alerts: If a mom’s responses indicate negative feelings, lack of support, or potential risk, automatically send an alert email to the care team (provider and doula) and a notification to the partner.
+Monthly summaries: Send a summary email once per month to providers and doulas highlighting overall trends (e.g., mood stability, engagement levels) only when there are no red flags.
+Partners receive real‑time notifications when check‑ins are completed and when red flags are detected.
+6. Baby & Postpartum Development Page
+The Baby page shows developmental updates:
+If the user is pregnant, display weekly fetal development information.
+If postpartum, show baby milestones appropriate for the infant’s age.
+Include quick links for critical information:
+Red flags: Link to trusted resources (e.g., CDC pages) detailing signs and symptoms to watch for.
+Activities: Suggest appropriate activities (e.g., tummy time) for postpartum moms and babies.
+7. Engagement & Insights Dashboard Page
+Provide a main Insights screen summarizing the user’s journey:
+Engagement tracker: Shows how frequently mom engages with the app. Incentivize high engagement.
+Mood trends: Visualize trends from daily check‑in responses over time.
+Baby progress: Summarize developmental progress relative to gestational age or postpartum milestones.
+Care team list: Display the selected provider, doula, and partner.
+Appointments: Allow moms to view all upcoming appointments in one list for convenience.
+8. Appointments Page: 
+Allow moms to either manually add upcoming appointments related to pregnancy/postpartum or sync them from Google Calendar (via Gmail). All events should appear in one list for convenience.
+9. Village Page (Community & Resources)
+Build a Village page that acts as a resource hub. Based on the user’s zip code, populate:
+Mom support groups.
+Healthcare providers and clinics.
+Breastfeeding support networks and peer groups.
+Doula networks.
+Advocacy and legal support organizations.
+Users can browse and select resources; selected resources should be saved and displayed in a “My Resources” list.
+10. Chat with Nia (AI Digital Doula)
+Integrate a conversational interface where moms can chat with Nia for questions, guidance or emotional support.
+The chat must monitor for concerning statements; if anything indicates distress or a potential emergency, trigger the same red‑flag notification process (email to provider/doula and partner notification).
+Preserve conversation history for the mom to review; ensure privacy and confidentiality.
+11. Additional Considerations
+Privacy & Security: Protect all personal data under applicable privacy laws (e.g., HIPAA). Use encryption and secure storage for sensitive information.
+Accessibility: Ensure the app is intuitive, with readable fonts and clear navigation.
+Scalability: Design the architecture so that future resources or features (e.g., mental health specialists, community forums) can be added easily.
+12. Business Model, Pricing & Budget
+Alongside the functional requirements, it’s important for the development team to understand the pricing strategy and budget constraints for the first phase of the project.
+Pricing Tiers
+The Heart Next Door app is designed to be accessible and heart‑centered. Since moms will not directly fund the platform, the pricing stays intentionally low. The proposed tiers are:
+Free – Care‑Provider Sponsored: Their access is paid for by care providers.
+$9.99/month – Nurture Monthly: Subscription tier for moms who choose monthly billing.
+$79/year – Nurture Annual: Annual subscription.
+$99 Lifetime – Founding Mama: One‑time payment for lifetime acces
