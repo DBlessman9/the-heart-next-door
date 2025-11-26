@@ -37,13 +37,13 @@ export default function AppHeader({ user }: AppHeaderProps) {
     if (user.isPostpartum) {
       return "Postpartum Journey";
     }
-    if (user.pregnancyWeek && user.pregnancyStage) {
-      const stages = {
-        first: "1st Trimester",
-        second: "2nd Trimester", 
-        third: "3rd Trimester"
+    if (user.pregnancyWeek) {
+      const getTrimester = (week: number) => {
+        if (week <= 13) return "1st Trimester";
+        if (week <= 27) return "2nd Trimester";
+        return "3rd Trimester";
       };
-      return `Week ${user.pregnancyWeek} • ${stages[user.pregnancyStage as keyof typeof stages]}`;
+      return `Week ${user.pregnancyWeek} • ${getTrimester(user.pregnancyWeek)}`;
     }
     return "Your Journey";
   };

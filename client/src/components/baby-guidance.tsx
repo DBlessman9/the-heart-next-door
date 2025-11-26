@@ -26,6 +26,90 @@ interface WeeklyGuidance {
   };
 }
 
+interface PostpartumMilestone {
+  ageInWeeks: number;
+  title: string;
+  emoji: string;
+  milestones: string[];
+  parentInsights: string[];
+  emotionalSupport: string;
+}
+
+const postpartumMilestones: PostpartumMilestone[] = [
+  {
+    ageInWeeks: 0,
+    title: "Newborn (0-2 weeks)",
+    emoji: "👶",
+    milestones: [
+      "Baby can see about 8-10 inches away",
+      "Hearing is fully developed",
+      "Baby follows objects with eyes",
+      "Reflexes like rooting and grasping are strong"
+    ],
+    parentInsights: [
+      "Sleep deprivation is real - nap when baby naps",
+      "Feeding every 2-3 hours is normal",
+      "Baby cries are the only way of communicating",
+      "Skin-to-skin contact soothes both you and baby"
+    ],
+    emotionalSupport: "You're doing an amazing job, even when it doesn't feel like it. These early days are temporary but the bond you're building is forever."
+  },
+  {
+    ageInWeeks: 2,
+    title: "Early Newborn (2-4 weeks)",
+    emoji: "🌙",
+    milestones: [
+      "Baby begins to smile socially",
+      "Focus improves to 12-15 inches",
+      "Starts recognizing your voice",
+      "Head control slightly improves"
+    ],
+    parentInsights: [
+      "First smiles are pure magic",
+      "Colic symptoms may appear around 3 weeks",
+      "You're learning your baby's signals",
+      "It's okay to ask for help"
+    ],
+    emotionalSupport: "Every moment is precious. You're learning to be a parent, and that's incredible."
+  },
+  {
+    ageInWeeks: 4,
+    title: "One Month",
+    emoji: "🎀",
+    milestones: [
+      "Social smiling becomes more frequent",
+      "Can lift head briefly when on tummy",
+      "Tracks objects across visual field",
+      "Beginning to distinguish day and night"
+    ],
+    parentInsights: [
+      "You're finding your rhythm as a parent",
+      "Postpartum recovery is progressing",
+      "Self-care is essential - take it seriously",
+      "It's okay to feel overwhelmed sometimes"
+    ],
+    emotionalSupport: "You've survived the first month! Celebrate this milestone - you're doing an incredible job."
+  },
+  {
+    ageInWeeks: 8,
+    title: "Two Months",
+    emoji: "🌟",
+    milestones: [
+      "Social smiles are responsive and frequent",
+      "Better head control and lifts head to 45 degrees",
+      "Can focus on objects 4-6 feet away",
+      "Makes cooing sounds"
+    ],
+    parentInsights: [
+      "Your baby recognizes you completely",
+      "First vaccines may be happening",
+      "You're building confidence as a parent",
+      "Postpartum checkup is coming up"
+    ],
+    emotionalSupport: "Look at how far you've both come! Your baby adores you, and you're an amazing parent."
+  }
+];
+
 // Comprehensive weekly guidance data
 const weeklyGuidanceData: WeeklyGuidance[] = [
   {
@@ -245,11 +329,39 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
   const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   const [showBabyNames, setShowBabyNames] = useState(false);
   const [showBirthPlan, setShowBirthPlan] = useState(false);
-  
-  // Find the guidance for the selected week or closest available
-  const guidance = weeklyGuidanceData.find(g => g.week === selectedWeek) || 
-                   weeklyGuidanceData.find(g => g.week <= selectedWeek) ||
-                   weeklyGuidanceData[0];
+
+  // Calculate baby age in weeks if postpartum
+  const getBabyAgeInWeeks = () => {
+    if (!user.babyBirthDate) return 0;
+    const birthDate = new Date(user.babyBirthDate);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - birthDate.getTime());
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+  };
+
+  const babyAgeInWeeks = user.isPostpartum ? getBabyAgeInWeeks() : 0;
+
+  // For postpartum, show baby milestones; for pregnancy, show pregnancy guidance
+  let guidance;
+  if (user.isPostpartum) {
+    const closestMilestone = postpartumMilestones.find(m => m.ageInWeeks === selectedWeek) ||
+                            postpartumMilestones.filter(m => m.ageInWeeks <= selectedWeek).pop() ||
+                            postpartumMilestones[0];
+    guidance = {
+      week: closestMilestone.ageInWeeks,
+      trimester: 0,
+      babySize: { fruit: closestMilestone.title, emoji: closestMilestone.emoji, size: "" },
+      babyMilestones: closestMilestone.milestones,
+      momInsights: closestMilestone.parentInsights,
+      emotionalSupport: closestMilestone.emotionalSupport,
+      learningContent: { title: "", description: "", category: "" }
+    };
+  } else {
+    // Find the guidance for the selected week or closest available
+    guidance = weeklyGuidanceData.find(g => g.week === selectedWeek) || 
+               weeklyGuidanceData.find(g => g.week <= selectedWeek) ||
+               weeklyGuidanceData[0];
+  }
 
   const { data: resources } = useQuery({
     queryKey: ["/api/resources", user.pregnancyStage],
@@ -257,20 +369,35 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
   });
 
   const goToPrevWeek = () => {
-    const currentIndex = weeklyGuidanceData.findIndex(g => g.week === selectedWeek);
-    if (currentIndex > 0) {
-      setSelectedWeek(weeklyGuidanceData[currentIndex - 1].week);
+    if (user.isPostpartum) {
+      const currentIndex = postpartumMilestones.findIndex(m => m.ageInWeeks === selectedWeek);
+      if (currentIndex > 0) {
+        setSelectedWeek(postpartumMilestones[currentIndex - 1].ageInWeeks);
+      }
+    } else {
+      const currentIndex = weeklyGuidanceData.findIndex(g => g.week === selectedWeek);
+      if (currentIndex > 0) {
+        setSelectedWeek(weeklyGuidanceData[currentIndex - 1].week);
+      }
     }
   };
 
   const goToNextWeek = () => {
-    const currentIndex = weeklyGuidanceData.findIndex(g => g.week === selectedWeek);
-    if (currentIndex < weeklyGuidanceData.length - 1) {
-      setSelectedWeek(weeklyGuidanceData[currentIndex + 1].week);
+    if (user.isPostpartum) {
+      const currentIndex = postpartumMilestones.findIndex(m => m.ageInWeeks === selectedWeek);
+      if (currentIndex < postpartumMilestones.length - 1) {
+        setSelectedWeek(postpartumMilestones[currentIndex + 1].ageInWeeks);
+      }
+    } else {
+      const currentIndex = weeklyGuidanceData.findIndex(g => g.week === selectedWeek);
+      if (currentIndex < weeklyGuidanceData.length - 1) {
+        setSelectedWeek(weeklyGuidanceData[currentIndex + 1].week);
+      }
     }
   };
 
-  const isCurrentWeek = selectedWeek === currentWeek;
+  const isCurrentWeek = user.isPostpartum ? selectedWeek === babyAgeInWeeks : selectedWeek === currentWeek;
+  const maxWeek = user.isPostpartum ? postpartumMilestones[postpartumMilestones.length - 1].ageInWeeks : weeklyGuidanceData[weeklyGuidanceData.length - 1].week;
 
   return (
     <div className="p-4 space-y-6">
@@ -280,15 +407,19 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
           variant="outline"
           size="sm"
           onClick={goToPrevWeek}
-          disabled={selectedWeek === weeklyGuidanceData[0].week}
+          disabled={selectedWeek === (user.isPostpartum ? postpartumMilestones[0].ageInWeeks : weeklyGuidanceData[0].week)}
         >
           <ChevronLeft size={16} />
         </Button>
         
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-deep-teal">Week {selectedWeek}</h2>
+          <h2 className="text-2xl font-bold text-deep-teal">
+            {user.isPostpartum ? `Baby Age: ${selectedWeek} weeks` : `Week ${selectedWeek}`}
+          </h2>
           <div className="flex items-center justify-center gap-2 mt-1">
-            <span className="text-sm text-muted-foreground">Trimester {guidance.trimester}</span>
+            {!user.isPostpartum && (
+              <span className="text-sm text-muted-foreground">Trimester {guidance.trimester}</span>
+            )}
             {isCurrentWeek && <Badge variant="secondary">Current</Badge>}
           </div>
         </div>
@@ -297,7 +428,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
           variant="outline"
           size="sm"
           onClick={goToNextWeek}
-          disabled={selectedWeek === weeklyGuidanceData[weeklyGuidanceData.length - 1].week}
+          disabled={selectedWeek === maxWeek}
         >
           <ChevronRight size={16} />
         </Button>
@@ -308,15 +439,17 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Baby className="text-blush" size={20} />
-            Your Baby This Week
+            {user.isPostpartum ? "Your Baby's Development" : "Your Baby This Week"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Baby Size */}
           <div className="text-center p-4 bg-blush/10 rounded-lg">
             <div className="text-4xl mb-2">{guidance.babySize.emoji}</div>
-            <p className="font-semibold text-deep-teal">Size of a {guidance.babySize.fruit}</p>
-            <p className="text-sm text-muted-foreground">{guidance.babySize.size}</p>
+            <p className="font-semibold text-deep-teal">{guidance.babySize.fruit}</p>
+            {guidance.babySize.size && (
+              <p className="text-sm text-muted-foreground">{guidance.babySize.size}</p>
+            )}
           </div>
 
           {/* Baby Milestones */}
@@ -337,12 +470,12 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         </CardContent>
       </Card>
 
-      {/* Mom's Body Insights */}
+      {/* Mom's Body Insights / Parent Insights */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Heart className="text-rose-500" size={20} />
-            Your Body This Week
+            {user.isPostpartum ? "Your Postpartum Journey" : "Your Body This Week"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -404,10 +537,10 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
         <div className="text-center">
           <Button
             variant="outline"
-            onClick={() => setSelectedWeek(currentWeek)}
+            onClick={() => setSelectedWeek(user.isPostpartum ? babyAgeInWeeks : currentWeek)}
             className="text-blush border-blush hover:bg-blush/10"
           >
-            Return to Week {currentWeek}
+            {user.isPostpartum ? `Return to Baby's Current Age (${babyAgeInWeeks} weeks)` : `Return to Week ${currentWeek}`}
           </Button>
         </div>
       )}
