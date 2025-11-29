@@ -1,22 +1,78 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Heart, AlertCircle, Search, Loader2 } from "lucide-react";
+import { Heart, ChevronLeft, Search, Loader2, Check } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import maternalIcon from "@assets/generated_images/Pregnant_woman_bun_hairstyle_sage_272a5b6e.png";
+import { Button } from "@/components/ui/button";
+
+const TOTAL_STEPS = 8;
+
+interface SelectableCardProps {
+  emoji: string;
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+  testId?: string;
+}
+
+function SelectableCard({ emoji, label, selected, onClick, testId }: SelectableCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      data-testid={testId}
+      className={`w-full p-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 border-2 ${
+        selected 
+          ? 'border-pink-400 bg-pink-50 shadow-md' 
+          : 'border-gray-100 bg-white hover:border-pink-200 hover:bg-pink-50/50'
+      }`}
+    >
+      <span className="text-2xl">{emoji}</span>
+      <span className="text-gray-800 font-medium flex-1">{label}</span>
+      {selected && (
+        <div className="w-6 h-6 rounded-full bg-pink-400 flex items-center justify-center">
+          <Check className="w-4 h-4 text-white" />
+        </div>
+      )}
+    </button>
+  );
+}
+
+interface MultiSelectCardProps {
+  emoji: string;
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}
+
+function MultiSelectCard({ emoji, label, selected, onClick }: MultiSelectCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full p-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 border-2 ${
+        selected 
+          ? 'border-pink-400 bg-pink-50' 
+          : 'border-gray-100 bg-white hover:border-pink-200'
+      }`}
+    >
+      <span className="text-xl">{emoji}</span>
+      <span className="text-gray-700 flex-1">{label}</span>
+      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${
+        selected ? 'bg-pink-400 border-pink-400' : 'border-gray-300'
+      }`}>
+        {selected && <Check className="w-3 h-3 text-white" />}
+      </div>
+    </button>
+  );
+}
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
-  const [showButtons, setShowButtons] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -38,7 +94,6 @@ export default function Onboarding() {
     doulaPractice: "",
     doulaEmail: "",
   });
-  const [showEmailExistsError, setShowEmailExistsError] = useState(false);
   const [wantsPartnerInvite, setWantsPartnerInvite] = useState<boolean | null>(null);
   const [partnerInviteCode, setPartnerInviteCode] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
@@ -79,24 +134,18 @@ export default function Onboarding() {
       localStorage.setItem("currentUserId", user.id.toString());
       setUserId(user.id);
       
-      // Route based on waitlist status
       if (user.waitlistUser) {
         setLocation("/waitlist");
       } else {
-        // For moms and trying_to_conceive, proceed to partner invitation step
         toast({
           title: "Profile created!",
           description: "Almost done...",
         });
-        setStep(5); // Move to partner invitation step
+        setStep(8);
       }
     },
     onError: (error: any) => {
-      console.error("Profile creation error:", error);
-      
-      // Check if it's a duplicate email error
       if (error?.message?.includes("duplicate_email") || error?.message?.includes("email already exists")) {
-        setShowEmailExistsError(true);
         toast({
           title: "Email already registered",
           description: "An account with this email already exists.",
@@ -122,13 +171,8 @@ export default function Onboarding() {
     },
     onSuccess: (partnership) => {
       setPartnerInviteCode(partnership.inviteCode);
-      toast({
-        title: "Invite code generated!",
-        description: "Share this code with your partner to connect.",
-      });
     },
-    onError: (error) => {
-      console.error("Error generating invite code:", error);
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to generate invite code. Please try again.",
@@ -164,70 +208,10 @@ export default function Onboarding() {
       setLocation("/");
     },
     onError: (error: any) => {
-      console.error("Error registering partner:", error);
       const message = error?.message || "Invalid or expired invite code";
       setInviteCodeError(message);
-      toast({
-        title: "Error",
-        description: message,
-        variant: "destructive",
-      });
     },
   });
-
-
-
-  const handleSubmit = () => {
-    if (step === 2) {
-      setStep(3);
-    } else if (step === 3) {
-      // For partners, use atomic registration endpoint
-      if (formData.pregnancyStage === "supporter") {
-        if (!enteredInviteCode) {
-          setInviteCodeError("Please enter an invite code");
-          return;
-        }
-        // Atomically register partner and link to mother
-        registerPartnerMutation.mutate({
-          inviteCode: enteredInviteCode,
-          userData: formData,
-        });
-        return;
-      }
-      
-      // Validate due date before submission for pregnant users
-      if (formData.pregnancyStage !== "postpartum" && formData.pregnancyStage !== "trying_to_conceive") {
-        const validation = validateDueDate();
-        if (!validation.isValid) {
-          toast({
-            title: "Due Date Error",
-            description: validation.error,
-            variant: "destructive",
-          });
-          return;
-        }
-      }
-      
-      // Move to provider information step
-      setStep(4);
-    } else if (step === 4) {
-      // Create user with provider information
-      const submitData = {
-        ...formData,
-        name: `${formData.firstName} ${formData.lastName}`,
-        pregnancyWeek: formData.pregnancyWeek ? parseInt(formData.pregnancyWeek) : undefined,
-      };
-      createUserMutation.mutate(submitData);
-    }
-  };
-
-  const handlePartnerInviteComplete = () => {
-    toast({
-      title: "Welcome to your digital village!",
-      description: "Your profile has been created successfully.",
-    });
-    setLocation("/");
-  };
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -242,43 +226,6 @@ export default function Onboarding() {
         return { ...prev, [field]: currentArray.filter(item => item !== option) };
       }
     });
-  };
-
-  const validateDueDate = () => {
-    if (!formData.dueDate || !formData.pregnancyStage || formData.pregnancyStage === "postpartum") {
-      return { isValid: true, error: "" };
-    }
-
-    const today = new Date();
-    const dueDate = new Date(formData.dueDate);
-    const weeksUntilDue = Math.ceil((dueDate.getTime() - today.getTime()) / (7 * 24 * 60 * 60 * 1000));
-
-    // Calculate expected week ranges for each trimester
-    const trimesterRanges = {
-      first: { minWeeks: 28, maxWeeks: 40 }, // weeks 0-12, so 28-40 weeks until due
-      second: { minWeeks: 13, maxWeeks: 27 }, // weeks 13-27, so 13-27 weeks until due  
-      third: { minWeeks: 0, maxWeeks: 12 }    // weeks 28-40, so 0-12 weeks until due
-    };
-
-    const range = trimesterRanges[formData.pregnancyStage as keyof typeof trimesterRanges];
-    if (!range) {
-      return { isValid: true, error: "" };
-    }
-
-    if (weeksUntilDue < range.minWeeks || weeksUntilDue > range.maxWeeks) {
-      const trimesterNames = {
-        first: "first trimester (weeks 1-12)",
-        second: "second trimester (weeks 13-27)", 
-        third: "third trimester (weeks 28-40)"
-      };
-      
-      return {
-        isValid: false,
-        error: `Due date doesn't align with ${trimesterNames[formData.pregnancyStage as keyof typeof trimesterNames]}. Expected ${range.minWeeks}-${range.maxWeeks} weeks until delivery.`
-      };
-    }
-
-    return { isValid: true, error: "" };
   };
 
   const handleLookupProvider = async (type: 'ob' | 'doula') => {
@@ -316,7 +263,7 @@ export default function Onboarding() {
         } else {
           toast({
             title: "No email found",
-            description: `We found ${practiceName} but couldn't locate an email address. You can add it manually or leave it blank for now.`,
+            description: `We found ${practiceName} but couldn't locate an email address.`,
           });
         }
       } else {
@@ -326,7 +273,7 @@ export default function Onboarding() {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Search error",
         description: "Couldn't complete the search. Please enter the information manually.",
@@ -337,105 +284,158 @@ export default function Onboarding() {
     }
   };
 
-  const handleLoginExistingUser = async () => {
-    try {
-      // Try to find user by email
-      const response = await fetch(`/api/users/email/${encodeURIComponent(formData.email)}`);
-      if (response.ok) {
-        const user = await response.json();
-        localStorage.setItem("currentUserId", user.id.toString());
-        toast({
-          title: "Welcome back!",
-          description: "You've been logged in successfully.",
-        });
-        setLocation("/");
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Unable to find your account. Please contact support.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Login error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handlePartnerInviteComplete = () => {
+    toast({
+      title: "Welcome to your digital village!",
+      description: "Your profile has been created successfully.",
+    });
+    setLocation("/");
   };
 
-
-
-  const isFormValid = () => {
-    if (step === 2) {
-      return formData.firstName && formData.lastName && formData.email && formData.location && formData.zipCode && formData.pregnancyStage && termsAccepted;
-    }
-    if (step === 3) {
-      if (formData.pregnancyStage === "postpartum") {
-        // For postpartum: baby birth date is required
-        return formData.babyBirthDate;
-      } else if (formData.pregnancyStage === "supporter") {
-        // For supporters: invite code is required
-        return enteredInviteCode && enteredInviteCode.length >= 6;
-      } else if (formData.pregnancyStage === "trying_to_conceive") {
-        // No additional fields required for trying to conceive
-        return true;
-      } else {
-        // For pregnant: due date is required
-        return formData.dueDate;
-      }
-    }
-    return true;
+  const goBack = () => {
+    if (step > 1) setStep(step - 1);
   };
 
-  // Show buttons immediately on step 1
-  useEffect(() => {
-    if (step === 1) {
-      setShowButtons(true);
-    }
-  }, [step]);
+  const canSkip = () => {
+    return step === 5 || step === 6;
+  };
+
+  const handleSkip = () => {
+    if (step === 5) setStep(6);
+    else if (step === 6) setStep(7);
+  };
+
+  const getProgress = () => {
+    return ((step - 1) / (TOTAL_STEPS - 1)) * 100;
+  };
+
+  const journeyOptions = [
+    { value: "trying_to_conceive", emoji: "🌱", label: "Trying to conceive" },
+    { value: "first", emoji: "🌸", label: "First trimester (0–13 weeks)" },
+    { value: "second", emoji: "🌷", label: "Second trimester (14–27 weeks)" },
+    { value: "third", emoji: "🌺", label: "Third trimester (28+ weeks)" },
+    { value: "postpartum", emoji: "👶", label: "Postpartum / 4th trimester" },
+    { value: "supporter", emoji: "💑", label: "Partner / Supporter" },
+  ];
+
+  const supportNeedsOptions = [
+    { emoji: "🍼", label: "Breastfeeding / feeding routines" },
+    { emoji: "💭", label: "Emotional wellness / mood" },
+    { emoji: "😴", label: "Sleep & recovery" },
+    { emoji: "💗", label: "Birth healing / trauma" },
+    { emoji: "📅", label: "Scheduling care and appointments" },
+    { emoji: "👩‍👩‍👧", label: "Connecting with other moms" },
+    { emoji: "✨", label: "None right now" },
+  ];
+
+  const pregnancySupportOptions = [
+    { emoji: "👶", label: "Preparing for birth" },
+    { emoji: "🤢", label: "Managing symptoms" },
+    { emoji: "🧘", label: "Emotional wellbeing" },
+    { emoji: "🥗", label: "Nutrition & wellness" },
+    { emoji: "🩺", label: "Talking with providers" },
+    { emoji: "💕", label: "My relationship or support system" },
+    { emoji: "❓", label: "Something else / not sure yet" },
+  ];
+
+  const pregnancyExperienceOptions = [
+    { emoji: "🌟", label: "This is my first pregnancy" },
+    { emoji: "👶", label: "I've had previous pregnancies" },
+    { emoji: "⚠️", label: "High-risk pregnancy" },
+    { emoji: "👯", label: "Multiple babies (twins, triplets, etc.)" },
+    { emoji: "💭", label: "Complications or special concerns" },
+    { emoji: "🕊️", label: "I'm navigating loss or uncertainty" },
+    { emoji: "🤔", label: "I'm still figuring things out" },
+  ];
+
+  const birthExperienceOptions = [
+    { emoji: "✅", label: "Baby arrived full-term" },
+    { emoji: "🌸", label: "Baby was preterm" },
+    { emoji: "💫", label: "Vaginal birth" },
+    { emoji: "🏥", label: "Cesarean birth" },
+    { emoji: "📋", label: "Planned induction" },
+    { emoji: "🚨", label: "Emergency delivery" },
+    { emoji: "💝", label: "NICU stay" },
+    { emoji: "🕊️", label: "We lost our baby" },
+    { emoji: "💭", label: "I'm still processing my experience" },
+  ];
+
+  const isStep2Valid = formData.firstName && formData.lastName && formData.email;
+  const isStep3Valid = formData.location && formData.zipCode && termsAccepted;
+  const isStep4Valid = formData.pregnancyStage !== "";
+  const isStep5Valid = () => {
+    if (formData.pregnancyStage === "postpartum") return !!formData.babyBirthDate;
+    if (formData.pregnancyStage === "supporter") return enteredInviteCode.length >= 6;
+    if (formData.pregnancyStage === "trying_to_conceive") return true;
+    return !!formData.dueDate;
+  };
+  const isStep7Valid = formData.obMidwifeName && formData.obMidwifeEmail;
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen">
-      <div className="p-6">
-        {step === 1 && (
-          <div className="text-center mt-8">
-            <div className="w-32 h-32 mx-auto bg-pink-100 rounded-full flex items-center justify-center mb-6 animate-fade-in">
-              <Heart className="w-16 h-16 text-red-500 fill-red-500 animate-pulse" style={{ animationDuration: '2s' }} />
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
+      {step > 1 && step < 8 && (
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-pink-100">
+          <div className="max-w-md mx-auto px-4 py-3">
+            <div className="flex items-center justify-between mb-2">
+              <button 
+                onClick={goBack}
+                className="p-2 -ml-2 text-gray-600 hover:text-gray-800 transition-colors"
+                data-testid="button-back"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              
+              <div className="flex-1 mx-4">
+                <div className="h-1.5 bg-pink-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-pink-400 to-purple-400 rounded-full transition-all duration-500 ease-out"
+                    style={{ width: `${getProgress()}%` }}
+                  />
+                </div>
+              </div>
+              
+              {canSkip() ? (
+                <button 
+                  onClick={handleSkip}
+                  className="text-pink-500 font-medium text-sm hover:text-pink-600 transition-colors"
+                  data-testid="button-skip"
+                >
+                  Skip
+                </button>
+              ) : (
+                <div className="w-10" />
+              )}
             </div>
-            <h1 className="text-3xl font-bold text-deep-teal mb-4">
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-md mx-auto px-6 py-8">
+        {step === 1 && (
+          <div className="text-center pt-12 animate-fade-in">
+            <div className="w-28 h-28 mx-auto bg-gradient-to-br from-pink-300 to-purple-300 rounded-full flex items-center justify-center mb-8 shadow-lg">
+              <Heart className="w-14 h-14 text-white fill-white animate-pulse" style={{ animationDuration: '2s' }} />
+            </div>
+            
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">
               Hi, I'm Nia
             </h1>
-            <p className="text-lg text-gray-600 mb-8">
-              I'm your digital doula, and I'm so glad you're here.
-              <br/>
-              Think of me as a friend who listens, supports, and walks with you every step of the way.
-              <br/>
-              Let's get to know each other.
+            
+            <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+              Your digital doula, here to listen, support, and walk with you every step of the way.
             </p>
-            {showButtons && (
-              <div className="space-y-4 px-4 animate-fade-in">
+            
+            <div className="space-y-4">
               <button 
                 onClick={() => setStep(2)}
-                className="w-full py-4 rounded-2xl text-lg font-semibold shadow-lg transition-colors"
-                style={{
-                  backgroundColor: 'hsl(340, 70%, 75%)',
-                  color: 'white',
-                  border: 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                }}
+                className="w-full py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                data-testid="button-get-started"
               >
                 Get Started
               </button>
+              
               <button 
                 onClick={() => {
-                  // Check if there's an existing user
                   const existingUserId = localStorage.getItem("currentUserId");
                   if (existingUserId) {
                     setLocation("/");
@@ -447,646 +447,554 @@ export default function Onboarding() {
                     });
                   }
                 }}
-                className="w-full py-4 rounded-2xl text-lg font-semibold transition-colors"
-                style={{
-                  backgroundColor: 'transparent',
-                  color: 'hsl(340, 70%, 75%)',
-                  border: '2px solid hsl(340, 70%, 75%)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                  e.target.style.color = 'white';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'hsl(340, 70%, 75%)';
-                }}
+                className="w-full py-4 rounded-full text-lg font-semibold text-pink-500 border-2 border-pink-300 hover:bg-pink-50 transition-all duration-200"
+                data-testid="button-returning"
               >
                 I'm Returning
               </button>
             </div>
-            )}
           </div>
         )}
 
         {step === 2 && (
-          <Card className="mt-8 mb-8">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold text-deep-teal mb-6 text-center">
-                Tell me about yourself
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                What's your name?
               </h2>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
-                    placeholder="Enter your first name"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
-                    placeholder="Enter your last name"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    placeholder="Enter your email"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="location">What city or area do you call home?</Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => handleInputChange("location", e.target.value)}
-                    placeholder="City, State (e.g., Detroit, MI)"
-                    className="mt-1"
-                    data-testid="input-location"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="zipCode">Zip Code</Label>
-                  <Input
-                    id="zipCode"
-                    value={formData.zipCode}
-                    onChange={(e) => handleInputChange("zipCode", e.target.value)}
-                    placeholder="Enter your zip code"
-                    className="mt-1"
-                    maxLength={5}
-                    data-testid="input-zipcode"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="pregnancyStage">Where are you in your journey?</Label>
-                  <Select 
-                    value={formData.pregnancyStage} 
-                    onValueChange={(value) => handleInputChange("pregnancyStage", value)}
-                  >
-                    <SelectTrigger className="mt-1" data-testid="select-pregnancy-stage">
-                      <SelectValue placeholder="Select your current stage" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="trying_to_conceive">Trying to conceive</SelectItem>
-                      <SelectItem value="first">First trimester (0–13 weeks)</SelectItem>
-                      <SelectItem value="second">Second trimester (14–27 weeks)</SelectItem>
-                      <SelectItem value="third">Third trimester (28+ weeks)</SelectItem>
-                      <SelectItem value="postpartum">Postpartum / 4th trimester</SelectItem>
-                      <SelectItem value="supporter">Partner / Supporter</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Terms and Conditions Checkbox */}
-                <div className="flex items-start space-x-3 pt-4 pb-2">
-                  <Checkbox
-                    id="terms"
-                    checked={termsAccepted}
-                    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                    data-testid="checkbox-terms"
-                    className="mt-1"
-                  />
-                  <Label 
-                    htmlFor="terms" 
-                    className="text-sm text-gray-600 leading-relaxed cursor-pointer"
-                  >
-                    I agree to The Heart Next Door's{" "}
-                    <a 
-                      href="/terms" 
-                      target="_blank"
-                      className="text-blush underline hover:text-blush/80"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Terms & Conditions
-                    </a>
-                    {" "}and{" "}
-                    <a 
-                      href="/privacy" 
-                      target="_blank"
-                      className="text-blush underline hover:text-blush/80"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Privacy Policy
-                    </a>
-                  </Label>
-                </div>
+              <p className="text-gray-500">Let's get to know each other</p>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="firstName" className="text-gray-700 font-medium">First Name</Label>
+                <Input
+                  id="firstName"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  placeholder="Enter your first name"
+                  className="mt-2 h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                  data-testid="input-first-name"
+                />
               </div>
-              <div className="mt-6 pb-4">
-                <button 
-                  onClick={handleSubmit}
-                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                  style={{
-                    backgroundColor: 'hsl(340, 70%, 75%)',
-                    color: 'white',
-                    border: '2px solid hsl(340, 70%, 75%)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                  }}
-                  disabled={!isFormValid()}
-                >
-                  Continue
-                </button>
+              
+              <div>
+                <Label htmlFor="lastName" className="text-gray-700 font-medium">Last Name</Label>
+                <Input
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange("lastName", e.target.value)}
+                  placeholder="Enter your last name"
+                  className="mt-2 h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                  data-testid="input-last-name"
+                />
               </div>
-            </CardContent>
-          </Card>
+              
+              <div>
+                <Label htmlFor="email" className="text-gray-700 font-medium">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  placeholder="your@email.com"
+                  className="mt-2 h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                  data-testid="input-email"
+                />
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => setStep(3)}
+              disabled={!isStep2Valid}
+              className="w-full py-4 mt-8 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl transition-all duration-200"
+              data-testid="button-continue"
+            >
+              Continue
+            </button>
+          </div>
         )}
 
         {step === 3 && (
-          <Card className="mt-8 mb-8">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold text-deep-teal mb-6 text-center">
-                A few more details
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Where are you located?
               </h2>
-              <div className="space-y-4">
-                {formData.pregnancyStage === "postpartum" ? (
-                  // Postpartum questions
-                  <>
-                    <div>
-                      <Label htmlFor="babyBirthDate">When was your baby born? *</Label>
-                      <Input
-                        id="babyBirthDate"
-                        type="date"
-                        value={formData.babyBirthDate}
-                        onChange={(e) => handleInputChange("babyBirthDate", e.target.value)}
-                        className="mt-1"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label className="text-base font-medium">Would you like to share a little about your birth so we can better support you?</Label>
-                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
-                      <div className="space-y-3">
-                        {[
-                          "Baby arrived full-term",
-                          "Baby was preterm", 
-                          "Vaginal birth",
-                          "Cesarean birth",
-                          "Planned induction",
-                          "Emergency delivery",
-                          "NICU stay",
-                          "Complications during birth",
-                          "We lost our baby",
-                          "I'm still processing my experience",
-                          "I'd rather not say"
-                        ].map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`birth-${option}`}
-                              checked={formData.birthExperience.includes(option)}
-                              onCheckedChange={(checked) => handleCheckboxChange('birthExperience', option, checked as boolean)}
-                            />
-                            <Label htmlFor={`birth-${option}`} className="text-sm font-normal">{option}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-base font-medium">Would you like support with any of the following?</Label>
-                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
-                      <div className="space-y-3">
-                        {[
-                          "Breastfeeding / feeding routines",
-                          "Emotional wellness / mood",
-                          "Sleep & recovery",
-                          "Birth healing / trauma",
-                          "Scheduling care and appointments",
-                          "Connecting with other moms",
-                          "None right now"
-                        ].map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`support-${option}`}
-                              checked={formData.supportNeeds.includes(option)}
-                              onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
-                            />
-                            <Label htmlFor={`support-${option}`} className="text-sm font-normal">{option}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : formData.pregnancyStage === "trying_to_conceive" ? (
-                  // Minimal questions for trying to conceive
-                  <>
-                    <div className="text-center py-8">
-                      <p className="text-gray-600">
-                        We're here for you on your journey. Let's get you connected with Nia!
-                      </p>
-                    </div>
-                  </>
-                ) : formData.pregnancyStage === "supporter" ? (
-                  // Partner/supporter needs invite code
-                  <>
-                    <div>
-                      <Label htmlFor="inviteCode" className="text-base font-medium">Enter Your Invite Code</Label>
-                      <p className="text-sm text-gray-500 mb-3">
-                        Your partner should have shared an invite code with you. Enter it here to connect.
-                      </p>
-                      <Input
-                        id="inviteCode"
-                        type="text"
-                        value={enteredInviteCode}
-                        onChange={(e) => {
-                          setEnteredInviteCode(e.target.value.toUpperCase());
-                          setInviteCodeError("");
-                        }}
-                        placeholder="Enter 8-character code"
-                        className="mt-1 uppercase text-center text-lg tracking-wider"
-                        maxLength={10}
-                        required
-                        data-testid="input-invite-code"
-                      />
-                      {inviteCodeError && (
-                        <div className="flex items-center mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-                          <AlertCircle className="text-red-500 mr-2" size={16} />
-                          <p className="text-sm text-red-700">{inviteCodeError}</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-center py-4">
-                      <p className="text-sm text-gray-600">
-                        Don't have a code? Ask your partner to generate one during their sign-up.
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  // Pregnancy questions for first, second, third trimesters
-                  <>
-                    <div>
-                      <Label htmlFor="dueDate">Due Date *</Label>
-                      <Input
-                        id="dueDate"
-                        type="date"
-                        value={formData.dueDate}
-                        onChange={(e) => handleInputChange("dueDate", e.target.value)}
-                        className="mt-1"
-                        required
-                      />
-                      {formData.dueDate && formData.pregnancyStage && !validateDueDate().isValid && (
-                        <div className="flex items-center mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-                          <AlertCircle className="text-red-500 mr-2" size={16} />
-                          <p className="text-sm text-red-700">{validateDueDate().error}</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label className="text-base font-medium">Would you like to share anything about your pregnancy to help us personalize your care?</Label>
-                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
-                      <div className="space-y-3">
-                        {[
-                          "This is my first pregnancy",
-                          "I've had previous pregnancies",
-                          "High-risk pregnancy",
-                          "Multiple babies (twins, triplets, etc.)",
-                          "Complications or special concerns",
-                          "I'm navigating loss or uncertainty",
-                          "I'm still figuring things out",
-                          "I'd rather not say"
-                        ].map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`pregnancy-${option}`}
-                              checked={formData.pregnancyExperience.includes(option)}
-                              onCheckedChange={(checked) => handleCheckboxChange('pregnancyExperience', option, checked as boolean)}
-                            />
-                            <Label htmlFor={`pregnancy-${option}`} className="text-sm font-normal">{option}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-base font-medium">Would you like extra support with…</Label>
-                      <p className="text-sm text-gray-500 mb-3">(Optional – select all that apply)</p>
-                      <div className="space-y-3">
-                        {[
-                          "Preparing for birth",
-                          "Managing symptoms",
-                          "Emotional wellbeing",
-                          "Nutrition & wellness",
-                          "Talking with providers",
-                          "My relationship or support system",
-                          "Something else / not sure yet"
-                        ].map((option) => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`pregnancy-support-${option}`}
-                              checked={formData.supportNeeds.includes(option)}
-                              onCheckedChange={(checked) => handleCheckboxChange('supportNeeds', option, checked as boolean)}
-                            />
-                            <Label htmlFor={`pregnancy-support-${option}`} className="text-sm font-normal">{option}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
+              <p className="text-gray-500">This helps us personalize your experience</p>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="location" className="text-gray-700 font-medium">City & State</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  placeholder="Detroit, MI"
+                  className="mt-2 h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                  data-testid="input-location"
+                />
               </div>
-              <div className="mt-6 pb-4">
-                <button 
-                  onClick={handleSubmit}
-                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                  style={{
-                    backgroundColor: 'hsl(340, 70%, 75%)',
-                    color: 'white',
-                    border: '2px solid hsl(340, 70%, 75%)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                  }}
-                  disabled={createUserMutation.isPending || registerPartnerMutation.isPending || !isFormValid()}
-                >
-                  {registerPartnerMutation.isPending ? "Connecting..." : createUserMutation.isPending ? "Creating profile..." : "Continue"}
-                </button>
+              
+              <div>
+                <Label htmlFor="zipCode" className="text-gray-700 font-medium">Zip Code</Label>
+                <Input
+                  id="zipCode"
+                  value={formData.zipCode}
+                  onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                  placeholder="48201"
+                  maxLength={5}
+                  className="mt-2 h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                  data-testid="input-zipcode"
+                />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            
+            <div className="flex items-start space-x-3 pt-4 bg-white/60 rounded-2xl p-4 border border-pink-100">
+              <Checkbox
+                id="terms"
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                data-testid="checkbox-terms"
+                className="mt-0.5 border-pink-300 data-[state=checked]:bg-pink-400 data-[state=checked]:border-pink-400"
+              />
+              <Label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
+                I agree to The Heart Next Door's{" "}
+                <a href="/terms" target="_blank" className="text-pink-500 underline">Terms & Conditions</a>
+                {" "}and{" "}
+                <a href="/privacy" target="_blank" className="text-pink-500 underline">Privacy Policy</a>
+              </Label>
+            </div>
+            
+            <button 
+              onClick={() => setStep(4)}
+              disabled={!isStep3Valid}
+              className="w-full py-4 mt-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl transition-all duration-200"
+              data-testid="button-continue"
+            >
+              Continue
+            </button>
+          </div>
         )}
 
         {step === 4 && (
-          <Card className="mt-8 mb-8">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold text-deep-teal mb-2 text-center">Healthcare Provider Information</h2>
-              <p className="text-gray-600 mb-6 text-center text-sm">
-                Help us keep you safe. We'll notify your providers if any red flags arise during your journey.
-              </p>
-              
-              <div className="space-y-6">
-                {/* OB/Midwife Section */}
-                <div className="space-y-4 pb-4 border-b border-gray-200">
-                  <h3 className="font-semibold text-deep-teal">OB or Midwife</h3>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="obMidwifeName" className="text-sm font-medium">Provider Name</Label>
-                    <Input 
-                      id="obMidwifeName"
-                      type="text" 
-                      placeholder="Dr. Jane Smith"
-                      value={formData.obMidwifeName}
-                      onChange={(e) => handleInputChange("obMidwifeName", e.target.value)}
-                      data-testid="input-ob-midwife-name"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="obMidwifePractice" className="text-sm font-medium">Office or Practice Name</Label>
-                    <Input 
-                      id="obMidwifePractice"
-                      type="text" 
-                      placeholder="Detroit Women's Health Clinic"
-                      value={formData.obMidwifePractice}
-                      onChange={(e) => handleInputChange("obMidwifePractice", e.target.value)}
-                      data-testid="input-ob-midwife-practice"
-                    />
-                    <p className="text-xs text-gray-500">This helps us find their contact info for you</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="obMidwifeEmail" className="text-sm font-medium">
-                      Email Address <span className="text-gray-400 font-normal">(Optional)</span>
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input 
-                        id="obMidwifeEmail"
-                        type="email" 
-                        placeholder="office@clinic.com"
-                        value={formData.obMidwifeEmail}
-                        onChange={(e) => handleInputChange("obMidwifeEmail", e.target.value)}
-                        data-testid="input-ob-midwife-email"
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => handleLookupProvider('ob')}
-                        disabled={isLookingUpProvider || !formData.obMidwifePractice}
-                        className="shrink-0"
-                        data-testid="button-lookup-ob"
-                      >
-                        {isLookingUpProvider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    <p className="text-xs text-gray-500">Don't know it? We can help you look it up!</p>
-                  </div>
-                </div>
-
-                {/* Doula Section */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-deep-teal">Doula <span className="text-gray-400 font-normal text-sm">(Optional)</span></h3>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="doulaName" className="text-sm font-medium">Doula Name</Label>
-                    <Input 
-                      id="doulaName"
-                      type="text" 
-                      placeholder="Sarah Johnson"
-                      value={formData.doulaName}
-                      onChange={(e) => handleInputChange("doulaName", e.target.value)}
-                      data-testid="input-doula-name"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="doulaPractice" className="text-sm font-medium">Practice or Business Name</Label>
-                    <Input 
-                      id="doulaPractice"
-                      type="text" 
-                      placeholder="Birth Support Services"
-                      value={formData.doulaPractice}
-                      onChange={(e) => handleInputChange("doulaPractice", e.target.value)}
-                      data-testid="input-doula-practice"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="doulaEmail" className="text-sm font-medium">Email Address</Label>
-                    <div className="flex gap-2">
-                      <Input 
-                        id="doulaEmail"
-                        type="email" 
-                        placeholder="sarah@doulaservices.com"
-                        value={formData.doulaEmail}
-                        onChange={(e) => handleInputChange("doulaEmail", e.target.value)}
-                        data-testid="input-doula-email"
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => handleLookupProvider('doula')}
-                        disabled={isLookingUpProvider || !formData.doulaPractice}
-                        className="shrink-0"
-                        data-testid="button-lookup-doula"
-                      >
-                        {isLookingUpProvider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    <p className="text-xs text-gray-500">We can help find this information for you</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-8">
-                <button 
-                  onClick={handleSubmit}
-                  className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                  style={{
-                    backgroundColor: 'hsl(340, 70%, 75%)',
-                    color: 'white',
-                    border: '2px solid hsl(340, 70%, 75%)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'hsl(340, 70%, 70%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                  }}
-                  disabled={createUserMutation.isPending || !formData.obMidwifeName || !formData.obMidwifeEmail}
-                  data-testid="button-continue-provider"
-                >
-                  {createUserMutation.isPending ? "Creating profile..." : "Continue"}
-                </button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="space-y-5 animate-fade-in">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Where are you in your journey?
+              </h2>
+              <p className="text-gray-500">Select the option that best describes you</p>
+            </div>
+            
+            <div className="space-y-3">
+              {journeyOptions.map((option) => (
+                <SelectableCard
+                  key={option.value}
+                  emoji={option.emoji}
+                  label={option.label}
+                  selected={formData.pregnancyStage === option.value}
+                  onClick={() => handleInputChange("pregnancyStage", option.value)}
+                  testId={`card-${option.value}`}
+                />
+              ))}
+            </div>
+            
+            <button 
+              onClick={() => setStep(5)}
+              disabled={!isStep4Valid}
+              className="w-full py-4 mt-6 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl transition-all duration-200"
+              data-testid="button-continue"
+            >
+              Continue
+            </button>
+          </div>
         )}
 
         {step === 5 && (
-          <Card className="mt-8 mb-8">
-            <CardContent className="p-6">
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blush to-lavender rounded-full flex items-center justify-center mb-6">
-                  <Heart className="text-white text-2xl" size={32} />
+          <div className="space-y-6 animate-fade-in">
+            {formData.pregnancyStage === "postpartum" ? (
+              <>
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    When was your baby born?
+                  </h2>
+                  <p className="text-gray-500">This helps us track your recovery journey</p>
                 </div>
-
-                <h3 className="text-2xl font-bold text-deep-teal mb-3">
-                  One more thing...
-                </h3>
                 
-                {wantsPartnerInvite === null ? (
-                  <div>
-                    <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                      Would you like to invite your partner or a supporter to stay connected with your journey?
-                    </p>
-                    <p className="text-sm text-gray-600 mb-8">
-                      They'll be able to see updates you choose to share, helping them support you better.
-                    </p>
-                    <div className="space-y-3">
-                      <button 
-                        onClick={() => {
-                          setWantsPartnerInvite(true);
-                          if (userId) {
-                            generateInviteCodeMutation.mutate({ motherId: userId });
-                          }
-                        }}
-                        className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                        style={{
-                          backgroundColor: 'hsl(340, 70%, 75%)',
-                          color: 'white',
-                          border: '2px solid hsl(340, 70%, 75%)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 70%)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                        }}
-                        data-testid="button-invite-partner"
-                      >
-                        Yes, invite my partner
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setWantsPartnerInvite(false);
-                          handlePartnerInviteComplete();
-                        }}
-                        className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors border-2"
-                        style={{
-                          backgroundColor: 'white',
-                          color: 'hsl(340, 70%, 75%)',
-                          border: '2px solid hsl(340, 70%, 75%)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 95%)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'white';
-                        }}
-                        data-testid="button-skip-partner-invite"
-                      >
-                        Skip for now
-                      </button>
-                    </div>
+                <div>
+                  <Input
+                    id="babyBirthDate"
+                    type="date"
+                    value={formData.babyBirthDate}
+                    onChange={(e) => handleInputChange("babyBirthDate", e.target.value)}
+                    className="h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                    data-testid="input-baby-birth-date"
+                  />
+                </div>
+                
+                <div className="pt-4">
+                  <p className="text-gray-700 font-medium mb-3">How was your birth experience? (Optional)</p>
+                  <div className="space-y-2">
+                    {birthExperienceOptions.map((option) => (
+                      <MultiSelectCard
+                        key={option.label}
+                        emoji={option.emoji}
+                        label={option.label}
+                        selected={formData.birthExperience.includes(option.label)}
+                        onClick={() => handleCheckboxChange('birthExperience', option.label, !formData.birthExperience.includes(option.label))}
+                      />
+                    ))}
                   </div>
+                </div>
+              </>
+            ) : formData.pregnancyStage === "supporter" ? (
+              <>
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    Enter your invite code
+                  </h2>
+                  <p className="text-gray-500">Your partner shared this code with you</p>
+                </div>
+                
+                <Input
+                  id="inviteCode"
+                  type="text"
+                  value={enteredInviteCode}
+                  onChange={(e) => {
+                    setEnteredInviteCode(e.target.value.toUpperCase());
+                    setInviteCodeError("");
+                  }}
+                  placeholder="XXXXXXXX"
+                  maxLength={10}
+                  className="h-16 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-2xl text-center tracking-widest uppercase"
+                  data-testid="input-invite-code"
+                />
+                
+                {inviteCodeError && (
+                  <p className="text-red-500 text-sm text-center">{inviteCodeError}</p>
+                )}
+                
+                <p className="text-gray-500 text-center text-sm">
+                  Don't have a code? Ask your partner to generate one.
+                </p>
+              </>
+            ) : formData.pregnancyStage === "trying_to_conceive" ? (
+              <div className="text-center py-8">
+                <div className="text-5xl mb-6">🌱</div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  We're here for you
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  Your journey is just beginning, and Nia is ready to support you every step of the way.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    When is your due date?
+                  </h2>
+                  <p className="text-gray-500">We'll personalize your experience based on this</p>
+                </div>
+                
+                <Input
+                  id="dueDate"
+                  type="date"
+                  value={formData.dueDate}
+                  onChange={(e) => handleInputChange("dueDate", e.target.value)}
+                  className="h-14 rounded-2xl border-gray-200 focus:border-pink-400 focus:ring-pink-400 text-lg"
+                  data-testid="input-due-date"
+                />
+                
+                <div className="pt-4">
+                  <p className="text-gray-700 font-medium mb-3">Tell us about your pregnancy (Optional)</p>
+                  <div className="space-y-2">
+                    {pregnancyExperienceOptions.map((option) => (
+                      <MultiSelectCard
+                        key={option.label}
+                        emoji={option.emoji}
+                        label={option.label}
+                        selected={formData.pregnancyExperience.includes(option.label)}
+                        onClick={() => handleCheckboxChange('pregnancyExperience', option.label, !formData.pregnancyExperience.includes(option.label))}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+            
+            <button 
+              onClick={() => {
+                if (formData.pregnancyStage === "supporter") {
+                  registerPartnerMutation.mutate({
+                    inviteCode: enteredInviteCode,
+                    userData: formData,
+                  });
+                } else {
+                  setStep(6);
+                }
+              }}
+              disabled={!isStep5Valid() || registerPartnerMutation.isPending}
+              className="w-full py-4 mt-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl transition-all duration-200"
+              data-testid="button-continue"
+            >
+              {registerPartnerMutation.isPending ? "Connecting..." : "Continue"}
+            </button>
+          </div>
+        )}
+
+        {step === 6 && (
+          <div className="space-y-5 animate-fade-in">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                What's your biggest challenge right now?
+              </h2>
+              <p className="text-gray-500">Select all that apply</p>
+            </div>
+            
+            <div className="space-y-3">
+              {(formData.pregnancyStage === "postpartum" ? supportNeedsOptions : pregnancySupportOptions).map((option) => (
+                <MultiSelectCard
+                  key={option.label}
+                  emoji={option.emoji}
+                  label={option.label}
+                  selected={formData.supportNeeds.includes(option.label)}
+                  onClick={() => handleCheckboxChange('supportNeeds', option.label, !formData.supportNeeds.includes(option.label))}
+                />
+              ))}
+            </div>
+            
+            <button 
+              onClick={() => setStep(7)}
+              className="w-full py-4 mt-6 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+              data-testid="button-continue"
+            >
+              Continue
+            </button>
+          </div>
+        )}
+
+        {step === 7 && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Your Care Team
+              </h2>
+              <p className="text-gray-500">We'll notify them if we notice anything concerning</p>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-pink-100 space-y-4">
+              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                <span className="text-xl">👩‍⚕️</span> OB or Midwife
+              </h3>
+              
+              <div>
+                <Label htmlFor="obMidwifeName" className="text-gray-600 text-sm">Provider Name</Label>
+                <Input
+                  id="obMidwifeName"
+                  value={formData.obMidwifeName}
+                  onChange={(e) => handleInputChange("obMidwifeName", e.target.value)}
+                  placeholder="Dr. Jane Smith"
+                  className="mt-1 h-12 rounded-xl border-gray-200 focus:border-pink-400"
+                  data-testid="input-ob-name"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="obMidwifePractice" className="text-gray-600 text-sm">Practice Name</Label>
+                <Input
+                  id="obMidwifePractice"
+                  value={formData.obMidwifePractice}
+                  onChange={(e) => handleInputChange("obMidwifePractice", e.target.value)}
+                  placeholder="Women's Health Clinic"
+                  className="mt-1 h-12 rounded-xl border-gray-200 focus:border-pink-400"
+                  data-testid="input-ob-practice"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="obMidwifeEmail" className="text-gray-600 text-sm">Email Address</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="obMidwifeEmail"
+                    type="email"
+                    value={formData.obMidwifeEmail}
+                    onChange={(e) => handleInputChange("obMidwifeEmail", e.target.value)}
+                    placeholder="office@clinic.com"
+                    className="h-12 rounded-xl border-gray-200 focus:border-pink-400 flex-1"
+                    data-testid="input-ob-email"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleLookupProvider('ob')}
+                    disabled={isLookingUpProvider || !formData.obMidwifePractice}
+                    className="h-12 w-12 rounded-xl border-pink-200 hover:bg-pink-50"
+                  >
+                    {isLookingUpProvider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-pink-100 space-y-4">
+              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                <span className="text-xl">🤱</span> Doula <span className="text-gray-400 font-normal text-sm">(Optional)</span>
+              </h3>
+              
+              <div>
+                <Label htmlFor="doulaName" className="text-gray-600 text-sm">Doula Name</Label>
+                <Input
+                  id="doulaName"
+                  value={formData.doulaName}
+                  onChange={(e) => handleInputChange("doulaName", e.target.value)}
+                  placeholder="Sarah Johnson"
+                  className="mt-1 h-12 rounded-xl border-gray-200 focus:border-pink-400"
+                  data-testid="input-doula-name"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="doulaPractice" className="text-gray-600 text-sm">Practice Name</Label>
+                <Input
+                  id="doulaPractice"
+                  value={formData.doulaPractice}
+                  onChange={(e) => handleInputChange("doulaPractice", e.target.value)}
+                  placeholder="Birth Support Services"
+                  className="mt-1 h-12 rounded-xl border-gray-200 focus:border-pink-400"
+                  data-testid="input-doula-practice"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="doulaEmail" className="text-gray-600 text-sm">Email Address</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="doulaEmail"
+                    type="email"
+                    value={formData.doulaEmail}
+                    onChange={(e) => handleInputChange("doulaEmail", e.target.value)}
+                    placeholder="sarah@doula.com"
+                    className="h-12 rounded-xl border-gray-200 focus:border-pink-400 flex-1"
+                    data-testid="input-doula-email"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleLookupProvider('doula')}
+                    disabled={isLookingUpProvider || !formData.doulaPractice}
+                    className="h-12 w-12 rounded-xl border-pink-200 hover:bg-pink-50"
+                  >
+                    {isLookingUpProvider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => createUserMutation.mutate(formData)}
+              disabled={!isStep7Valid || createUserMutation.isPending}
+              className="w-full py-4 mt-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl transition-all duration-200"
+              data-testid="button-create-profile"
+            >
+              {createUserMutation.isPending ? "Creating profile..." : "Continue"}
+            </button>
+          </div>
+        )}
+
+        {step === 8 && (
+          <div className="text-center pt-8 animate-fade-in">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-pink-300 to-purple-400 rounded-full flex items-center justify-center mb-8 shadow-lg">
+              <Heart className="w-10 h-10 text-white fill-white" />
+            </div>
+            
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              One more thing...
+            </h2>
+            
+            {wantsPartnerInvite === null ? (
+              <div className="space-y-6">
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Would you like to invite your partner to stay connected with your journey?
+                </p>
+                <p className="text-gray-500 text-sm">
+                  They'll see updates you choose to share
+                </p>
+                
+                <div className="space-y-3 pt-4">
+                  <button 
+                    onClick={() => {
+                      setWantsPartnerInvite(true);
+                      if (userId) {
+                        generateInviteCodeMutation.mutate({ motherId: userId });
+                      }
+                    }}
+                    className="w-full py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all"
+                    data-testid="button-invite-partner"
+                  >
+                    Yes, invite my partner
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      setWantsPartnerInvite(false);
+                      handlePartnerInviteComplete();
+                    }}
+                    className="w-full py-4 rounded-full text-lg font-semibold text-pink-500 border-2 border-pink-300 hover:bg-pink-50 transition-all"
+                    data-testid="button-skip-invite"
+                  >
+                    Skip for now
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {partnerInviteCode ? (
+                  <>
+                    <p className="text-gray-600 text-lg">
+                      Share this code with your partner:
+                    </p>
+                    
+                    <div className="bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-2xl p-6">
+                      <p className="text-3xl font-bold text-gray-800 tracking-widest" data-testid="text-invite-code">
+                        {partnerInviteCode}
+                      </p>
+                    </div>
+                    
+                    <p className="text-gray-500 text-sm">
+                      This code expires in 7 days
+                    </p>
+                    
+                    <button 
+                      onClick={handlePartnerInviteComplete}
+                      className="w-full py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all"
+                      data-testid="button-continue-home"
+                    >
+                      Continue to Home
+                    </button>
+                  </>
                 ) : (
-                  <div>
-                    {partnerInviteCode ? (
-                      <div>
-                        <p className="text-lg text-gray-700 mb-6">
-                          Share this code with your partner or supporter:
-                        </p>
-                        <div className="bg-blush/10 border-2 border-blush rounded-xl p-6 mb-6">
-                          <p className="text-3xl font-bold text-deep-teal tracking-wider" data-testid="text-invite-code">
-                            {partnerInviteCode}
-                          </p>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-8">
-                          This code expires in 7 days. They can use it during sign-up to connect with you.
-                        </p>
-                        <button 
-                          onClick={handlePartnerInviteComplete}
-                          className="w-full py-3 rounded-2xl font-semibold shadow-lg transition-colors"
-                          style={{
-                            backgroundColor: 'hsl(340, 70%, 75%)',
-                            color: 'white',
-                            border: '2px solid hsl(340, 70%, 75%)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 70%)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'hsl(340, 70%, 75%)';
-                          }}
-                          data-testid="button-complete-onboarding"
-                        >
-                          Continue to Home
-                        </button>
-                      </div>
-                    ) : (
-                      <div>
-                        <p className="text-gray-600 mb-4">Generating your invite code...</p>
-                      </div>
-                    )}
+                  <div className="py-8">
+                    <Loader2 className="w-8 h-8 text-pink-400 animate-spin mx-auto" />
+                    <p className="text-gray-500 mt-4">Generating invite code...</p>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
         )}
       </div>
+      
+      <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.4s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
