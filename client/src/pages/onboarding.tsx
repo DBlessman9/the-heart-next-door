@@ -414,15 +414,15 @@ export default function Onboarding() {
         {step === 1 && (
           <div className="text-center pt-12 animate-fade-in">
             <div className="w-28 h-28 mx-auto bg-gradient-to-br from-pink-300 to-purple-300 rounded-full flex items-center justify-center mb-8 shadow-lg">
-              <Heart className="w-14 h-14 text-white fill-white animate-pulse" style={{ animationDuration: '2s' }} />
+              <Heart className="w-14 h-14 text-red-500 fill-red-500 animate-pulse" style={{ animationDuration: '2s' }} />
             </div>
             
             <h1 className="text-3xl font-bold text-gray-800 mb-4">
-              Hi, I'm Nia
+              The Heart Next Door
             </h1>
             
             <p className="text-lg text-gray-600 mb-10 leading-relaxed">
-              Your digital doula, here to listen, support, and walk with you every step of the way.
+              Your digital village, here to listen, support, and walk with you every step of the way.
             </p>
             
             <div className="space-y-4">
