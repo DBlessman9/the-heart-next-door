@@ -46,10 +46,10 @@ function NiaAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 }
 
 const quickReplies = [
-  "How am I feeling today?",
+  "What should I be eating?",
   "I need some support",
   "Tell me about my baby",
-  "I'm feeling anxious"
+  "Help me prepare for birth"
 ];
 
 export default function FloatingChat() {
