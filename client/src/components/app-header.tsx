@@ -170,7 +170,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl font-semibold text-deep-teal">
-            {getGreeting()}, {user.firstName} 💗
+            {getGreeting()}, {user.firstName}
           </h2>
           <p className="text-sm text-gray-500">
             {getPregnancyInfo()}

@@ -413,7 +413,7 @@ export default function Onboarding() {
       <div className="max-w-md mx-auto px-6 py-8">
         {step === 1 && (
           <div className="text-center pt-12 animate-fade-in">
-            <div className="w-28 h-28 mx-auto bg-gradient-to-br from-pink-300 to-purple-300 rounded-full flex items-center justify-center mb-8 shadow-lg">
+            <div className="w-28 h-28 mx-auto bg-white border-4 border-pink-200 rounded-full flex items-center justify-center mb-8 shadow-lg">
               <Heart className="w-14 h-14 text-red-500 fill-red-500 animate-pulse" style={{ animationDuration: '2s' }} />
             </div>
             
