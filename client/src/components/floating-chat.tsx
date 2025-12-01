@@ -130,7 +130,7 @@ export default function FloatingChat() {
             data-testid="button-open-chat"
           >
             <div className="absolute inset-0 bg-red-400 rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
-            <div className="relative h-16 w-16 rounded-full bg-white flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-4 border-red-100">
+            <div className="relative h-16 w-16 rounded-full bg-white flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-4 border-pink-200">
               <Heart className="w-8 h-8 text-red-500 fill-red-500" />
             </div>
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">

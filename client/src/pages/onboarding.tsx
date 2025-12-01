@@ -905,7 +905,7 @@ export default function Onboarding() {
 
         {step === 8 && (
           <div className="text-center pt-8 animate-fade-in">
-            <div className="w-20 h-20 mx-auto bg-white border-4 border-red-100 rounded-full flex items-center justify-center mb-8 shadow-lg">
+            <div className="w-20 h-20 mx-auto bg-white border-4 border-pink-200 rounded-full flex items-center justify-center mb-8 shadow-lg">
               <Heart className="w-10 h-10 text-red-500 fill-red-500" />
             </div>
             

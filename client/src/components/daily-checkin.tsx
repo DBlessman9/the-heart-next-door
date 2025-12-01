@@ -99,7 +99,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
       </Card>
 
       <div className="text-center mb-6">
-        <div className="w-20 h-20 bg-pink-100 border-4 border-pink-200 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-20 h-20 bg-white border-4 border-pink-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Heart className="text-red-500 fill-red-500" size={32} />
         </div>
         <h3 className="text-xl font-semibold text-deep-teal mb-2">

@@ -65,7 +65,7 @@ export default function PartnerDashboard({ userId }: PartnerDashboardProps) {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto bg-white border-4 border-red-100 rounded-full flex items-center justify-center mb-4 shadow-lg">
+          <div className="w-20 h-20 mx-auto bg-white border-4 border-pink-200 rounded-full flex items-center justify-center mb-4 shadow-lg">
             <Heart className="text-red-500 fill-red-500" size={40} />
           </div>
           <h1 className="text-3xl font-bold text-deep-teal mb-2" data-testid="text-partner-header">
