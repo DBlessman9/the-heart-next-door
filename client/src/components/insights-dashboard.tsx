@@ -167,7 +167,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-blush" />
+            <Heart className="h-5 w-5 text-red-500 fill-red-500" />
             Emotional Check-in Trends
           </CardTitle>
           <CardDescription>Your feelings over the past week</CardDescription>

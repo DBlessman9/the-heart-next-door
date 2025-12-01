@@ -93,8 +93,8 @@ export default function PartnerOnboarding() {
     <div className="min-h-screen bg-gradient-to-br from-blush-50 to-blush-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-blush-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-8 h-8 text-blush-600" />
+          <div className="w-16 h-16 bg-white border-4 border-red-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Heart className="w-8 h-8 text-red-500 fill-red-500" />
           </div>
           <CardTitle className="text-2xl text-blush-800">Join as a Partner</CardTitle>
           <p className="text-blush-600">Support your partner's wellness journey</p>

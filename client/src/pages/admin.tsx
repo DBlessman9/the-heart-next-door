@@ -57,7 +57,7 @@ export default function AdminPortal() {
       <div className="bg-white border-b border-gray-200 p-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Heart className="w-8 h-8 text-blush fill-blush" />
+            <Heart className="w-8 h-8 text-red-500 fill-red-500" />
             <h1 className="text-2xl font-bold text-deep-teal">Admin Portal</h1>
           </div>
           <Button

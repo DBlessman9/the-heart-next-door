@@ -19,7 +19,7 @@ export default function Waitlist() {
         <Card className="border-2 border-blush/20 shadow-lg">
           <CardContent className="p-8 md:p-12">
             <div className="mb-6">
-              <Heart className="w-16 h-16 text-blush mx-auto mb-4" fill="currentColor" />
+              <Heart className="w-16 h-16 text-red-500 fill-red-500 mx-auto mb-4" />
               <h1 className="text-3xl md:text-4xl font-bold text-deep-teal mb-4">
                 Thanks for joining, mama!
               </h1>

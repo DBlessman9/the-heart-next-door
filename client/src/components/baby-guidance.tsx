@@ -474,7 +474,7 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Heart className="text-rose-500" size={20} />
+            <Heart className="text-red-500 fill-red-500" size={20} />
             {user.isPostpartum ? "Your Postpartum Journey" : "Your Body This Week"}
           </CardTitle>
         </CardHeader>

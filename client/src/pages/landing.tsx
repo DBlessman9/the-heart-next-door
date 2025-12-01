@@ -206,8 +206,8 @@ export default function Landing() {
                   <div className="bg-white rounded-xl p-4 shadow-md">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex-1 flex items-center justify-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blush-400 to-blush-500 rounded-full flex items-center justify-center">
-                          <Heart className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 bg-white border-2 border-red-100 rounded-full flex items-center justify-center shadow-sm">
+                          <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                         </div>
                         <div className="text-center">
                           <div className="font-semibold text-blush-800 text-sm leading-tight">The Heart</div>
@@ -399,7 +399,7 @@ export default function Landing() {
                       HIPAA Compliant
                     </div>
                     <div className="flex items-center gap-2">
-                      <Heart className="w-4 h-4 text-rose-500" />
+                      <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                       Clinically Informed
                     </div>
                     <div className="flex items-center gap-2">
@@ -506,8 +506,8 @@ export default function Landing() {
                       <p className="text-gray-600">Founder, The Heart Next Door</p>
                     </div>
                     <div className="hidden md:block">
-                      <div className="w-24 h-24 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full flex items-center justify-center">
-                        <Heart className="w-10 h-10 text-rose-600" />
+                      <div className="w-24 h-24 bg-white border-4 border-red-100 rounded-full flex items-center justify-center shadow-lg">
+                        <Heart className="w-10 h-10 text-red-500 fill-red-500" />
                       </div>
                     </div>
                   </div>
@@ -550,7 +550,7 @@ export default function Landing() {
                 asChild
               >
                 <a href="#" className="flex items-center gap-2">
-                  <Heart className="w-4 h-4" />
+                  <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                   Follow on Social
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -588,8 +588,8 @@ export default function Landing() {
       <footer className="py-12 px-4 bg-gradient-to-br from-gray-800 to-gray-900 text-center">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-rose-400 to-pink-400 rounded-2xl flex items-center justify-center shadow-lg">
-              <Heart className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+              <Heart className="w-5 h-5 text-red-500 fill-red-500" />
             </div>
             <span className="text-2xl font-bold text-white ml-3">The Heart Next Door</span>
           </div>
