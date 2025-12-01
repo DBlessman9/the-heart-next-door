@@ -220,7 +220,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Missing required fields: userId and message" });
       }
       
-      const messageData = insertChatMessageSchema.parse(req.body);
+      // Transform request body to match schema (message -> content)
+      const transformedBody = {
+        userId: req.body.userId,
+        content: req.body.message,
+        isFromUser: req.body.isFromUser ?? true,
+      };
+      
+      const messageData = insertChatMessageSchema.parse(transformedBody);
       
       // Save user message
       const userMessage = await storage.createChatMessage(messageData);
