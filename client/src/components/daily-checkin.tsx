@@ -67,7 +67,7 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
     { id: "tired", label: "Tired", selected: feeling === "tired" },
     { id: "overwhelmed", label: "Overwhelmed", selected: feeling === "overwhelmed" },
     { id: "grateful", label: "Grateful", selected: feeling === "grateful" },
-    { id: "other", label: "Other", selected: feeling === "other" },
+    { id: "hopeful", label: "Hopeful", selected: feeling === "hopeful" },
   ];
 
   const bodyCareOptions = [
