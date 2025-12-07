@@ -65,9 +65,16 @@ export default function Community({ userId, user }: CommunityProps) {
     !joinedGroups.some((joined: Group) => joined.id === fav.id)
   )];
 
-  // Fetch available groups
+  // Fetch available groups with location filtering based on user's zip code
   const { data: availableGroups = [] } = useQuery({
-    queryKey: ["/api/community/groups"],
+    queryKey: ["/api/community/groups", user.zipCode],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (user.zipCode) params.append('zipCode', user.zipCode);
+      const response = await fetch(`/api/community/groups?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch groups');
+      return response.json();
+    },
     enabled: activeTab === "discover",
   });
 

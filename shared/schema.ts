@@ -189,12 +189,14 @@ export const groups = pgTable("groups", {
   description: text("description"),
   type: text("type").notNull(), // "location", "birth_month", "topic", "resource"
   zipCode: text("zip_code"), // for location-based groups
+  city: text("city"), // city name for location filtering
+  state: text("state"), // state abbreviation (e.g., "MI", "CA")
   dueDate: timestamp("due_date"), // for birth month groups
   topic: text("topic"), // for topic-based groups like "breastfeeding", "NICU", "VBAC"
   isPrivate: boolean("is_private").default(false),
   memberCount: integer("member_count").default(0),
   createdBy: integer("created_by").references(() => users.id),
-  // External resource fields for Detroit community organizations
+  // External resource fields for community organizations
   website: text("website"), // External website URL
   contactEmail: text("contact_email"), // Contact email
   contactPhone: text("contact_phone"), // Contact phone

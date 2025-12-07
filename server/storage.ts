@@ -99,7 +99,7 @@ export interface IStorage {
   getAppointmentByExternalId(externalId: string, source: string): Promise<Appointment | null>;
 
   // Community operations
-  getGroups(userId?: number): Promise<Group[]>;
+  getGroups(userId?: number, userZipCode?: string): Promise<Group[]>;
   getUserGroups(userId: number): Promise<Group[]>;
   createGroup(group: InsertGroup): Promise<Group>;
   joinGroup(userId: number, groupId: number): Promise<void>;
@@ -772,9 +772,34 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Community operations
-  async getGroups(userId?: number): Promise<Group[]> {
+  async getGroups(userId?: number, userZipCode?: string): Promise<Group[]> {
     await this.ensureSeeded();
-    const allGroups = await db.select().from(groups).orderBy(groups.name);
+    let allGroups = await db.select().from(groups).orderBy(groups.name);
+    
+    // Filter external resources by location if user zip code is provided
+    if (userZipCode) {
+      const isDetroitArea = userZipCode.startsWith('48'); // Michigan zip codes starting with 48
+      
+      allGroups = allGroups.filter(group => {
+        // Always show non-external groups (user-created community groups)
+        if (!group.isExternal) return true;
+        
+        // For external resources, filter by location
+        if (isDetroitArea) {
+          // Show Detroit/Michigan resources for Detroit-area users
+          return group.state === 'MI' || group.city === 'Detroit' || !group.city;
+        } else {
+          // For users outside Detroit, only show resources that match their state
+          // Parse state from user's location if we have it
+          const userState = this.getStateFromZip(userZipCode);
+          if (userState && group.state) {
+            return group.state === userState;
+          }
+          // Don't show Detroit-specific resources to non-Detroit users
+          return group.city !== 'Detroit' && group.state !== 'MI';
+        }
+      });
+    }
     
     if (userId) {
       // Check membership status for each group
@@ -791,6 +816,72 @@ export class DatabaseStorage implements IStorage {
     return allGroups;
   }
 
+  // Helper to get state from zip code (first 3 digits)
+  private getStateFromZip(zipCode: string): string | null {
+    const prefix = zipCode.slice(0, 3);
+    const zipToState: Record<string, string> = {
+      // Michigan
+      '480': 'MI', '481': 'MI', '482': 'MI', '483': 'MI', '484': 'MI', 
+      '485': 'MI', '486': 'MI', '487': 'MI', '488': 'MI', '489': 'MI',
+      '490': 'MI', '491': 'MI', '492': 'MI', '493': 'MI', '494': 'MI',
+      '495': 'MI', '496': 'MI', '497': 'MI', '498': 'MI', '499': 'MI',
+      // California
+      '900': 'CA', '901': 'CA', '902': 'CA', '903': 'CA', '904': 'CA',
+      '905': 'CA', '906': 'CA', '907': 'CA', '908': 'CA', '910': 'CA',
+      '911': 'CA', '912': 'CA', '913': 'CA', '914': 'CA', '915': 'CA',
+      '916': 'CA', '917': 'CA', '918': 'CA', '919': 'CA', '920': 'CA',
+      '921': 'CA', '922': 'CA', '923': 'CA', '924': 'CA', '925': 'CA',
+      '926': 'CA', '927': 'CA', '928': 'CA', '930': 'CA', '931': 'CA',
+      '932': 'CA', '933': 'CA', '934': 'CA', '935': 'CA', '936': 'CA',
+      '937': 'CA', '938': 'CA', '939': 'CA', '940': 'CA', '941': 'CA',
+      '942': 'CA', '943': 'CA', '944': 'CA', '945': 'CA', '946': 'CA',
+      '947': 'CA', '948': 'CA', '949': 'CA', '950': 'CA', '951': 'CA',
+      '952': 'CA', '953': 'CA', '954': 'CA', '955': 'CA', '956': 'CA',
+      '957': 'CA', '958': 'CA', '959': 'CA', '960': 'CA', '961': 'CA',
+      // New York
+      '100': 'NY', '101': 'NY', '102': 'NY', '103': 'NY', '104': 'NY',
+      '105': 'NY', '106': 'NY', '107': 'NY', '108': 'NY', '109': 'NY',
+      '110': 'NY', '111': 'NY', '112': 'NY', '113': 'NY', '114': 'NY',
+      '115': 'NY', '116': 'NY', '117': 'NY', '118': 'NY', '119': 'NY',
+      '120': 'NY', '121': 'NY', '122': 'NY', '123': 'NY', '124': 'NY',
+      '125': 'NY', '126': 'NY', '127': 'NY', '128': 'NY', '129': 'NY',
+      '130': 'NY', '131': 'NY', '132': 'NY', '133': 'NY', '134': 'NY',
+      '135': 'NY', '136': 'NY', '137': 'NY', '138': 'NY', '139': 'NY',
+      '140': 'NY', '141': 'NY', '142': 'NY', '143': 'NY', '144': 'NY',
+      '145': 'NY', '146': 'NY', '147': 'NY', '148': 'NY', '149': 'NY',
+      // Texas
+      '750': 'TX', '751': 'TX', '752': 'TX', '753': 'TX', '754': 'TX',
+      '755': 'TX', '756': 'TX', '757': 'TX', '758': 'TX', '759': 'TX',
+      '760': 'TX', '761': 'TX', '762': 'TX', '763': 'TX', '764': 'TX',
+      '765': 'TX', '766': 'TX', '767': 'TX', '768': 'TX', '769': 'TX',
+      '770': 'TX', '771': 'TX', '772': 'TX', '773': 'TX', '774': 'TX',
+      '775': 'TX', '776': 'TX', '777': 'TX', '778': 'TX', '779': 'TX',
+      '780': 'TX', '781': 'TX', '782': 'TX', '783': 'TX', '784': 'TX',
+      '785': 'TX', '786': 'TX', '787': 'TX', '788': 'TX', '789': 'TX',
+      '790': 'TX', '791': 'TX', '792': 'TX', '793': 'TX', '794': 'TX',
+      '795': 'TX', '796': 'TX', '797': 'TX', '798': 'TX', '799': 'TX',
+      // Florida
+      '320': 'FL', '321': 'FL', '322': 'FL', '323': 'FL', '324': 'FL',
+      '325': 'FL', '326': 'FL', '327': 'FL', '328': 'FL', '329': 'FL',
+      '330': 'FL', '331': 'FL', '332': 'FL', '333': 'FL', '334': 'FL',
+      '335': 'FL', '336': 'FL', '337': 'FL', '338': 'FL', '339': 'FL',
+      '340': 'FL', '341': 'FL', '342': 'FL', '344': 'FL', '346': 'FL',
+      // Georgia
+      '300': 'GA', '301': 'GA', '302': 'GA', '303': 'GA', '304': 'GA',
+      '305': 'GA', '306': 'GA', '307': 'GA', '308': 'GA', '309': 'GA',
+      '310': 'GA', '311': 'GA', '312': 'GA', '313': 'GA', '314': 'GA',
+      '315': 'GA', '316': 'GA', '317': 'GA', '318': 'GA', '319': 'GA',
+      // Illinois
+      '600': 'IL', '601': 'IL', '602': 'IL', '603': 'IL', '604': 'IL',
+      '605': 'IL', '606': 'IL', '607': 'IL', '608': 'IL', '609': 'IL',
+      '610': 'IL', '611': 'IL', '612': 'IL', '613': 'IL', '614': 'IL',
+      '615': 'IL', '616': 'IL', '617': 'IL', '618': 'IL', '619': 'IL',
+      '620': 'IL', '621': 'IL', '622': 'IL', '623': 'IL', '624': 'IL',
+      '625': 'IL', '626': 'IL', '627': 'IL', '628': 'IL', '629': 'IL',
+    };
+    return zipToState[prefix] || null;
+  }
+
   async getUserGroups(userId: number): Promise<Group[]> {
     await this.ensureSeeded();
     return await db.select({
@@ -799,11 +890,17 @@ export class DatabaseStorage implements IStorage {
       description: groups.description,
       type: groups.type,
       zipCode: groups.zipCode,
+      city: groups.city,
+      state: groups.state,
       dueDate: groups.dueDate,
       topic: groups.topic,
       isPrivate: groups.isPrivate,
       memberCount: groups.memberCount,
       createdBy: groups.createdBy,
+      website: groups.website,
+      contactEmail: groups.contactEmail,
+      contactPhone: groups.contactPhone,
+      isExternal: groups.isExternal,
       createdAt: groups.createdAt,
     })
     .from(groups)

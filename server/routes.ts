@@ -648,7 +648,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/community/groups", async (req, res) => {
     try {
       const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
-      const groups = await storage.getGroups(userId);
+      const userZipCode = req.query.zipCode as string | undefined;
+      const groups = await storage.getGroups(userId, userZipCode);
       res.json(groups);
     } catch (error) {
       res.status(500).json({ message: "Error fetching groups", error: error instanceof Error ? error.message : "Unknown error" });
