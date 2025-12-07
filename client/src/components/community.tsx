@@ -75,7 +75,7 @@ export default function Community({ userId, user }: CommunityProps) {
       if (!response.ok) throw new Error('Failed to fetch groups');
       return response.json();
     },
-    enabled: activeTab === "discover",
+    enabled: activeTab === "discover" && !!user.zipCode,
   });
 
   // Fetch group messages
