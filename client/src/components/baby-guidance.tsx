@@ -516,21 +516,21 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
               <>
                 <Button 
                   variant="outline" 
-                  className="h-20 flex flex-col gap-2"
+                  className="h-24 flex flex-col gap-2 px-4 py-3"
                   onClick={() => window.open('https://www.cdc.gov/act-early/milestones/index.html', '_blank')}
                   data-testid="button-milestones"
                 >
-                  <Star className="h-6 w-6 text-amber-500" />
-                  <span className="text-sm">Developmental Milestones</span>
+                  <Star className="h-6 w-6 text-amber-500 flex-shrink-0" />
+                  <span className="text-xs leading-tight text-center">Developmental<br/>Milestones</span>
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="h-20 flex flex-col gap-2"
+                  className="h-24 flex flex-col gap-2 px-4 py-3"
                   onClick={() => window.open('https://www.cdc.gov/hearher/maternal-warning-signs/index.html', '_blank')}
                   data-testid="button-red-flags"
                 >
-                  <AlertCircle className="h-6 w-6 text-red-500" />
-                  <span className="text-sm">Red Flags</span>
+                  <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
+                  <span className="text-xs leading-tight text-center">Red Flags</span>
                 </Button>
               </>
             ) : (
