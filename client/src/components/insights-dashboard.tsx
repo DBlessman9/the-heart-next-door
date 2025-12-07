@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, 
   Calendar, 
@@ -228,9 +227,7 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
             <div className="text-center py-4">
               <Clock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
               <p className="text-gray-500 text-sm">No upcoming appointments</p>
-              <Button variant="outline" size="sm" className="mt-2">
-                Schedule Appointment
-              </Button>
+              <p className="text-gray-400 text-xs mt-1">Add appointments from the Schedule page</p>
             </div>
           )}
         </CardContent>
