@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Baby, Heart, Brain, Sparkles, Target, BookOpen, AlertCircle, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -325,8 +325,6 @@ const weeklyGuidanceData: WeeklyGuidance[] = [
 ];
 
 export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidanceProps) {
-  const currentWeek = user.pregnancyWeek || 20;
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   const [showBabyNames, setShowBabyNames] = useState(false);
   const [showBirthPlan, setShowBirthPlan] = useState(false);
 
@@ -335,11 +333,22 @@ export default function BabyGuidance({ userId, user, onTabChange }: BabyGuidance
     if (!user.babyBirthDate) return 0;
     const birthDate = new Date(user.babyBirthDate);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - birthDate.getTime());
+    // If birth date is in the future, baby hasn't been born yet
+    if (birthDate > now) return 0;
+    const diffTime = now.getTime() - birthDate.getTime();
     return Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
   };
 
   const babyAgeInWeeks = user.isPostpartum ? getBabyAgeInWeeks() : 0;
+  
+  // Initialize with correct week based on pregnancy stage
+  const currentWeek = user.isPostpartum ? babyAgeInWeeks : (user.pregnancyWeek || 20);
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
+
+  // Sync selected week when user data changes (e.g., on page load)
+  useEffect(() => {
+    setSelectedWeek(currentWeek);
+  }, [user.isPostpartum, user.pregnancyWeek, user.babyBirthDate]);
 
   // For postpartum, show baby milestones; for pregnancy, show pregnancy guidance
   let guidance;
