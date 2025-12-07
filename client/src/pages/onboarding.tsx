@@ -3,11 +3,18 @@ import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Heart, ChevronLeft, Search, Loader2, Check } from "lucide-react";
+import { Heart, ChevronLeft, Search, Loader2, Check, AlertTriangle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const TOTAL_STEPS = 8;
 
@@ -93,8 +100,10 @@ export default function Onboarding() {
     doulaName: "",
     doulaPractice: "",
     doulaEmail: "",
+    noProviderYet: false,
   });
   const [wantsPartnerInvite, setWantsPartnerInvite] = useState<boolean | null>(null);
+  const [showNoProviderDisclaimer, setShowNoProviderDisclaimer] = useState(false);
   const [partnerInviteCode, setPartnerInviteCode] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [enteredInviteCode, setEnteredInviteCode] = useState("");
@@ -126,6 +135,7 @@ export default function Onboarding() {
         doulaName: userData.doulaName,
         doulaPractice: userData.doulaPractice,
         doulaEmail: userData.doulaEmail,
+        noProviderYet: userData.noProviderYet,
         preferences: {},
       });
       return response.json();
@@ -369,7 +379,7 @@ export default function Onboarding() {
     if (formData.pregnancyStage === "trying_to_conceive") return true;
     return !!formData.dueDate;
   };
-  const isStep7Valid = formData.obMidwifeName && formData.obMidwifeEmail;
+  const isStep7Valid = formData.noProviderYet || (formData.obMidwifeName && formData.obMidwifeEmail);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
@@ -892,6 +902,37 @@ export default function Onboarding() {
               </div>
             </div>
             
+            {!formData.noProviderYet && (
+              <button 
+                onClick={() => setShowNoProviderDisclaimer(true)}
+                className="w-full py-3 text-gray-600 text-sm underline hover:text-pink-500 transition-colors"
+                data-testid="button-no-provider"
+              >
+                I don't have a provider yet — help me get started
+              </button>
+            )}
+            
+            {formData.noProviderYet && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-amber-800 font-medium">No provider added</p>
+                    <p className="text-xs text-amber-600 mt-1">
+                      We'll help you find care. You can add a provider later in settings.
+                    </p>
+                    <button
+                      onClick={() => handleInputChange("noProviderYet", false)}
+                      className="text-xs text-pink-500 underline mt-2"
+                      data-testid="button-add-provider-later"
+                    >
+                      Actually, I'd like to add my provider now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <button 
               onClick={() => createUserMutation.mutate(formData)}
               disabled={!isStep7Valid || createUserMutation.isPending}
@@ -902,6 +943,67 @@ export default function Onboarding() {
             </button>
           </div>
         )}
+
+        {/* No Provider Disclaimer Dialog */}
+        <Dialog open={showNoProviderDisclaimer} onOpenChange={setShowNoProviderDisclaimer}>
+          <DialogContent className="max-w-md mx-4 rounded-3xl">
+            <DialogHeader>
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="w-8 h-8 text-amber-500" />
+                </div>
+              </div>
+              <DialogTitle className="text-center text-xl">Important Information</DialogTitle>
+              <DialogDescription className="text-center pt-2">
+                <span className="block text-gray-700 leading-relaxed">
+                  Nia can guide you with educational support and wellness tools, but she is not a medical provider.
+                </span>
+                <span className="block mt-3 text-gray-700 font-medium">
+                  For emergencies or concerning symptoms, call 911 or your local emergency number.
+                </span>
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 pt-4">
+              <div className="bg-pink-50 rounded-xl p-4">
+                <h4 className="font-medium text-gray-800 mb-2">We'll help you:</h4>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-pink-500">•</span>
+                    Find local OBs and midwives in your area
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-pink-500">•</span>
+                    Learn what to look for in a care provider
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-pink-500">•</span>
+                    Add your provider once you choose one
+                  </li>
+                </ul>
+              </div>
+              
+              <button
+                onClick={() => {
+                  handleInputChange("noProviderYet", true);
+                  setShowNoProviderDisclaimer(false);
+                }}
+                className="w-full py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all"
+                data-testid="button-accept-disclaimer"
+              >
+                I understand, continue
+              </button>
+              
+              <button
+                onClick={() => setShowNoProviderDisclaimer(false)}
+                className="w-full py-3 text-gray-500 text-sm"
+                data-testid="button-cancel-disclaimer"
+              >
+                Cancel
+              </button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {step === 8 && (
           <div className="text-center pt-8 animate-fade-in">

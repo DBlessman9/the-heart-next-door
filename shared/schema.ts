@@ -30,6 +30,7 @@ export const users = pgTable("users", {
   doulaName: text("doula_name"),
   doulaPractice: text("doula_practice"), // Office/practice name  
   doulaEmail: text("doula_email"),
+  noProviderYet: boolean("no_provider_yet").default(false), // True if user doesn't have a provider yet
   createdAt: timestamp("created_at").defaultNow(),
 });
 
