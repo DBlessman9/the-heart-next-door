@@ -477,6 +477,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User feedback endpoint
+  app.post("/api/feedback", async (req, res) => {
+    try {
+      const { userId, feedback, rating, category } = req.body;
+      
+      if (!feedback || feedback.trim().length === 0) {
+        return res.status(400).json({ message: "Feedback message is required" });
+      }
+      
+      // Get user info if userId provided
+      let userName = "Anonymous";
+      let userEmail = "Not provided";
+      if (userId) {
+        const user = await storage.getUser(userId);
+        if (user) {
+          userName = user.firstName || "Anonymous";
+          userEmail = user.email || "Not provided";
+        }
+      }
+      
+      const { sendEmail } = await import("./services/email");
+      
+      const categoryLabels: Record<string, string> = {
+        general: "General Feedback",
+        feature: "Feature Request",
+        bug: "Bug Report",
+        praise: "Compliment",
+      };
+      
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">New User Feedback</h1>
+            <p style="color: white; margin: 5px 0 0 0;">The Heart Next Door</p>
+          </div>
+          
+          <div style="padding: 30px; background: #fff;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #374151;">From:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; color: #6b7280;">${userName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #374151;">Email:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; color: #6b7280;">${userEmail}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #374151;">Category:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; color: #6b7280;">${categoryLabels[category] || "General Feedback"}</td>
+              </tr>
+              ${rating ? `
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #374151;">Rating:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; color: #6b7280;">${"⭐".repeat(rating)} (${rating}/5)</td>
+              </tr>
+              ` : ''}
+            </table>
+            
+            <div style="margin-top: 20px;">
+              <p style="font-weight: bold; color: #374151; margin-bottom: 10px;">Feedback:</p>
+              <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; color: #374151;">
+                ${feedback.replace(/\n/g, '<br>')}
+              </div>
+            </div>
+            
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 20px;">
+              Submitted: ${new Date().toLocaleString()}
+            </p>
+          </div>
+        </div>
+      `;
+      
+      const sent = await sendEmail({
+        to: "hello@heartnextdoor.com",
+        subject: `[Feedback] ${categoryLabels[category] || "General"} from ${userName}`,
+        html,
+      });
+      
+      if (sent) {
+        res.json({ message: "Thank you for your feedback!" });
+      } else {
+        // Still return success to user even if email fails - we don't want to discourage feedback
+        console.error("Failed to send feedback email, but acknowledging to user");
+        res.json({ message: "Thank you for your feedback!" });
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      res.status(500).json({ message: "Error submitting feedback" });
+    }
+  });
+
   // Weekly summary endpoint - can be triggered by cron job or manually
   app.post("/api/care-team/weekly-summary/:userId", async (req, res) => {
     try {
