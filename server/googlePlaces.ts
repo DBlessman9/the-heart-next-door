@@ -76,7 +76,8 @@ export class GooglePlacesService {
   // Get coordinates from zip code using Geocoding API
   async getCoordinatesFromZip(zipCode: string): Promise<{ lat: number; lng: number; city: string; state: string } | null> {
     try {
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}&key=${this.apiKey}`;
+      // Use components format for reliable US zip code geocoding
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:${zipCode}|country:US&key=${this.apiKey}`;
       const response = await fetch(url);
       const data = await response.json();
 
