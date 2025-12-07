@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, Users, MapPin, Calendar, Plus, Search, Send, ExternalLink, Phone, Mail, Star } from "lucide-react";
+import { MessageSquare, Users, MapPin, Calendar, Plus, Search, Send, ExternalLink, Phone, Mail, Star, Loader2, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,6 +83,52 @@ export default function Community({ userId, user }: CommunityProps) {
     queryKey: ["/api/community/messages", selectedGroup?.id],
     enabled: !!selectedGroup?.id && isGroupChatOpen,
   });
+
+  // Check if resources need to be fetched for non-Detroit users
+  const { data: resourceStatus } = useQuery<{
+    needsFetch: boolean;
+    lastFetchedAt: string | null;
+    resourceCount: number;
+    isDetroitArea: boolean;
+  }>({
+    queryKey: ["/api/community/resource-status", user.zipCode],
+    queryFn: async () => {
+      if (!user.zipCode) return { needsFetch: false, lastFetchedAt: null, resourceCount: 0, isDetroitArea: false };
+      const response = await fetch(`/api/community/resource-status/${user.zipCode}`);
+      if (!response.ok) throw new Error('Failed to check resource status');
+      return response.json();
+    },
+    enabled: !!user.zipCode && activeTab === "discover",
+  });
+
+  // Mutation to fetch local resources
+  const fetchResourcesMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('POST', '/api/community/fetch-local-resources', { zipCode: user.zipCode });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/community/groups", user.zipCode] });
+      queryClient.invalidateQueries({ queryKey: ["/api/community/resource-status", user.zipCode] });
+      toast({
+        title: "Resources Found!",
+        description: data.message || `Found ${data.resourceCount} local maternal health resources`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Couldn't Find Resources",
+        description: "We couldn't find resources in your area right now. Please try again later.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Auto-fetch resources for non-Detroit areas that haven't been indexed
+  useEffect(() => {
+    if (resourceStatus?.needsFetch && !fetchResourcesMutation.isPending) {
+      fetchResourcesMutation.mutate();
+    }
+  }, [resourceStatus?.needsFetch]);
 
   // Join group mutation
   const joinGroupMutation = useMutation({
@@ -616,24 +662,46 @@ export default function Community({ userId, user }: CommunityProps) {
             {filteredGroups.length === 0 && (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
-                  {user.zipCode && !user.zipCode.startsWith('48') ? (
+                  {fetchResourcesMutation.isPending ? (
                     <>
-                      <h3 className="font-semibold text-lg mb-2">Local Resources Coming Soon!</h3>
+                      <Loader2 className="mx-auto mb-4 text-blush animate-spin" size={48} />
+                      <h3 className="font-semibold text-lg mb-2">Finding Local Resources...</h3>
                       <p className="text-muted-foreground mb-4">
-                        We're adding curated maternal health resources for your area. 
-                        Our team is working to connect you with trusted local providers.
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Create or join community groups to connect with moms near you!
+                        We're searching for doulas, midwives, lactation consultants, and 
+                        other maternal health providers in your area. This may take a moment.
                       </p>
                     </>
+                  ) : user.zipCode && !user.zipCode.startsWith('48') && resourceStatus?.resourceCount === 0 ? (
+                    <>
+                      <MapPin className="mx-auto mb-4 text-muted-foreground" size={48} />
+                      <h3 className="font-semibold text-lg mb-2">No Resources Found Yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        We couldn't find any maternal health providers in your area. 
+                        Try searching again or create a community group to connect with moms near you!
+                      </p>
+                      <div className="flex gap-2 justify-center">
+                        <Button 
+                          onClick={() => fetchResourcesMutation.mutate()} 
+                          variant="outline"
+                          disabled={fetchResourcesMutation.isPending}
+                        >
+                          <RefreshCw size={16} className="mr-2" />
+                          Search Again
+                        </Button>
+                        <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-blush hover:bg-blush/90">
+                          Create a group
+                        </Button>
+                      </div>
+                    </>
                   ) : (
-                    <p className="text-muted-foreground">No groups found matching your search</p>
+                    <>
+                      <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
+                      <p className="text-muted-foreground">No groups found matching your search</p>
+                      <Button onClick={() => setIsCreateDialogOpen(true)} className="mt-4 bg-blush hover:bg-blush/90">
+                        Create a group
+                      </Button>
+                    </>
                   )}
-                  <Button onClick={() => setIsCreateDialogOpen(true)} className="mt-4 bg-blush hover:bg-blush/90">
-                    Create a group
-                  </Button>
                 </CardContent>
               </Card>
             )}

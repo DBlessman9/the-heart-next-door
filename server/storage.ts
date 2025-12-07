@@ -16,6 +16,7 @@ import {
   partnerProgress,
   partnerUpdates,
   emailSignups,
+  resourceFetchCache,
   type User,
   type InsertUser,
   type ChatMessage,
@@ -148,6 +149,24 @@ export interface IStorage {
     waitlistCount: number;
   }>;
   detectRedFlags(checkIn: CheckIn, user: User): Promise<string | null>;
+
+  // Resource fetch cache operations
+  getResourceFetchCache(zipPrefix: string): Promise<{ lastFetchedAt: Date; resourceCount: number } | null>;
+  updateResourceFetchCache(zipPrefix: string, resourceCount: number): Promise<void>;
+  createGooglePlacesResource(resource: {
+    name: string;
+    description: string;
+    googlePlaceId: string;
+    website: string | null;
+    contactPhone: string | null;
+    address: string;
+    city: string;
+    state: string;
+    topic: string;
+    rating: number | null;
+    zipCode: string;
+  }): Promise<Group>;
+  getResourceByGooglePlaceId(googlePlaceId: string): Promise<Group | null>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1309,6 +1328,86 @@ export class DatabaseStorage implements IStorage {
 
     // Return first red flag or null
     return redFlags.length > 0 ? redFlags[0] : null;
+  }
+
+  // Resource fetch cache operations
+  async getResourceFetchCache(zipPrefix: string): Promise<{ lastFetchedAt: Date; resourceCount: number } | null> {
+    const [cache] = await db
+      .select()
+      .from(resourceFetchCache)
+      .where(eq(resourceFetchCache.zipPrefix, zipPrefix));
+    
+    if (!cache) return null;
+    return {
+      lastFetchedAt: cache.lastFetchedAt!,
+      resourceCount: cache.resourceCount || 0,
+    };
+  }
+
+  async updateResourceFetchCache(zipPrefix: string, resourceCount: number): Promise<void> {
+    // Upsert - insert or update if exists
+    const existing = await this.getResourceFetchCache(zipPrefix);
+    
+    if (existing) {
+      await db
+        .update(resourceFetchCache)
+        .set({ lastFetchedAt: new Date(), resourceCount })
+        .where(eq(resourceFetchCache.zipPrefix, zipPrefix));
+    } else {
+      await db
+        .insert(resourceFetchCache)
+        .values({ zipPrefix, lastFetchedAt: new Date(), resourceCount });
+    }
+  }
+
+  async getResourceByGooglePlaceId(googlePlaceId: string): Promise<Group | null> {
+    const [group] = await db
+      .select()
+      .from(groups)
+      .where(eq(groups.googlePlaceId, googlePlaceId));
+    return group || null;
+  }
+
+  async createGooglePlacesResource(resource: {
+    name: string;
+    description: string;
+    googlePlaceId: string;
+    website: string | null;
+    contactPhone: string | null;
+    address: string;
+    city: string;
+    state: string;
+    topic: string;
+    rating: number | null;
+    zipCode: string;
+  }): Promise<Group> {
+    // Check if already exists
+    const existing = await this.getResourceByGooglePlaceId(resource.googlePlaceId);
+    if (existing) return existing;
+
+    const [group] = await db
+      .insert(groups)
+      .values({
+        name: resource.name,
+        description: resource.description,
+        type: "resource",
+        topic: resource.topic,
+        city: resource.city,
+        state: resource.state,
+        zipCode: resource.zipCode,
+        website: resource.website,
+        contactPhone: resource.contactPhone,
+        address: resource.address,
+        rating: resource.rating,
+        googlePlaceId: resource.googlePlaceId,
+        source: "google_places",
+        isExternal: true,
+        isPrivate: false,
+        memberCount: 0,
+      })
+      .returning();
+    
+    return group;
   }
 }
 

@@ -201,7 +201,20 @@ export const groups = pgTable("groups", {
   contactEmail: text("contact_email"), // Contact email
   contactPhone: text("contact_phone"), // Contact phone
   isExternal: boolean("is_external").default(false), // True for external resources/organizations
+  // Google Places integration fields
+  googlePlaceId: text("google_place_id"), // Unique ID from Google Places to prevent duplicates
+  source: text("source").default("manual"), // "manual", "google_places"
+  address: text("address"), // Full address from Google Places
+  rating: integer("rating"), // Rating (1-5) from Google Places
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Cache table for tracking resource fetches by zip code area
+export const resourceFetchCache = pgTable("resource_fetch_cache", {
+  id: serial("id").primaryKey(),
+  zipPrefix: text("zip_prefix").notNull().unique(), // First 3 digits of zip code
+  lastFetchedAt: timestamp("last_fetched_at").defaultNow(),
+  resourceCount: integer("resource_count").default(0),
 });
 
 export const memberships = pgTable("memberships", {

@@ -653,6 +653,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Fetch local resources from Google Places for a zip code
+  app.post("/api/community/fetch-local-resources", async (req, res) => {
+    try {
+      const { zipCode } = req.body;
+      if (!zipCode || zipCode.length < 5) {
+        return res.status(400).json({ message: "Valid zip code required" });
+      }
+
+      const zipPrefix = zipCode.substring(0, 3);
+      
+      // Check if we've recently fetched resources for this area (within 7 days)
+      const cache = await storage.getResourceFetchCache(zipPrefix);
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      
+      if (cache) {
+        // Normalize lastFetchedAt to Date object for proper comparison
+        const lastFetchedDate = new Date(cache.lastFetchedAt);
+        if (lastFetchedDate > sevenDaysAgo) {
+          return res.json({ 
+            message: "Resources already fetched recently", 
+            resourceCount: cache.resourceCount,
+            cached: true 
+          });
+        }
+      }
+
+      // Import and use Google Places service
+      const { googlePlacesService } = await import("./googlePlaces");
+      
+      if (!googlePlacesService.isConfigured()) {
+        return res.status(503).json({ message: "Google Places API not configured" });
+      }
+
+      // Search for maternal health resources
+      const resources = await googlePlacesService.searchMaternalHealthResources(zipCode);
+      
+      // If no resources found, check if it's likely an API configuration issue
+      if (resources.length === 0) {
+        // Still update cache to avoid repeated failed attempts
+        await storage.updateResourceFetchCache(zipPrefix, 0);
+        
+        return res.json({ 
+          message: "No maternal health resources found in your area. Try again later or create a community group!",
+          resourceCount: 0,
+          cached: false,
+          apiConfigIssue: true // May indicate API not properly configured
+        });
+      }
+      
+      // Save each resource to the database
+      let savedCount = 0;
+      for (const resource of resources) {
+        try {
+          await storage.createGooglePlacesResource({
+            ...resource,
+            zipCode,
+          });
+          savedCount++;
+        } catch (err) {
+          console.error("Error saving resource:", err);
+        }
+      }
+
+      // Update the cache
+      await storage.updateResourceFetchCache(zipPrefix, savedCount);
+
+      res.json({ 
+        message: `Found ${savedCount} local maternal health resources`,
+        resourceCount: savedCount,
+        cached: false
+      });
+    } catch (error) {
+      console.error("Error fetching local resources:", error);
+      res.status(500).json({ message: "Error fetching local resources", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Check if resources need to be fetched for a zip code
+  app.get("/api/community/resource-status/:zipCode", async (req, res) => {
+    try {
+      const { zipCode } = req.params;
+      const zipPrefix = zipCode.substring(0, 3);
+      
+      const cache = await storage.getResourceFetchCache(zipPrefix);
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      
+      // Detroit area (48xxx) has curated resources
+      const isDetroitArea = zipCode.startsWith('48');
+      
+      // Determine if we need to fetch resources
+      let needsFetch = false;
+      if (!isDetroitArea) {
+        if (!cache) {
+          needsFetch = true;
+        } else {
+          // Normalize lastFetchedAt to Date object for proper comparison
+          const lastFetchedDate = new Date(cache.lastFetchedAt);
+          needsFetch = lastFetchedDate < sevenDaysAgo;
+        }
+      }
+      
+      res.json({
+        needsFetch,
+        lastFetchedAt: cache?.lastFetchedAt || null,
+        resourceCount: cache?.resourceCount || 0,
+        isDetroitArea,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error checking resource status", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
   app.get("/api/community/my-groups/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
