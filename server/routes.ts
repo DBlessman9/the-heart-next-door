@@ -56,9 +56,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userData = insertUserSchema.parse(req.body);
       
-      // Check if zip code is in Detroit area
-      const isDetroitArea = userData.zipCode ? detroitZipCodes.includes(userData.zipCode) : false;
-      
       // Calculate pregnancy week from due date if not provided
       let pregnancyWeek = userData.pregnancyWeek;
       if (!pregnancyWeek && userData.dueDate) {
@@ -69,14 +66,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pregnancyWeek = Math.max(0, 40 - weeksUntilDue);
       }
       
-      // Set waitlist flag for non-Detroit users
-      const userDataWithWaitlist = {
+      // All moms can now sign up nationwide - no regional waitlist
+      const userDataWithDetails = {
         ...userData,
         pregnancyWeek,
-        waitlistUser: !isDetroitArea,
+        waitlistUser: false,
       };
       
-      const user = await storage.createUser(userDataWithWaitlist);
+      const user = await storage.createUser(userDataWithDetails);
       res.json(user);
     } catch (error) {
       console.error("User creation error:", error);

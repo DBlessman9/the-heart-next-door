@@ -619,20 +619,20 @@ export default function Community({ userId, user }: CommunityProps) {
                   <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
                   {user.zipCode && !user.zipCode.startsWith('48') ? (
                     <>
-                      <h3 className="font-semibold text-lg mb-2">Coming to Your Area Soon!</h3>
+                      <h3 className="font-semibold text-lg mb-2">Local Resources Coming Soon!</h3>
                       <p className="text-muted-foreground mb-4">
-                        We're currently serving the Detroit area and expanding nationwide. 
-                        We'll notify you when local resources are available in your area.
+                        We're adding curated maternal health resources for your area. 
+                        Our team is working to connect you with trusted local providers.
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        In the meantime, you can still create and join community groups with other moms.
+                        Create or join community groups to connect with moms near you!
                       </p>
                     </>
                   ) : (
-                    <p className="text-muted-foreground">No groups found</p>
+                    <p className="text-muted-foreground">No groups found matching your search</p>
                   )}
                   <Button onClick={() => setIsCreateDialogOpen(true)} className="mt-4 bg-blush hover:bg-blush/90">
-                    Create the first group
+                    Create a group
                   </Button>
                 </CardContent>
               </Card>
