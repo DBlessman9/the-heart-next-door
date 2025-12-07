@@ -91,7 +91,7 @@ export default function Community({ userId, user }: CommunityProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/my-groups", userId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/community/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/community/groups", user.zipCode] });
       toast({
         title: "Joined Group",
         description: "You've successfully joined the group!",
@@ -113,7 +113,7 @@ export default function Community({ userId, user }: CommunityProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/community/my-groups", userId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/community/groups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/community/groups", user.zipCode] });
       toast({
         title: "Group Created",
         description: "Your group has been created successfully!",
@@ -617,7 +617,20 @@ export default function Community({ userId, user }: CommunityProps) {
               <Card>
                 <CardContent className="p-8 text-center">
                   <Users className="mx-auto mb-4 text-muted-foreground" size={48} />
-                  <p className="text-muted-foreground">No groups found</p>
+                  {user.zipCode && !user.zipCode.startsWith('48') ? (
+                    <>
+                      <h3 className="font-semibold text-lg mb-2">Coming to Your Area Soon!</h3>
+                      <p className="text-muted-foreground mb-4">
+                        We're currently serving the Detroit area and expanding nationwide. 
+                        We'll notify you when local resources are available in your area.
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        In the meantime, you can still create and join community groups with other moms.
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">No groups found</p>
+                  )}
                   <Button onClick={() => setIsCreateDialogOpen(true)} className="mt-4 bg-blush hover:bg-blush/90">
                     Create the first group
                   </Button>
