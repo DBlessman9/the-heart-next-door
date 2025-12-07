@@ -11,7 +11,7 @@ import {
   Flame,
   User
 } from "lucide-react";
-import { format, isAfter } from "date-fns";
+import { format, isAfter, differenceInWeeks } from "date-fns";
 
 interface DashboardProps {
   userId: number;
@@ -105,8 +105,32 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
     }
   };
 
+  // Calculate actual weeks (pregnancy week or baby's age)
+  const calculateWeeks = () => {
+    if (!user) return { weeks: 0, label: "Weeks" };
+    
+    const today = new Date();
+    
+    if (user.isPostpartum && user.babyBirthDate) {
+      // For postpartum: calculate baby's age in weeks
+      const birthDate = new Date(user.babyBirthDate);
+      const weeksOld = Math.max(0, differenceInWeeks(today, birthDate));
+      return { weeks: weeksOld, label: "Baby Weeks" };
+    } else if (user.dueDate) {
+      // For pregnant: calculate pregnancy week from due date
+      const dueDate = new Date(user.dueDate);
+      const weeksUntilDue = differenceInWeeks(dueDate, today);
+      const pregnancyWeek = Math.max(1, Math.min(42, 40 - weeksUntilDue));
+      return { weeks: pregnancyWeek, label: "Pregnancy Week" };
+    }
+    
+    // Fallback to stored value
+    return { weeks: user.pregnancyWeek || 0, label: "Weeks" };
+  };
+
   const journalStreak = calculateJournalStreak();
   const moodTrend = getMoodTrend();
+  const weekInfo = calculateWeeks();
   const upcomingAppointments = appointments?.filter((apt: any) => {
     try {
       return apt.date && isAfter(new Date(apt.date), new Date());
@@ -142,8 +166,8 @@ export default function InsightsDashboard({ userId }: DashboardProps) {
             <div className="flex items-center justify-center mb-2">
               <Baby className="h-8 w-8 text-blush" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{user?.pregnancyWeek || 0}</div>
-            <p className="text-xs text-gray-600">Weeks</p>
+            <div className="text-2xl font-bold text-gray-900">{weekInfo.weeks}</div>
+            <p className="text-xs text-gray-600">{weekInfo.label}</p>
           </CardContent>
         </Card>
 
