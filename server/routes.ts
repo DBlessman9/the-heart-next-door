@@ -336,14 +336,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const checkInData = insertCheckInSchema.parse(req.body);
       const checkIn = await storage.createCheckIn(checkInData);
       
-      // Detect red flags
+      // Get user for care team notifications
       const user = await storage.getUser(checkInData.userId);
-      if (user) {
-        const redFlag = await storage.detectRedFlags(checkIn, user);
-        if (redFlag) {
-          // Send alerts to care team
-          const { sendRedFlagAlert } = await import("./services/email");
+      if (user && !user.noProviderYet) {
+        const { sendImmediatePainAlert, sendRedFlagAlert } = await import("./services/email");
+        
+        // IMMEDIATE ALERT: Send right away if mom reports "in-pain"
+        if (checkIn.feeling === 'in-pain') {
+          console.log('Immediate pain alert triggered for user:', user.firstName);
           
+          // Alert OB/Midwife immediately
+          if (user.obMidwifeEmail) {
+            await sendImmediatePainAlert({
+              motherName: user.firstName,
+              motherLastName: user.lastName,
+              providerEmail: user.obMidwifeEmail,
+              providerName: user.obMidwifeName || "Healthcare Provider",
+              feeling: checkIn.feeling || 'in-pain',
+              bodyCare: checkIn.bodyCare || 'not specified',
+              feelingSupported: checkIn.feelingSupported || 'not specified',
+              pregnancyWeek: user.pregnancyWeek,
+              isPostpartum: user.isPostpartum || false,
+            });
+          }
+          
+          // Alert Doula immediately
+          if (user.doulaEmail) {
+            await sendImmediatePainAlert({
+              motherName: user.firstName,
+              motherLastName: user.lastName,
+              providerEmail: user.doulaEmail,
+              providerName: user.doulaName || "Doula",
+              feeling: checkIn.feeling || 'in-pain',
+              bodyCare: checkIn.bodyCare || 'not specified',
+              feelingSupported: checkIn.feelingSupported || 'not specified',
+              pregnancyWeek: user.pregnancyWeek,
+              isPostpartum: user.isPostpartum || false,
+            });
+          }
+        }
+        
+        // Detect other red flags (disconnected, overwhelmed patterns, etc.)
+        const redFlag = await storage.detectRedFlags(checkIn, user);
+        if (redFlag && checkIn.feeling !== 'in-pain') {
           // Alert OB/Midwife
           if (user.obMidwifeEmail) {
             await sendRedFlagAlert({
@@ -352,6 +387,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               providerName: user.obMidwifeName || "Healthcare Provider",
               alert: redFlag,
               details: `Check-in: Feeling ${checkIn.feeling}, Body Care: ${checkIn.bodyCare}, Support: ${checkIn.feelingSupported}`,
+              pregnancyWeek: user.pregnancyWeek,
+              isPostpartum: user.isPostpartum || false,
             });
           }
           
@@ -363,6 +400,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               providerName: user.doulaName || "Doula",
               alert: redFlag,
               details: `Check-in: Feeling ${checkIn.feeling}, Body Care: ${checkIn.bodyCare}, Support: ${checkIn.feelingSupported}`,
+              pregnancyWeek: user.pregnancyWeek,
+              isPostpartum: user.isPostpartum || false,
             });
           }
         }
@@ -372,6 +411,177 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating check-in:", error);
       res.status(400).json({ message: "Error creating check-in", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Weekly summary endpoint - can be triggered by cron job or manually
+  app.post("/api/care-team/weekly-summary/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Skip if user has no provider
+      if (user.noProviderYet) {
+        return res.json({ 
+          message: "User has not added a provider yet - no summary sent",
+          emailsSent: 0 
+        });
+      }
+      
+      // Skip if user has no care team
+      if (!user.obMidwifeEmail && !user.doulaEmail) {
+        return res.json({ 
+          message: "No care team members to notify",
+          emailsSent: 0 
+        });
+      }
+      
+      // Get weekly check-ins
+      const weeklyCheckIns = await storage.getWeeklyCheckIns(userId);
+      
+      if (weeklyCheckIns.length === 0) {
+        return res.json({ 
+          message: "No check-ins this week - no summary sent",
+          emailsSent: 0 
+        });
+      }
+      
+      const { sendWeeklySummaryEmail } = await import("./services/email");
+      let emailsSent = 0;
+      
+      // Send to OB/Midwife
+      if (user.obMidwifeEmail) {
+        const sent = await sendWeeklySummaryEmail({
+          motherName: user.firstName,
+          motherLastName: user.lastName,
+          providerEmail: user.obMidwifeEmail,
+          providerName: user.obMidwifeName || "Healthcare Provider",
+          providerRole: 'ob-midwife',
+          weeklyCheckIns: weeklyCheckIns.map(c => ({
+            feeling: c.feeling || '',
+            bodyCare: c.bodyCare || '',
+            feelingSupported: c.feelingSupported || '',
+            createdAt: c.createdAt || new Date(),
+          })),
+          pregnancyWeek: user.pregnancyWeek,
+          isPostpartum: user.isPostpartum || false,
+        });
+        if (sent) emailsSent++;
+      }
+      
+      // Send to Doula
+      if (user.doulaEmail) {
+        const sent = await sendWeeklySummaryEmail({
+          motherName: user.firstName,
+          motherLastName: user.lastName,
+          providerEmail: user.doulaEmail,
+          providerName: user.doulaName || "Doula",
+          providerRole: 'doula',
+          weeklyCheckIns: weeklyCheckIns.map(c => ({
+            feeling: c.feeling || '',
+            bodyCare: c.bodyCare || '',
+            feelingSupported: c.feelingSupported || '',
+            createdAt: c.createdAt || new Date(),
+          })),
+          pregnancyWeek: user.pregnancyWeek,
+          isPostpartum: user.isPostpartum || false,
+        });
+        if (sent) emailsSent++;
+      }
+      
+      res.json({ 
+        message: `Weekly summary sent successfully`,
+        emailsSent,
+        checkInsIncluded: weeklyCheckIns.length
+      });
+    } catch (error) {
+      console.error("Error sending weekly summary:", error);
+      res.status(500).json({ message: "Error sending weekly summary", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
+  // Send weekly summaries to all users with care teams
+  app.post("/api/care-team/send-all-weekly-summaries", async (req, res) => {
+    try {
+      const allUsers = await db.select().from(users);
+      const usersWithCareTeam = allUsers.filter(u => 
+        !u.noProviderYet && (u.obMidwifeEmail || u.doulaEmail)
+      );
+      
+      const { sendWeeklySummaryEmail } = await import("./services/email");
+      let totalEmailsSent = 0;
+      const results: any[] = [];
+      
+      for (const user of usersWithCareTeam) {
+        const weeklyCheckIns = await storage.getWeeklyCheckIns(user.id);
+        
+        if (weeklyCheckIns.length === 0) {
+          results.push({ userId: user.id, status: 'skipped', reason: 'no check-ins' });
+          continue;
+        }
+        
+        let userEmailsSent = 0;
+        
+        // Send to OB/Midwife
+        if (user.obMidwifeEmail) {
+          const sent = await sendWeeklySummaryEmail({
+            motherName: user.firstName,
+            motherLastName: user.lastName,
+            providerEmail: user.obMidwifeEmail,
+            providerName: user.obMidwifeName || "Healthcare Provider",
+            providerRole: 'ob-midwife',
+            weeklyCheckIns: weeklyCheckIns.map(c => ({
+              feeling: c.feeling || '',
+              bodyCare: c.bodyCare || '',
+              feelingSupported: c.feelingSupported || '',
+              createdAt: c.createdAt || new Date(),
+            })),
+            pregnancyWeek: user.pregnancyWeek,
+            isPostpartum: user.isPostpartum || false,
+          });
+          if (sent) userEmailsSent++;
+        }
+        
+        // Send to Doula
+        if (user.doulaEmail) {
+          const sent = await sendWeeklySummaryEmail({
+            motherName: user.firstName,
+            motherLastName: user.lastName,
+            providerEmail: user.doulaEmail,
+            providerName: user.doulaName || "Doula",
+            providerRole: 'doula',
+            weeklyCheckIns: weeklyCheckIns.map(c => ({
+              feeling: c.feeling || '',
+              bodyCare: c.bodyCare || '',
+              feelingSupported: c.feelingSupported || '',
+              createdAt: c.createdAt || new Date(),
+            })),
+            pregnancyWeek: user.pregnancyWeek,
+            isPostpartum: user.isPostpartum || false,
+          });
+          if (sent) userEmailsSent++;
+        }
+        
+        totalEmailsSent += userEmailsSent;
+        results.push({ userId: user.id, status: 'sent', emailsSent: userEmailsSent });
+      }
+      
+      res.json({
+        message: "Weekly summaries sent",
+        totalUsersProcessed: usersWithCareTeam.length,
+        totalEmailsSent,
+        results
+      });
+    } catch (error) {
+      console.error("Error sending all weekly summaries:", error);
+      res.status(500).json({ message: "Error sending weekly summaries", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 

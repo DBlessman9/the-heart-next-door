@@ -72,6 +72,7 @@ export interface IStorage {
 
   // Check-in operations
   getCheckIns(userId: number): Promise<CheckIn[]>;
+  getWeeklyCheckIns(userId: number): Promise<CheckIn[]>;
   createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn>;
   getTodaysCheckIn(userId: number): Promise<CheckIn | undefined>;
 
@@ -618,6 +619,22 @@ export class DatabaseStorage implements IStorage {
       .from(checkIns)
       .where(eq(checkIns.userId, userId))
       .orderBy(checkIns.createdAt);
+  }
+
+  async getWeeklyCheckIns(userId: number): Promise<CheckIn[]> {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setHours(0, 0, 0, 0);
+    
+    return await db.select()
+      .from(checkIns)
+      .where(
+        and(
+          eq(checkIns.userId, userId),
+          gte(checkIns.createdAt, oneWeekAgo)
+        )
+      )
+      .orderBy(desc(checkIns.createdAt));
   }
 
   async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
