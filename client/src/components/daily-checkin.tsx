@@ -63,11 +63,13 @@ export default function DailyCheckIn({ userId, user }: DailyCheckInProps) {
 
   const feelingOptions = [
     { id: "peaceful", label: "Peaceful", selected: feeling === "peaceful" },
-    { id: "anxious", label: "Anxious", selected: feeling === "anxious" },
-    { id: "tired", label: "Tired", selected: feeling === "tired" },
-    { id: "overwhelmed", label: "Overwhelmed", selected: feeling === "overwhelmed" },
     { id: "grateful", label: "Grateful", selected: feeling === "grateful" },
     { id: "hopeful", label: "Hopeful", selected: feeling === "hopeful" },
+    { id: "anxious", label: "Anxious", selected: feeling === "anxious" },
+    { id: "overwhelmed", label: "Overwhelmed", selected: feeling === "overwhelmed" },
+    { id: "tired", label: "Tired", selected: feeling === "tired" },
+    { id: "in-pain", label: "In Pain", selected: feeling === "in-pain" },
+    { id: "disconnected", label: "Disconnected", selected: feeling === "disconnected" },
   ];
 
   const bodyCareOptions = [
