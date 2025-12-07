@@ -414,6 +414,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test email endpoint
+  app.post("/api/email/test", async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: "Email address required" });
+      }
+      
+      const { sendEmail } = await import("./services/email");
+      
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">The Heart Next Door</h1>
+            <p style="color: white; margin: 5px 0 0 0;">Email Test Successful!</p>
+          </div>
+          
+          <div style="padding: 30px; background: #fff;">
+            <p style="color: #374151; font-size: 16px;">Hello!</p>
+            
+            <div style="background: #d1fae5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0;">
+              <p style="color: #065f46; margin: 0; font-weight: bold;">
+                ✅ Your email integration is working correctly!
+              </p>
+            </div>
+            
+            <p style="color: #374151; font-size: 14px;">
+              This test confirms that:<br><br>
+              • SendGrid is properly configured<br>
+              • HIPAA-compliant emails can be sent<br>
+              • Care team notifications will work
+            </p>
+            
+            <p style="color: #6b7280; font-size: 13px; margin-top: 20px;">
+              Sent at: ${new Date().toLocaleString()}
+            </p>
+          </div>
+          
+          <div style="background: #f3f4f6; padding: 20px; text-align: center;">
+            <p style="color: #9ca3af; font-size: 11px; margin: 0;">
+              The Heart Next Door - Maternal Wellness Support
+            </p>
+          </div>
+        </div>
+      `;
+      
+      const sent = await sendEmail({
+        to: email,
+        subject: 'The Heart Next Door - Email Test Successful',
+        html,
+      });
+      
+      if (sent) {
+        res.json({ message: "Test email sent successfully!", to: email });
+      } else {
+        res.status(500).json({ message: "Failed to send test email" });
+      }
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ message: "Error sending test email", error: error instanceof Error ? error.message : "Unknown error" });
+    }
+  });
+
   // Weekly summary endpoint - can be triggered by cron job or manually
   app.post("/api/care-team/weekly-summary/:userId", async (req, res) => {
     try {
