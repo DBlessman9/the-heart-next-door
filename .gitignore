@@ -23,3 +23,33 @@ pnpm-debug.log*
 # IDE
 .vscode/
 .idea/
+
+# =========================
+# iOS / Xcode
+# =========================
+DerivedData/
+*.xcuserdata/
+**/*.xcuserdata/
+
+# Xcode build
+build/
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
